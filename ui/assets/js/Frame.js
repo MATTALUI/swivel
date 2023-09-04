@@ -1,5 +1,6 @@
 class Frame {
   constructor () {
+    this.previewImage = null;
     this.objects = [
       new AnimationObject(),
       new AnimationObject(),

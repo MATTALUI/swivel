@@ -20,7 +20,9 @@ class SwivelAnimator {
     this.width = 1920;
     this.height = 1080;
     this.allControlNodes = [];
-    this.interactionState = null;
+    this.targetNode = null;
+    this.targetNodeActive = false;
+    this.mouseDownInitialValues = null;
   }
 
   registerElements() {
@@ -30,6 +32,9 @@ class SwivelAnimator {
 
   registerEventListeners() {
     this.canvas.addEventListener("mousemove", (e) => this.handleMouseMovement(e));
+    this.canvas.addEventListener("mousedown", (e) => this.handleMouseDown(e));
+    this.canvas.addEventListener("mouseup", (e) => this.handleMouseUp(e));
+    this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
     window.addEventListener("resize", (e) => this.handleResize(e));
   }
 
@@ -60,8 +65,6 @@ class SwivelAnimator {
     const ctx = this.canvas.getContext('2d');
     ctx.clearRect(0, 0, width, height);
 
-    debugger;
-
     // Create a registry of just the points that we can build as we go so that
     // we can draw the control points on top of all the lines at the end without having to recurse again
     this.allControlNodes = [];
@@ -83,7 +86,6 @@ class SwivelAnimator {
       });
     }
     frame.objects.forEach((object) => {
-      debugger
       const { root } = object;
       connectNodeToChildren(root);
       // We're adding the roots to this list, but I suspect there might come a
@@ -106,7 +108,7 @@ class SwivelAnimator {
     // the `interactionState`. I suspect that this could do with some more
     // in-depth engineering when needs get more complex.
 
-    if (!this.interactionState) {
+    if (!this.targetNodeActive) {
       // No interaction has been initiated so we're pretty much just checking
       // interactables and setting the hover states.
       let clickable = false;
@@ -121,7 +123,7 @@ class SwivelAnimator {
         const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
         if (distance <= 10) {
           clickable = true;
-          this.hoveredNode = node;
+          this.targetNode = node;
           break;
         }
       }
@@ -134,9 +136,47 @@ class SwivelAnimator {
         this.canvas.classList.add("clickable");
       } else {
         this.canvas.classList.remove("clickable");
-        this.hoveredNode = null;
+        this.targetNode = null;
       }
+    } else if (this.targetNode.isRoot) {
+      // This implementation uses deltas because it means we can calculate
+      // movement for all of the nodes without having to know the initial
+      // position for the whole object. There are some limitations to this (like
+      // location getting slightly lost if the user leaves the canvas). A full
+      // absolute implementation would lead to a better experience long term but
+      // will require keeping an original copy of the node tree. I want to avoid
+      // that until it's worth the effort.
+      this.mouseDownInitialValues;
+      const moveWithChildren = (node, deltaXPx, deltaYPx) => {
+        node.children.forEach(child => moveWithChildren(child, deltaXPx, deltaYPx));
+        const { width, height } = this.canvas;
+        const deltaX = deltaXPx / width;
+        const deltaY = deltaYPx / height;
+        node.position.x += deltaX;
+        node.position.y += deltaY;
+      }
+      moveWithChildren(this.targetNode, event.movementX, event.movementY);
+      this.buildCanvas();
     }
+  }
+
+  handleMouseDown(event) {
+    if (!this.targetNode) return;
+    if (event.button === 0) {
+      this.targetNodeActive = true;
+      this.mouseDownInitialValues = {
+        x: event.offsetX,
+        y: event.offsetY,
+        nodeX: this.targetNode.position.x,
+        nodeY: this.targetNode.position.y,
+      };
+    }
+  }
+
+  handleMouseUp(event) {
+    if (!this.targetNodeActive) return;
+    this.targetNodeActive = false;
+    this.mouseDownInitialValues = null;
   }
 
   handleResize(e) {
