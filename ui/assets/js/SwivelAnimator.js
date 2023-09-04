@@ -1,8 +1,17 @@
+function debounce(func, timeout = 300) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
+}
+
 class SwivelAnimator {
   constructor() {
     this.initializeData();
     this.registerElements();
     this.buildCanvas();
+    this.renderFramePreviews();
     this.registerEventListeners();
   }
 
@@ -28,6 +37,7 @@ class SwivelAnimator {
   registerElements() {
     this.canvas = document.querySelector("canvas");
     this.canvasContainer = document.querySelector("#canvasContainer");
+    this.framesEle = document.querySelector("#frames");
   }
 
   registerEventListeners() {
@@ -101,6 +111,27 @@ class SwivelAnimator {
       ctx.fill();
     });
   }
+
+  renderFramePreviews() {
+    this.frames.forEach((frame, index) => {
+      this.framesEle.appendChild(ElementBuilder.buildFramePreview(frame, index));
+    });
+    if (!this.currentFrame.previewImage) this._updateCurrentFramePreview();
+  }
+
+  _updateCurrentFramePreview() {
+    const url = this.canvas.toDataURL();
+    const container = document.querySelector(`.framePreviewContainer[data-frame-index="${this.currentFrameIndex}"]`);
+    const noPreview = container.querySelector(".noPreview");
+    this.currentFrame.previewImage = url;
+    if (noPreview) {
+      container.replaceWith(ElementBuilder.buildFramePreview(this.currentFrame, this.currentFrameIndex));
+    } else {
+      container.querySelector(".framePreview").setAttribute("src", url);
+    }
+  }
+
+  updateCurrentFramePreview = debounce(() => this._updateCurrentFramePreview(), 500);
 
   handleMouseMovement(event) {
     // Interactions are currently just and FSM controlled by a nullable string.
@@ -177,6 +208,7 @@ class SwivelAnimator {
     if (!this.targetNodeActive) return;
     this.targetNodeActive = false;
     this.mouseDownInitialValues = null;
+    this.updateCurrentFramePreview();
   }
 
   handleResize(e) {

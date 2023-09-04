@@ -6,7 +6,7 @@
   --night: #0A0A0A;
 
   --light: var(--lemon-chiffron);
-  --dark: var(--lemon-chiffron);
+  --dark: var(--night);
   --primary: var(--russian-violet);
   --accent: var(--african-violet);
 }
@@ -19,6 +19,10 @@ html, body {
   padding: 0;
   margin: 0;
   height: 100vh;
+}
+
+img {
+  max-width: 100%;
 }
 
 body {
@@ -35,6 +39,7 @@ main {
 
 aside {
   background-color: var(--primary);
+  border-right: 1px solid var(--african-violet);
 }
 
 footer {
@@ -55,10 +60,32 @@ nav {
   cursor: pointer;
 }
 
-#frames {
+.framePreviewContainer {
+  margin: 0 0.25rem;
+  max-width: 4rem;
+  display: flex;
+  align-items: center;
+}
+
+.framePreview {
+  border: 2px solid var(--accent);
+  border-radius: 5px;
   background-color: white;
+}
+
+.noPreview {
+  height: 35px;
+  width: 35px;
+  border-radius: 5px;
+  background-color: var(--dark);
+  border: 2px solid var(--accent);
+}
+
+#frames {
+  display: flex;
+  align-items: center;
+  background-color: var(--primary);
   height: 4rem;
-  border-bottom: 1px solid var(--accent);
 }
 
 #canvasContainer {
