@@ -1,0 +1,69 @@
+:root {
+  --russian-violet: #3E2F5B;
+  --dark-purple: #261132;
+  --african-violet: #B58DB6;
+  --lemon-chiffron: #F1F0CC;
+  --night: #0A0A0A;
+
+  --light: var(--lemon-chiffron);
+  --dark: var(--lemon-chiffron);
+  --primary: var(--russian-violet);
+  --accent: var(--african-violet);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  height: 100vh;
+}
+
+body {
+  background-color: var(--dark-purple);
+  display: grid;
+  grid-template-columns: 2fr 6fr;
+  grid-template-rows: 1px auto 1px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+}
+
+aside {
+  background-color: var(--primary);
+}
+
+footer {
+  grid-column: span 2;
+}
+
+canvas {
+  border: 1px solid black;
+  background-color: white;
+}
+
+nav {
+  background-color: var(--primary);
+  grid-column: span 2;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+#frames {
+  background-color: white;
+  height: 4rem;
+  border-bottom: 1px solid var(--accent);
+}
+
+#canvasContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
