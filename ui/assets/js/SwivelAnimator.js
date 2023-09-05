@@ -1,17 +1,8 @@
-function debounce(func, timeout = 300) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => { func.apply(this, args); }, timeout);
-  };
-}
-
 class SwivelAnimator {
   constructor() {
     this.initializeData();
     this.registerElements();
-    this.buildCanvas();
-    this.renderFramePreviews();
+    this.repaint();
     this.registerEventListeners();
   }
 
@@ -32,6 +23,9 @@ class SwivelAnimator {
     this.targetNode = null;
     this.targetNodeActive = false;
     this.mouseDownInitialValues = null;
+    this.playing = false;
+    this.fps = 10;
+    this.lastFrameTime = null;
   }
 
   registerElements() {
@@ -42,12 +36,18 @@ class SwivelAnimator {
     this.framesEle = document.querySelector("#frames");
   }
 
+  repaint() {
+    this.buildCanvas();
+    this.renderFramePreviews();
+  }
+
   registerEventListeners() {
     this.canvas.addEventListener("mousemove", (e) => this.handleMouseMovement(e));
     this.canvas.addEventListener("mousedown", (e) => this.handleMouseDown(e));
     this.canvas.addEventListener("mouseup", (e) => this.handleMouseUp(e));
     this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
     this.addFrameButton.addEventListener("click", (e) => this.addFrame(e));
+    this.playButton.addEventListener("click", (e) => this.togglePlayback(e))
     window.addEventListener("resize", (e) => this.handleResize(e));
     window.addEventListener("SWIVEL::framechange", (e) => this.handleFrameChange(e));
   }
@@ -125,10 +125,10 @@ class SwivelAnimator {
   }
 
   addFrame(event) {
+    this.playing = false;
     this.frames.push(this.currentFrame.clone());
     this.currentFrameIndex = this.frames.length - 1;
-    this.buildCanvas();
-    this.renderFramePreviews();
+    this.repaint();
   }
 
   _updateCurrentFramePreview() {
@@ -143,7 +143,34 @@ class SwivelAnimator {
     }
   }
 
-  updateCurrentFramePreview = debounce(() => this._updateCurrentFramePreview(), 500);
+  updateCurrentFramePreview = Utils.debounce(() => this._updateCurrentFramePreview(), 500);
+
+  togglePlayback(event) {
+    console.log("toggle playback");
+    this.playButton.innerHTML = this.playing ? "PLAY" : "STOP";
+    this.playing = !this.playing;
+    if (this.playing)
+      window.requestAnimationFrame(() => this.playAnimation());
+  }
+
+  playAnimation() {
+    if (!this.playing) return;
+    window.requestAnimationFrame(() => this.playAnimation());
+    const currentTime = new Date();
+    if (this.lastFrameTime) {
+      const msInSecond = 1000;
+      const frameDifferential = msInSecond / this.fps;
+      if (currentTime - frameDifferential < this.lastFrameTime)
+        return;
+    }
+    this.lastFrameTime = currentTime;
+    this.currentFrameIndex++;
+    if (this.currentFrameIndex === this.frames.length)
+      this.currentFrameIndex = 0;
+    this.repaint();
+    console.log("playing", this.currentFrameIndex);
+  }
+
 
   handleMouseMovement(event) {
     // Interactions are currently just and FSM controlled by a nullable string.
@@ -230,7 +257,6 @@ class SwivelAnimator {
   handleFrameChange(event) {
     const { index } = event.detail;
     this.currentFrameIndex = index;
-    this.buildCanvas();
-    this.renderFramePreviews();
+    this.repaint();
   }
 }
