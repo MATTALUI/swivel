@@ -36,6 +36,8 @@ class SwivelAnimator {
 
   registerElements() {
     this.canvas = document.querySelector("canvas");
+    this.playButton = document.querySelector("#play");
+    this.addFrameButton = document.querySelector("#addFrame");
     this.canvasContainer = document.querySelector("#canvasContainer");
     this.framesEle = document.querySelector("#frames");
   }
@@ -45,7 +47,9 @@ class SwivelAnimator {
     this.canvas.addEventListener("mousedown", (e) => this.handleMouseDown(e));
     this.canvas.addEventListener("mouseup", (e) => this.handleMouseUp(e));
     this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+    this.addFrameButton.addEventListener("click", (e) => this.addFrame(e));
     window.addEventListener("resize", (e) => this.handleResize(e));
+    window.addEventListener("SWIVEL::framechange", (e) => this.handleFrameChange(e));
   }
 
   buildCanvas() {
@@ -113,10 +117,18 @@ class SwivelAnimator {
   }
 
   renderFramePreviews() {
+    this.framesEle.innerHTML = "";
     this.frames.forEach((frame, index) => {
-      this.framesEle.appendChild(ElementBuilder.buildFramePreview(frame, index));
+      this.framesEle.appendChild(ElementBuilder.buildFramePreview(frame, index, this.currentFrameIndex));
     });
     if (!this.currentFrame.previewImage) this._updateCurrentFramePreview();
+  }
+
+  addFrame(event) {
+    this.frames.push(this.currentFrame.clone());
+    this.currentFrameIndex = this.frames.length - 1;
+    this.buildCanvas();
+    this.renderFramePreviews();
   }
 
   _updateCurrentFramePreview() {
@@ -125,7 +137,7 @@ class SwivelAnimator {
     const noPreview = container.querySelector(".noPreview");
     this.currentFrame.previewImage = url;
     if (noPreview) {
-      container.replaceWith(ElementBuilder.buildFramePreview(this.currentFrame, this.currentFrameIndex));
+      container.replaceWith(ElementBuilder.buildFramePreview(this.currentFrame, this.currentFrameIndex, this.currentFrameIndex));
     } else {
       container.querySelector(".framePreview").setAttribute("src", url);
     }
@@ -211,7 +223,14 @@ class SwivelAnimator {
     this.updateCurrentFramePreview();
   }
 
-  handleResize(e) {
+  handleResize(event) {
     this.buildCanvas();
+  }
+
+  handleFrameChange(event) {
+    const { index } = event.detail;
+    this.currentFrameIndex = index;
+    this.buildCanvas();
+    this.renderFramePreviews();
   }
 }

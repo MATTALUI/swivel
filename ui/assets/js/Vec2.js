@@ -10,4 +10,10 @@ class Vec2 {
       y: this.y * height,
     };
   }
+
+  clone () {
+    const clone = new Vec2(this.x, this.y);
+
+    return clone;
+  }
 }

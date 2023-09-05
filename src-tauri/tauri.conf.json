@@ -13,7 +13,10 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": false,
+      "notification": {
+        "all": true
+      }
     },
     "bundle": {
       "active": true,

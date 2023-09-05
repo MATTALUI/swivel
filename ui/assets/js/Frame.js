@@ -15,4 +15,11 @@ class Frame {
     this.objects[1].root.appendChild(new ObjectNode());
     this.objects[1].root.children[1].setPosition(new Vec2(0.12, 0.89));
   }
+
+  clone () {
+    const clone = new Frame();
+    clone.objects = this.objects.map(o => o.clone());
+
+    return clone;
+  }
 }

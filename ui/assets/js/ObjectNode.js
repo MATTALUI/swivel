@@ -18,4 +18,13 @@ class ObjectNode {
   setPosition(pos) {
     this.position = pos;
   }
+
+  clone() {
+    const clone = new ObjectNode();
+    clone.size = this.size;
+    clone.setPosition(this.position.clone());
+    this.children.forEach(c => clone.appendChild(c.clone()));
+
+    return clone
+  }
 }
