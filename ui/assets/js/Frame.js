@@ -60,9 +60,6 @@ Frame.buildDefaultObjects = () => {
   // T
   const t2 = new AnimationObject();
   t2.root.setPosition(new Vec2(0.475, 0.5));
-
-
-  objects.push(m, a, t1, t2);
   child = new ObjectNode();
   t2.root.appendChild(child);
   child.setPosition(new Vec2(0.45, 0.5));
@@ -72,6 +69,8 @@ Frame.buildDefaultObjects = () => {
   child = new ObjectNode();
   t2.root.appendChild(child);
   child.setPosition(new Vec2(0.475, 0.69));
+
+  objects.push(m, a, t1, t2);
   
 
   return objects;

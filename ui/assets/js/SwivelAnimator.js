@@ -84,19 +84,28 @@ class SwivelAnimator {
     this.allControlNodes = [];
     const connectNodeToChildren = (node, controllable = true) => {
       node.children.forEach((child) => {
-        if (child.children.length) connectNodeToChildren(child);
+        if (child.children.length) connectNodeToChildren(child, controllable);
         if (controllable) this.allControlNodes.push(child);
         const { x: startX, y: startY } = child.position.getRenderedPosition(width, height);
         const { x: endX, y: endY } = node.position.getRenderedPosition(width, height);
+        const alpha = controllable ? 1 : 0.5;
 
 
         ctx.beginPath();
+        ctx.strokeStyle = `rgba(0,0,0,${alpha})`;
         ctx.moveTo(startX, startY);
         ctx.lineTo(endX, endY);
         ctx.lineWidth = child.size;
         ctx.lineCap = "round";
         ctx.stroke();
 
+      });
+    }
+    if (!this.playing && this.currentFrameIndex) {
+      const prevFrame = this.frames[this.currentFrameIndex - 1];
+      prevFrame.objects.forEach((object) => {
+        const { root } = object;
+        connectNodeToChildren(root, false);
       });
     }
     frame.objects.forEach((object) => {
@@ -171,7 +180,6 @@ class SwivelAnimator {
     if (this.currentFrameIndex === this.frames.length)
       this.currentFrameIndex = 0;
     this.repaint();
-    console.log("playing", this.currentFrameIndex);
   }
 
 
