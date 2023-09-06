@@ -3,6 +3,7 @@ class SwivelAnimator {
     this.initializeData();
     this.registerElements();
     this.repaint();
+    this.updateForms();
     this.registerEventListeners();
   }
 
@@ -26,6 +27,7 @@ class SwivelAnimator {
     this.playing = false;
     this.fps = 10;
     this.lastFrameTime = null;
+    this.name = "Untitled Project";
   }
 
   registerElements() {
@@ -34,11 +36,20 @@ class SwivelAnimator {
     this.addFrameButton = document.querySelector("#addFrame");
     this.canvasContainer = document.querySelector("#canvasContainer");
     this.framesEle = document.querySelector("#frames");
+    this.projectNameInput = document.querySelector("#projectName");
+    this.projectWidthInput = document.querySelector("#projectWidth");
+    this.projectHeightInput = document.querySelector("#projectHeight");
   }
 
   repaint() {
     this.buildCanvas();
     this.renderFramePreviews();
+  }
+
+  updateForms() {
+    this.projectNameInput.value = this.name || "Untitled Project";
+    this.projectWidthInput.value = this.width || 1920;
+    this.projectHeightInput.value = this.height || 1080;
   }
 
   registerEventListeners() {
@@ -48,6 +59,9 @@ class SwivelAnimator {
     this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
     this.addFrameButton.addEventListener("click", (e) => this.addFrame(e));
     this.playButton.addEventListener("click", (e) => this.togglePlayback(e))
+    this.projectNameInput.addEventListener("change", (e) => this.handleProjectNameChange(e));
+    this.projectWidthInput.addEventListener("change", (e) => this.handleProjectDimensionChange(e));
+    this.projectHeightInput.addEventListener("change", (e) => this.handleProjectDimensionChange(e));
     window.addEventListener("resize", (e) => this.handleResize(e));
     window.addEventListener("SWIVEL::framechange", (e) => this.handleFrameChange(e));
   }
@@ -182,6 +196,22 @@ class SwivelAnimator {
     this.repaint();
   }
 
+  handleProjectNameChange(event) {
+    const newVal = event.target.value;
+    this.name = newVal;
+    this.updateForms();
+  }
+
+  handleProjectDimensionChange(event) {
+    const widthRawVal = +this.projectWidthInput.value;
+    const heightRawVal = +this.projectHeightInput.value;
+    const widthVal = isNaN(widthRawVal) ? this.width : widthRawVal;
+    const heightVal = isNaN(heightRawVal) ? this.height : heightRawVal;
+    this.width = widthVal;
+    this.height = heightVal;
+    this.updateForms();
+    this.repaint();
+  }
 
   handleMouseMovement(event) {
     if (this.playing) return;

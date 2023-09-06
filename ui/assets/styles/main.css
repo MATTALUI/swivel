@@ -2,6 +2,7 @@
   --russian-violet: #3E2F5B;
   --dark-purple: #261132;
   --african-violet: #B58DB6;
+  --african-transparent: rgba(181, 141, 182, 0.55);
   --lemon-chiffron: #F1F0CC;
   --night: #0A0A0A;
 
@@ -19,6 +20,7 @@ html, body {
   padding: 0;
   margin: 0;
   height: 100vh;
+  font-family: 'Ubuntu', sans-serif;
 }
 
 img {
@@ -53,6 +55,15 @@ canvas {
 nav {
   background-color: var(--primary);
   grid-column: span 2;
+}
+
+input[type=text],input[type=number] {
+  display: block;
+  width: 100%;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  padding: 0.25rem 0.5rem;
 }
 
 button {
@@ -96,6 +107,31 @@ button:hover {
   border: 2px solid var(--accent);
 }
 
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 0.25rem;
+}
+
+.inputSection {
+  margin: 0.5rem 0.25rem;
+  padding: 0.5rem 0.25rem;
+  background-color: var(--african-transparent);
+  color: var(--dark);
+  /* border: 1px solid white; */
+  border-radius: 5px;
+}
+
+.inputSection label {
+  margin-top: 0.25rem;
+  font-weight: bold;
+  font-size: 1.125rem;
+}
+
+.inputSection input {
+  margin-top: 0.25rem;
+}
+
 #frames {
   display: flex;
   align-items: center;
@@ -111,8 +147,8 @@ button:hover {
 }
 
 #controls {
-  background-color: var(--african-violet);
+  background-color: var(--primary);
   display: flex;
   justify-content: space-between;
-  padding: 0.125rem 0.25rem;
+  padding: 0.25rem 0.25rem;
 }
