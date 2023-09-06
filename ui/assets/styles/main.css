@@ -39,7 +39,6 @@ main {
 
 aside {
   background-color: var(--primary);
-  border-right: 1px solid var(--african-violet);
 }
 
 footer {

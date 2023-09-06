@@ -82,10 +82,10 @@ class SwivelAnimator {
     // Create a registry of just the points that we can build as we go so that
     // we can draw the control points on top of all the lines at the end without having to recurse again
     this.allControlNodes = [];
-    const connectNodeToChildren = (node) => {
+    const connectNodeToChildren = (node, controllable = true) => {
       node.children.forEach((child) => {
         if (child.children.length) connectNodeToChildren(child);
-        this.allControlNodes.push(child);
+        if (controllable) this.allControlNodes.push(child);
         const { x: startX, y: startY } = child.position.getRenderedPosition(width, height);
         const { x: endX, y: endY } = node.position.getRenderedPosition(width, height);
 
@@ -107,13 +107,15 @@ class SwivelAnimator {
       this.allControlNodes.push(root);
     });
 
-    this.allControlNodes.forEach(({ position, isRoot }) => {
-      const { x, y } = position.getRenderedPosition(width, height);
-      ctx.beginPath();
-      ctx.arc(x, y, 6.9, 0, 2 * Math.PI);
-      ctx.fillStyle = isRoot ? "#ff8000" : "#bf0404";
-      ctx.fill();
-    });
+    if (!this.playing) {
+      this.allControlNodes.forEach(({ position, isRoot }) => {
+        const { x, y } = position.getRenderedPosition(width, height);
+        ctx.beginPath();
+        ctx.arc(x, y, 6.9, 0, 2 * Math.PI);
+        ctx.fillStyle = isRoot ? "#ff8000" : "#bf0404";
+        ctx.fill();
+      });
+    }
   }
 
   renderFramePreviews() {
@@ -146,9 +148,10 @@ class SwivelAnimator {
   updateCurrentFramePreview = Utils.debounce(() => this._updateCurrentFramePreview(), 500);
 
   togglePlayback(event) {
-    console.log("toggle playback");
     this.playButton.innerHTML = this.playing ? "PLAY" : "STOP";
     this.playing = !this.playing;
+    if (!this.playing)
+      this.repaint();
     if (this.playing)
       window.requestAnimationFrame(() => this.playAnimation());
   }
@@ -173,11 +176,7 @@ class SwivelAnimator {
 
 
   handleMouseMovement(event) {
-    // Interactions are currently just and FSM controlled by a nullable string.
-    // In order to determine what we should do with the mouse movement we check
-    // the `interactionState`. I suspect that this could do with some more
-    // in-depth engineering when needs get more complex.
-
+    if (this.playing) return;
     if (!this.targetNodeActive) {
       // No interaction has been initiated so we're pretty much just checking
       // interactables and setting the hover states.
