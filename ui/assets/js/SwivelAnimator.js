@@ -1,9 +1,6 @@
 class SwivelAnimator {
   constructor() {
-    this.initializeData();
-    this.registerElements();
-    this.repaint();
-    this.updateForms();
+    this.setupNewProject();
     this.registerEventListeners();
     this.registerTauriEventListeners();
   }
@@ -18,6 +15,13 @@ class SwivelAnimator {
 
   get isNewProject() {
     return !this.id;
+  }
+
+  setupNewProject () {
+    this.initializeData();
+    this.registerElements();
+    this.repaint();
+    this.updateForms();
   }
 
   initializeData() {
@@ -83,6 +87,7 @@ class SwivelAnimator {
     }
     const { listen } = window.__TAURI__.event;
     listen("SWIVEL::INIT_SAVE", (e) => this.handleInitSave(e));
+    listen("SWIVEL::INIT_NEW", (e) => this.handleInitNew(e));
   }
 
   buildCanvas() {
@@ -331,6 +336,13 @@ class SwivelAnimator {
     const { invoke } = window.__TAURI__.tauri;
     const saveSuccess = await invoke("save_project", { projectData });
     console.log(saveSuccess);
+    UIManager.stopFullscreenLoading();
+  }
+
+  async handleInitNew(event) {
+    UIManager.startFullscreenLoading("Setting Up New Project");
+    await new Promise(res => setTimeout(res, 1000));
+    this.setupNewProject();
     UIManager.stopFullscreenLoading();
   }
 

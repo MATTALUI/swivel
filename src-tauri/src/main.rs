@@ -4,12 +4,22 @@
 use serde::ser::{Serialize, Serializer, SerializeStruct};
 
 fn main() {
+  // File
+  let new = tauri::CustomMenuItem::new("new", "New");
   let save = tauri::CustomMenuItem::new("save", "Save");
-  let submenu = tauri::Submenu::new("File", tauri::Menu::new().add_item(save));
+  let open = tauri::CustomMenuItem::new("open", "Open...").disabled();
+  let file_contents = tauri::Menu::new()
+    .add_item(new)
+    .add_item(save)
+    .add_item(open);
+  let file_submenu = tauri::Submenu::new("File", file_contents);
+  // Edit
+  // View
+
   let menu = tauri::Menu::new()
     .add_native_item(tauri::MenuItem::Copy)
-    .add_item(tauri::CustomMenuItem::new("hide", "Hide"))
-    .add_submenu(submenu);
+    // .add_item(tauri::CustomMenuItem::new("hide", "Hide"))
+    .add_submenu(file_submenu);
 
   tauri::Builder::default()
     .menu(menu)
@@ -53,6 +63,9 @@ impl Serialize for CustomSaveTestPayload {
 fn manage_menu_event(event:tauri::WindowMenuEvent) {
   println!("Menu event item: {}", event.menu_item_id());
   match event.menu_item_id() {
+    "new" => {
+      let _ = event.window().emit("SWIVEL::INIT_NEW", {});
+    }
     "save" => {
       let _ = event.window().emit("SWIVEL::INIT_SAVE", CustomSaveTestPayload { message: "yeah boy!".to_string(), custom: "cats".to_string()});
     }
