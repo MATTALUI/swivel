@@ -5,6 +5,7 @@ class SwivelAnimator {
     this.repaint();
     this.updateForms();
     this.registerEventListeners();
+    this.registerTauriEventListeners();
   }
 
   get aspectRatio() {
@@ -15,7 +16,12 @@ class SwivelAnimator {
     return this.frames[this.currentFrameIndex];
   }
 
+  get isNewProject() {
+    return !this.id;
+  }
+
   initializeData() {
+    this.id = null;
     this.frames = new Array(1).fill(new Frame());
     this.currentFrameIndex = 0;
     this.width = 1920;
@@ -28,6 +34,7 @@ class SwivelAnimator {
     this.fps = 10;
     this.lastFrameTime = null;
     this.name = "Untitled Project";
+    this.webmode = false;
   }
 
   registerElements() {
@@ -64,6 +71,16 @@ class SwivelAnimator {
     this.projectHeightInput.addEventListener("change", (e) => this.handleProjectDimensionChange(e));
     window.addEventListener("resize", (e) => this.handleResize(e));
     window.addEventListener("SWIVEL::framechange", (e) => this.handleFrameChange(e));
+  }
+
+  registerTauriEventListeners() {
+    if (!window.__TAURI__) {
+      console.log("Non-Tauri instance. Running in webmode.");
+      this.webmode = true;
+      return;
+    }
+    const { listen } = window.__TAURI__.event;
+    listen("SWIVEL::INIT_SAVE", (e) => this.handleInitSave(e));
   }
 
   buildCanvas() {
@@ -289,6 +306,13 @@ class SwivelAnimator {
 
   handleResize(event) {
     this.buildCanvas();
+  }
+
+  async handleInitSave(event) {
+    console.log(event.payload);
+    UIManager.startFullscreenLoading("Saving");
+    await new Promise(res => setTimeout(res, 5000));
+    UIManager.stopFullscreenLoading();
   }
 
   handleFrameChange(event) {
