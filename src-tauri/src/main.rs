@@ -15,13 +15,21 @@ fn main() {
     .menu(menu)
     .on_menu_event(manage_menu_event)
     .invoke_handler(tauri::generate_handler![greet])
+    .invoke_handler(tauri::generate_handler![save_project])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
 
 #[tauri::command]
 fn greet(name: &str) -> String {
-   format!("Hello, {}!", name)
+  return format!("Hello, {}!", name);
+}
+
+#[tauri::command]
+fn save_project(project_data: &str) -> bool {
+  let _ = std::fs::create_dir("./saves");
+  let _ = std::fs::write("./saves/test.swivel", project_data);
+  return true;
 }
 
 #[derive(Clone)]

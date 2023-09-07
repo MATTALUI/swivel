@@ -19,6 +19,14 @@ class ObjectNode {
     this.position = pos;
   }
 
+  toSerializableObject() {
+    return {
+      position: this.position.toSerializableObject(),
+      size: this.size,
+      children: this.children.map(c => c.toSerializableObject()),
+    }
+  }
+
   clone() {
     const clone = new ObjectNode();
     clone.size = this.size;

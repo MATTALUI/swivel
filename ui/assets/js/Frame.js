@@ -4,6 +4,13 @@ class Frame {
     this.objects = Frame.buildDefaultObjects();
   }
 
+  toSerializableObject () {
+    return {
+      previewImage: this.previewImage,
+      objects: this.objects.map(o => o.toSerializableObject()),
+    };
+  }
+
   clone() {
     const clone = new Frame();
     clone.objects = this.objects.map(o => o.clone());

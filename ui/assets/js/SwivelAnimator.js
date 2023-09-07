@@ -21,19 +21,21 @@ class SwivelAnimator {
   }
 
   initializeData() {
+    // Project Data
     this.id = null;
     this.frames = new Array(1).fill(new Frame());
-    this.currentFrameIndex = 0;
     this.width = 1920;
     this.height = 1080;
+    this.fps = 10;
+    this.name = "Untitled Project";
+    // App Data
+    this.currentFrameIndex = 0;
     this.allControlNodes = [];
     this.targetNode = null;
     this.targetNodeActive = false;
     this.mouseDownInitialValues = null;
     this.playing = false;
-    this.fps = 10;
     this.lastFrameTime = null;
-    this.name = "Untitled Project";
     this.webmode = false;
   }
 
@@ -213,6 +215,17 @@ class SwivelAnimator {
     this.repaint();
   }
 
+  serialize() {
+    return JSON.stringify({
+      id: this.id,
+      name: this.name,
+      width: this.width,
+      height: this.height,
+      fps: this.fps,
+      frames: this.frames.map(f => f.toSerializableObject()),
+    });
+  }
+
   handleProjectNameChange(event) {
     const newVal = event.target.value;
     this.name = newVal;
@@ -311,7 +324,13 @@ class SwivelAnimator {
   async handleInitSave(event) {
     console.log(event.payload);
     UIManager.startFullscreenLoading("Saving");
-    await new Promise(res => setTimeout(res, 5000));
+    await new Promise(res => setTimeout(res, 1000));
+    if (this.isNewProject) this.id = crypto.randomUUID();
+    const projectData = this.serialize();
+    console.log(projectData);
+    const { invoke } = window.__TAURI__.tauri;
+    const saveSuccess = await invoke("save_project", { projectData });
+    console.log(saveSuccess);
     UIManager.stopFullscreenLoading();
   }
 

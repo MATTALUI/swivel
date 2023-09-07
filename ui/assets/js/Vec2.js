@@ -11,6 +11,13 @@ class Vec2 {
     };
   }
 
+  toSerializableObject() {
+    return {
+      x: this.x,
+      y: this.y,
+    }
+  }
+
   clone () {
     const clone = new Vec2(this.x, this.y);
 
