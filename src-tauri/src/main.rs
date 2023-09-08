@@ -37,8 +37,11 @@ fn greet(name: &str) -> String {
 
 #[tauri::command]
 fn save_project(project_data: &str) -> bool {
+  // TODO: create a registry here in order to index some of these files for the loading featre
+  let project: AnimationProject = serde_json::from_str(project_data).unwrap();
+  let file_name = format!("./saves/{}.swivel", project.id);
   let _ = std::fs::create_dir("./saves");
-  let _ = std::fs::write("./saves/test.swivel", project_data);
+  let _ = std::fs::write(file_name, project_data);
   return true;
 }
 
@@ -71,4 +74,38 @@ fn manage_menu_event(event:tauri::WindowMenuEvent) {
     }
     _ => {}
   }
+}
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+struct Vec2 {
+  x: f32,
+  y: f32,
+}
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+struct AnimationObjectNode {
+  position: Vec2,
+  children: Vec<AnimationObjectNode>,
+  size: u8,
+}
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+struct AnimationObject {
+  root: AnimationObjectNode,
+}
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+struct AnimationFrame {
+  previewImage: String,
+  objects: Vec<AnimationObject>,
+}
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+struct AnimationProject {
+  id: String,
+  frames: Vec<AnimationFrame>,
+  width: u16,
+  height: u16,
+  fps: u8,
+  name: String,
 }
