@@ -281,23 +281,28 @@ class SwivelAnimator {
         this.targetNode = null;
       }
     } else if (this.targetNode.isRoot) {
-      // This implementation uses deltas because it means we can calculate
-      // movement for all of the nodes without having to know the initial
-      // position for the whole object. There are some limitations to this (like
-      // location getting slightly lost if the user leaves the canvas). A full
-      // absolute implementation would lead to a better experience long term but
-      // will require keeping an original copy of the node tree. I want to avoid
-      // that until it's worth the effort.
-      this.mouseDownInitialValues;
-      const moveWithChildren = (node, deltaXPx, deltaYPx) => {
-        node.children.forEach(child => moveWithChildren(child, deltaXPx, deltaYPx));
-        const { width, height } = this.canvas;
-        const deltaX = deltaXPx / width;
-        const deltaY = deltaYPx / height;
-        node.position.x += deltaX;
-        node.position.y += deltaY;
+      const { offsetX, offsetY } = event;
+      const { width, height } = this.canvas.getBoundingClientRect();
+      // You'd think I wouldn't need to clamp here, but I was seeing events come
+      // out where fast mouse movements could over/undershoot bounds.
+      const mouseX = Utils.clamp(offsetX, 0, width);
+      const mouseY = Utils.clamp(offsetY, 0, height);
+      const { x: originalX, y: originalY, originalNodeRoot } = this.mouseDownInitialValues;
+      const deltaX = mouseX - originalX;
+      const deltaY = mouseY - originalY;
+      const moveWithChildren = (node, originalNode) => {
+        node.children.forEach((child, index) => {
+          moveWithChildren(child, originalNode.children[index]);
+        });
+        const { x: originalNodeX, y: originalNodeY } = originalNode.position.getRenderedPosition(width, height);
+        const newX = originalNodeX + deltaX;
+        const newY = originalNodeY + deltaY;
+        node.setPosition(new Vec2(
+          newX / width,
+          newY / height
+        ));
       }
-      moveWithChildren(this.targetNode, event.movementX, event.movementY);
+      moveWithChildren(this.targetNode, originalNodeRoot);
       this.buildCanvas();
     }
   }
@@ -309,9 +314,11 @@ class SwivelAnimator {
       this.mouseDownInitialValues = {
         x: event.offsetX,
         y: event.offsetY,
-        nodeX: this.targetNode.position.x,
-        nodeY: this.targetNode.position.y,
+        originalParentNode: null,
+        originalNodeRoot: this.targetNode.objectRootNode.clone(),
       };
+      if (this.targetNode.parent)
+        this.mouseDownInitialValues.originalParentNode  = this.targetNode.parent.clone();
     }
   }
 
@@ -327,15 +334,12 @@ class SwivelAnimator {
   }
 
   async handleInitSave(event) {
-    console.log(event.payload);
     UIManager.startFullscreenLoading("Saving");
     await new Promise(res => setTimeout(res, 1000));
     if (this.isNewProject) this.id = crypto.randomUUID();
     const projectData = this.serialize();
-    console.log(projectData);
     const { invoke } = window.__TAURI__.tauri;
     const saveSuccess = await invoke("save_project", { projectData });
-    console.log(saveSuccess);
     UIManager.stopFullscreenLoading();
   }
 

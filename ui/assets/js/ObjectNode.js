@@ -10,6 +10,14 @@ class ObjectNode {
     return !this.parent;
   }
 
+  get objectRootNode () {
+    let root = this;
+    while (root.parent) {
+      root = root.parent;
+    }
+    return root;
+  }
+
   appendChild(child) {
     child.parent = this;
     this.children.push(child);
