@@ -12,7 +12,7 @@ type MassTestCase<T, E> = {
 
 describe("Utils.clamp", () => {
   const precision = 5;
-  const testCases: MassTestCase<number, number> = [
+  const testCases: MassTestCase<Vec3, number> = [
     { args: [50, 0, 100], expectation: 50 },
     { args: [69, 0, 100], expectation: 69 },
     { args: [10000, 0, 100], expectation: 100 },
