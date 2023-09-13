@@ -17,15 +17,32 @@ Utils.radToDeg = (rad) => rad * (180 / Math.PI);
 Utils.getAngleOfChange = (x1, y1, x2, y2) => {
   const deltaX = x2 - x1;
   const deltaY = y2 - y1;
-  const angle = Utils.radToDeg(Math.atan(Math.abs(deltaY) / Math.abs(deltaX)));
+  let angle = Utils.radToDeg(Math.atan(Math.abs(deltaY) / Math.abs(deltaX)));
   // Q1 has no offset; we'll default there;
   let quadrantOffset = 0;
+  let quadrant = 1;
   // Q2 is TL and has an offset of 90deg;
-  if (deltaX < 0 && deltaY > 0) quadrantOffset = 90;
+  if (deltaX < 0 && deltaY > 0){
+    quadrant = 2;
+    quadrantOffset = 90;
+  }
   // Q3 is BL and has an offset of 180deg;
-  if (deltaX <= 0 && deltaY <= 0) quadrantOffset = 180;
+  if (deltaX <= 0 && deltaY <= 0){
+    quadrant = 3;
+    quadrantOffset = 180;
+  }
   // Q4 is BR and has an offset of 270deg;
-  if (deltaX > 0 && deltaY < 0) quadrantOffset = 270;
+  if (deltaX > 0 && deltaY < 0){
+    quadrant = 4;
+    quadrantOffset = 270;
+  }
+
+  if (quadrant === 2 || quadrant === 4) {
+    // These quadrants we actually want the inverse angle because the
+    // calculations run from the x-axis, but Q1 and Q4 actually increase from
+    // the Y.
+    angle = 90 - angle;
+  }
 
   return angle + quadrantOffset;
 }
