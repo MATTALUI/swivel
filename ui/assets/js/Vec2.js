@@ -11,6 +11,12 @@ class Vec2 {
     };
   }
 
+  getRenderedPositionTuple (width, height) {
+    const { x, y } = this.getRenderedPosition(width, height);
+
+    return [x, y];
+  }
+
   toSerializableObject() {
     return {
       x: this.x,

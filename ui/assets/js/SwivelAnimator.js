@@ -17,7 +17,7 @@ class SwivelAnimator {
     return !this.id;
   }
 
-  setupNewProject () {
+  setupNewProject() {
     this.initializeData();
     this.registerElements();
     this.repaint();
@@ -305,27 +305,53 @@ class SwivelAnimator {
       moveWithChildren(this.targetNode, originalNodeRoot);
       this.buildCanvas();
     } else {
+      const { width, height } = this.canvas;
+      const swivelPoint = this.targetNode.parent;
+      const [swivelX, swivelY] =
+        swivelPoint.position.getRenderedPositionTuple(width, height);
       // This logic assumes only two types of movment should come from a node.
       // If we want to have more types of movement that are differentiated by
       // more than root and not root we will have to update this here.
-      const rotateWithChildren = (swivelNode, deltaDeg, node, originalNode) => {
+      const rotateWithChildren = (deltaDeg, node, originalNode) => {
         node.children.forEach((child, index) => {
-          rotateWithChildren(swivelNode, deltaDeg, child, originalNode.children[index]);
+          rotateWithChildren(deltaDeg, child, originalNode.children[index]);
         });
-
+        const [originalX, originalY] =
+          originalNode.position.getRenderedPositionTuple(width, height);
+        const distance = Utils.getPositionDistance(swivelX, swivelY, originalX, originalY);
+        const originalAngle = Utils.getAngleOfChange(
+          swivelX,
+          swivelY,
+          originalX,
+          originalY
+        );
+        const newAngle = originalAngle + deltaDeg;
+        const newX = swivelX + (Math.cos(Utils.degToRad(newAngle)) * distance);
+        const newY = swivelY + (Math.sin(Utils.degToRad(newAngle)) * distance);
+        node.setPosition(new Vec2(
+          newX / width,
+          newY / height
+        ));
       }
-      const { width, height } = this.canvas;
       const { offsetX, offsetY } = event;
-      const swivelPoint = this.targetNode.parent;
       const originalNode = this.targetNode.clone();
-      const { x: swivelX, y: swivelY } = swivelPoint.position.getRenderedPosition(width, height)
-      const originalDeltaX = offsetX - swivelX;
-      const originalDeltaY = offsetY - swivelY;
-      // console.log(originalDeltaX, originalDeltaY);
-      const originalAngle = Utils.radToDeg(Math.atan(originalDeltaY / originalDeltaX));
-      // rotateWithChildren(swivelPoint, 0, this.targetNode, originalNode);
-      // debugger;
-      console.log("rotate me, daddy", originalAngle);
+      const [originalX, originalY] =
+        originalNode.position.getRenderedPositionTuple(width, height);
+      const originalAngle = Utils.getAngleOfChange(
+        swivelX,
+        swivelY,
+        originalX,
+        originalY
+      );
+      const newAngle = Utils.getAngleOfChange(
+        swivelX,
+        swivelY,
+        offsetX,
+        offsetY
+      );
+      const deltaAngle = newAngle - originalAngle;
+      rotateWithChildren(deltaAngle, this.targetNode, originalNode);
+      this.repaint();
     }
   }
 
@@ -340,7 +366,7 @@ class SwivelAnimator {
         originalNodeRoot: this.targetNode.objectRootNode.clone(),
       };
       if (this.targetNode.parent)
-        this.mouseDownInitialValues.originalParentNode  = this.targetNode.parent.clone();
+        this.mouseDownInitialValues.originalParentNode = this.targetNode.parent.clone();
     }
   }
 

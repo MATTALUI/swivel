@@ -29,10 +29,10 @@ describe("Utils.clamp", () => {
 describe("Utils.degToRad", () => {
   const precision = 5;
   const testCases: MassTestCase<number, number> = [
-    { expectation: Math.PI / 6 , args: 30 },
-    { expectation: Math.PI / 3 , args: 60 },
-    { expectation: Math.PI / 2 , args: 90 },
-    { expectation: (3 * Math.PI) / 2 , args: 270 },
+    { expectation: Math.PI / 6, args: 30 },
+    { expectation: Math.PI / 3, args: 60 },
+    { expectation: Math.PI / 2, args: 90 },
+    { expectation: (3 * Math.PI) / 2, args: 270 },
   ];
 
   testCases.forEach(({ args, expectation }) => {
@@ -45,15 +45,29 @@ describe("Utils.degToRad", () => {
 describe("Utils.radToDeg", () => {
   const precision = 5;
   const testCases: MassTestCase<number, number> = [
-    { args: Math.PI / 6 , expectation: 30 },
-    { args: Math.PI / 3 , expectation: 60 },
-    { args: Math.PI / 2 , expectation: 90 },
-    { args: (3 * Math.PI) / 2 , expectation: 270 },
+    { args: Math.PI / 6, expectation: 30 },
+    { args: Math.PI / 3, expectation: 60 },
+    { args: Math.PI / 2, expectation: 90 },
+    { args: (3 * Math.PI) / 2, expectation: 270 },
   ];
 
   testCases.forEach(({ args, expectation }) => {
     it(`${expectation} degrees`, () => {
       expect(Utils.radToDeg(args).toFixed(precision)).toEqual(expectation.toFixed(precision));
+    });
+  });
+});
+
+describe("Utils.getPositionDistance", () => {
+  const precision = 5;
+  const testCases: MassTestCase<Vec4, number> = [
+    { args: [0, 0, 3, 4], expectation: 5 },
+    { args: [0, 0, 5, 12], expectation: 13 },
+  ];
+
+  testCases.forEach(({ args, expectation }) => {
+    it(`(${args[0]}, ${args[1]}) -> (${args[2]}, ${args[3]}) = ${expectation}`, () => {
+      expect(Utils.getPositionDistance(...args).toFixed(precision)).toEqual(expectation.toFixed(precision));
     });
   });
 });

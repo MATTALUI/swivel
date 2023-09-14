@@ -14,6 +14,13 @@ Utils.degToRad = (deg) => deg * (Math.PI / 180);
 
 Utils.radToDeg = (rad) => rad * (180 / Math.PI);
 
+Utils.getPositionDistance = (x1, y1, x2, y2) => {
+  const deltaX = Math.abs(x2 - x1);
+  const deltaY = Math.abs(y2 - y1);
+
+  return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+}
+
 Utils.getAngleOfChange = (x1, y1, x2, y2) => {
   const deltaX = x2 - x1;
   const deltaY = y2 - y1;
