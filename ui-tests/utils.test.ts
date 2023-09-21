@@ -62,7 +62,10 @@ describe("Utils.getPositionDistance", () => {
   const precision = 5;
   const testCases: MassTestCase<Vec4, number> = [
     { args: [0, 0, 3, 4], expectation: 5 },
+    { args: [0, 0, -3, 4], expectation: 5 },
     { args: [0, 0, 5, 12], expectation: 13 },
+    { args: [0, 0, -5, -12], expectation: 13 },
+    { args: [0, 0, 5, -12], expectation: 13 },
   ];
 
   testCases.forEach(({ args, expectation }) => {
