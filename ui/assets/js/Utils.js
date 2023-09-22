@@ -54,6 +54,17 @@ Utils.getAngleOfChange = (x1, y1, x2, y2) => {
   return angle + quadrantOffset;
 }
 
+Utils.calculateAdjacentIndices = (index, width, height) => {
+  const map = { top: null, left: null, right: null, bottom: null };
+
+  if (index % width !== 0) map.left = index - 1;
+  if (index % width !== width - 1) map.right = index + 1;
+  if (index >= width ) map.top = index - width;
+  if (index < (width * height - 1) - width) map.bottom = index + width;
+
+  return map;
+}
+
 // This is a short term measure that lets us use this code in the client the
 // same as in the tests. Eventually we'll move to a more module-based design and
 // might not need this?

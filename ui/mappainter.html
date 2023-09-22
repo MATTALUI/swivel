@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Map Paintor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/styles/main.css">
+  <link rel="stylesheet" href="/assets/styles/mappainter.css">
+  <script type="module" src="/assets/js/Utils.js" defer></script>
+  <script src="/assets/js/main.js" defer></script>
+  <script src="/assets/js/MapPainter.js" defer></script>
+</head>
+
+<body>
+  <main>
+    <div class="controls"></div>
+    <div id="grid" draggable="false"></div>
+    <div class="controls">
+      <button id="paintMode">Paint</button>
+      <button id="floodMode">Flood</button>
+    </div>
+  </main>
+</body>
+
+</html>

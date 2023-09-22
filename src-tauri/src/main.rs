@@ -15,17 +15,26 @@ fn main() {
   let file_submenu = tauri::Submenu::new("File", file_contents);
   // Edit
   // View
+  // Tools
+  let animator = tauri::CustomMenuItem::new("tool-swivel-animator", "Swivel Animator");
+  let map_painter = tauri::CustomMenuItem::new("tool-map-painter", "Map Painter");
+  let tools_contents = tauri::Menu::new()
+    .add_item(animator)
+    .add_item(map_painter);
+  let tools_submenu = tauri::Submenu::new("Tools", tools_contents);
 
   let menu = tauri::Menu::new()
     .add_native_item(tauri::MenuItem::Copy)
     // .add_item(tauri::CustomMenuItem::new("hide", "Hide"))
-    .add_submenu(file_submenu);
+    .add_submenu(file_submenu)
+    .add_submenu(tools_submenu);
 
   tauri::Builder::default()
     .menu(menu)
     .on_menu_event(manage_menu_event)
     .invoke_handler(tauri::generate_handler![greet])
     .invoke_handler(tauri::generate_handler![save_project])
+    .invoke_handler(tauri::generate_handler![save_painted_map])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
@@ -42,6 +51,13 @@ fn save_project(project_data: &str) -> bool {
   let file_name = format!("./saves/{}.swivel", project.id);
   let _ = std::fs::create_dir("./saves");
   let _ = std::fs::write(file_name, project_data);
+  return true;
+}
+
+#[tauri::command]
+fn save_painted_map(activeIndices: Vec<u16>) -> bool {
+  println!("{:?}", activeIndices);
+
   return true;
 }
 
@@ -72,8 +88,19 @@ fn manage_menu_event(event:tauri::WindowMenuEvent) {
     "save" => {
       let _ = event.window().emit("SWIVEL::INIT_SAVE", CustomSaveTestPayload { message: "yeah boy!".to_string(), custom: "cats".to_string()});
     }
+    "tool-map-painter" => {
+      let _ = event.window().emit("SWIVEL::SWITCH_TOOLS", SwivelToolView { name: "mappainter".to_string() });
+    }
+    "tool-swivel-animator" => {
+      let _ = event.window().emit("SWIVEL::SWITCH_TOOLS", SwivelToolView { name: "index".to_string() });
+    }
     _ => {}
   }
+}
+
+#[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
+struct SwivelToolView {
+  name: String,
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]

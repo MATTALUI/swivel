@@ -9,6 +9,12 @@ type MassTestCase<T, E> = {
   args: T,
   expectation: E,
 }[];
+type AdjacentTileMap = {
+  top: number | null;
+  left: number | null;
+  bottom: number | null;
+  right: number | null;
+};
 
 describe("Utils.clamp", () => {
   const precision = 5;
@@ -71,6 +77,27 @@ describe("Utils.getPositionDistance", () => {
   testCases.forEach(({ args, expectation }) => {
     it(`(${args[0]}, ${args[1]}) -> (${args[2]}, ${args[3]}) = ${expectation}`, () => {
       expect(Utils.getPositionDistance(...args).toFixed(precision)).toEqual(expectation.toFixed(precision));
+    });
+  });
+});
+
+describe("Utils.calculateAdjacentIndices", () => {
+  const testCases: MassTestCase<Vec3, AdjacentTileMap> = [
+    { args: [0, 3, 3], expectation: { top: null, left: null, right: 1, bottom: 3 } },
+    { args: [4, 3, 3], expectation: { top: 1, left: 3, right: 5, bottom: 7 } },
+    { args: [2, 3, 3], expectation: { top: null, left: 1, right: null, bottom: 5 } },
+    { args: [6, 3, 3], expectation: { top: 3, left: null, right: 7, bottom: null } },
+    { args: [8, 3, 3], expectation: { top: 5, left: 7, right: null, bottom: null } },
+    { args: [7, 3, 3], expectation: { top: 4, left: 6, right: 8, bottom: null } },
+    { args: [7, 5, 3], expectation: { top: 2, left: 6, right: 8, bottom: 12 } },
+    { args: [14, 5, 3], expectation: { top: 9, left: 13, right: null, bottom: null } },
+  ];
+
+  testCases.forEach(({ args, expectation }) => {
+    const { top, left, bottom, right } = expectation;
+    const itMsg = `${args.join(',')} => t: ${top}, l: ${left}, b:${bottom}, r: ${right}`;
+    it(itMsg, () => {
+      expect(Utils.calculateAdjacentIndices(...args)).toEqual(expectation);
     });
   });
 });
