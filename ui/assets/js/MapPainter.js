@@ -1,20 +1,25 @@
-if (window.__TAURI__) {
-  const { listen } = window.__TAURI__.event;
-  listen("SWIVEL::INIT_SAVE", async (e) => {
-    const { invoke } = window.__TAURI__.tauri;
-    const activeIndices = Array
-      .from(document.querySelectorAll(".cell.active"))
-      .map(e => +e.getAttribute("data-index"));
-    const saveSuccess = await invoke("save_painted_map", { activeIndices });
-  });
-  listen("SWIVEL::INIT_NEW", async (e) => {
-
-  });
-}
 
 (async () => {
-  const width = 100;
-  const height = 60;
+  const width = 40;
+  const height = 30;
+
+  if (window.__TAURI__) {
+    const { listen } = window.__TAURI__.event;
+    listen("SWIVEL::INIT_SAVE", async (e) => {
+      const { invoke } = window.__TAURI__.tauri;
+      const activeIndices = Array
+        .from(document.querySelectorAll(".cell.active"))
+        .map(e => +e.getAttribute("data-index"));
+      const saveSuccess = await invoke("save_painted_map", {
+        activeIndices,
+        width,
+        height,
+      });
+    });
+    listen("SWIVEL::INIT_NEW", async (e) => {
+  
+    });
+  }
 
   const total = width * height;
   const gridEle = document.querySelector("#grid");
