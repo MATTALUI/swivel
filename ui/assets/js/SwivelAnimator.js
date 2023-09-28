@@ -88,6 +88,7 @@ class SwivelAnimator {
     const { listen } = window.__TAURI__.event;
     listen("SWIVEL::INIT_SAVE", (e) => this.handleInitSave(e));
     listen("SWIVEL::INIT_NEW", (e) => this.handleInitNew(e));
+    listen("SWIVEL::INIT_EXPORT", (e) => this.handleInitExport(e));
   }
 
   buildCanvas() {
@@ -388,6 +389,16 @@ class SwivelAnimator {
     const projectData = this.serialize();
     const { invoke } = window.__TAURI__.tauri;
     const saveSuccess = await invoke("save_project", { projectData });
+    UIManager.stopFullscreenLoading();
+  }
+
+  async handleInitExport(event) {
+    UIManager.startFullscreenLoading("Exporting");
+    await new Promise(res => setTimeout(res, 1000));
+    const projectData = this.serialize();
+    const { invoke } = window.__TAURI__.tauri;
+    const saveSuccess = await invoke("export_project", { projectData });
+    console.log("done invoking")
     UIManager.stopFullscreenLoading();
   }
 

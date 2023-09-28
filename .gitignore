@@ -4,3 +4,4 @@ node_modules
 # will have compiled files and executablessrc-tauri/
 target
 saves
+tmp

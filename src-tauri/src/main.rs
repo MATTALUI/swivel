@@ -1,18 +1,23 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use base64::{engine::general_purpose, Engine as _};
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 use std::collections::HashMap;
+use std::process::Command;
 
 fn main() {
     // File
     let new = tauri::CustomMenuItem::new("new", "New");
     let save = tauri::CustomMenuItem::new("save", "Save");
+    let export = tauri::CustomMenuItem::new("export", "Export As...");
     let open = tauri::CustomMenuItem::new("open", "Open...").disabled();
     let file_contents = tauri::Menu::new()
         .add_item(new)
         .add_item(save)
-        .add_item(open);
+        .add_item(open)
+        .add_item(export);
+
     let file_submenu = tauri::Submenu::new("File", file_contents);
     // Edit
     // View
@@ -30,9 +35,12 @@ fn main() {
     tauri::Builder::default()
         .menu(menu)
         .on_menu_event(manage_menu_event)
-        .invoke_handler(tauri::generate_handler![greet])
-        .invoke_handler(tauri::generate_handler![save_project])
-        .invoke_handler(tauri::generate_handler![save_painted_map])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            export_project,
+            save_project,
+            save_painted_map
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -43,12 +51,45 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn save_project(project_data: &str) -> bool {
+#[allow(non_snake_case)] // Properties come from JS so inevitable for now
+fn save_project(projectData: &str) -> bool {
     // TODO: create a registry here in order to index some of these files for the loading featre
-    let project: AnimationProject = serde_json::from_str(project_data).unwrap();
+    let project: AnimationProject = serde_json::from_str(projectData).unwrap();
     let file_name = format!("./saves/{}.swivel", project.id);
     let _ = std::fs::create_dir("./saves");
-    let _ = std::fs::write(file_name, project_data);
+    let _ = std::fs::write(file_name, projectData);
+    return true;
+}
+
+#[tauri::command]
+#[allow(non_snake_case)] // Properties come from JS so inevitable for now
+fn export_project(projectData: &str) -> bool {
+    let project: AnimationProject = serde_json::from_str(projectData).unwrap();
+    // This can't be right?
+    let _ = std::fs::create_dir("./tmp");
+    let _ = std::fs::remove_dir_all("./tmp").unwrap();
+    let _ = std::fs::create_dir("./tmp");
+    for (index, frame) in project.frames.iter().enumerate() {
+        let base64Img = frame.previewImage.clone();
+        let img = &general_purpose::STANDARD
+            .decode(base64Img.replace("data:image/png;base64,", ""))
+            .unwrap();
+        let path = format!("./tmp/img_{:0>5}.png", index);
+        let _ = std::fs::write(path, img);
+    }
+    // I'd rather use a crate for this, but the current ffmpeg crates don't look
+    // like they're maintained anymore and don't have any helpful info. So
+    // this'll have to do for now.
+    Command::new("ffmpeg")
+        .args([
+            "-framerate",
+            "1",
+            "-i",
+            "./tmp/img_%05d.png",
+            "./tmp/output.gif",
+        ])
+        .output()
+        .expect("failed convert to gif");
     return true;
 }
 
@@ -128,6 +169,9 @@ fn manage_menu_event(event: tauri::WindowMenuEvent) {
     match event.menu_item_id() {
         "new" => {
             let _ = event.window().emit("SWIVEL::INIT_NEW", {});
+        }
+        "export" => {
+            let _ = event.window().emit("SWIVEL::INIT_EXPORT", {});
         }
         "save" => {
             let _ = event.window().emit(
