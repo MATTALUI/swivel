@@ -1,10 +1,4 @@
-class UIManager { }
-
-UIManager.initGenericEventHandlers = () => {
-  const loader = document.querySelector("#fullscreenLoader");
-}
-
-UIManager.startFullscreenLoading = (message="", skipAnimation=false) => {
+export const startFullscreenLoading = (message = "", skipAnimation = false) => {
   let loader = document.querySelector("#fullscreenLoader");
   if (loader) return;
   loader = document.createElement("div");
@@ -30,12 +24,13 @@ UIManager.startFullscreenLoading = (message="", skipAnimation=false) => {
   }
 
   setTimeout(() => {
+    if (!loader) return;
     loader.classList.remove("off");
     loader.classList.add("on");
   }, 10);
 };
 
-UIManager.stopFullscreenLoading = () => {
+export const stopFullscreenLoading = () => {
   const loader = document.querySelector("#fullscreenLoader");
   if (!loader) return;
   loader.classList.remove("on");

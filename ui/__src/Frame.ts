@@ -1,29 +1,12 @@
-class Frame {
-  constructor() {
-    this.previewImage = null;
-    this.objects = Frame.buildDefaultObjects();
-  }
+import ObjectNode from "./ObjectNode";
+import Vec2 from "./Vec2";
+import AnimationObject, { SerializableAnimationObject } from "./AnimationObject";
 
-  toSerializableObject () {
-    return {
-      previewImage: this.previewImage,
-      objects: this.objects.map(o => o.toSerializableObject()),
-    };
-  }
-
-  clone() {
-    const clone = new Frame();
-    clone.objects = this.objects.map(o => o.clone());
-
-    return clone;
-  }
-}
-
-// This realistically is only used when initializing the first empty frame for a
+// This is only used when initializing the first empty frame for a
 // blank object.
-Frame.buildDefaultObjects = () => {
+const buildDefaultObjects = (): AnimationObject[] => {
   let child, newestChild;
-  const objects = [];
+  const objects: AnimationObject[] = [];
   // M
   const m = new AnimationObject();
   m.root.setPosition(new Vec2(0.1, 0.69));
@@ -78,7 +61,37 @@ Frame.buildDefaultObjects = () => {
   child.setPosition(new Vec2(0.475, 0.69));
 
   objects.push(m, a, t1, t2);
-  
+
 
   return objects;
+}
+
+type SerializableFrame = {
+  previewImage: string | null;
+  objects: SerializableAnimationObject[];
+};
+
+export default class Frame {
+  previewImage: string | null;
+  objects: AnimationObject[];
+
+
+  constructor() {
+    this.previewImage = null;
+    this.objects = buildDefaultObjects();
+  }
+
+  toSerializableObject(): SerializableFrame {
+    return {
+      previewImage: this.previewImage,
+      objects: this.objects.map(o => o.toSerializableObject()),
+    };
+  }
+
+  clone() {
+    const clone = new Frame();
+    clone.objects = this.objects.map(o => o.clone());
+
+    return clone;
+  }
 }

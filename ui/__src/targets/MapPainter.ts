@@ -1,15 +1,18 @@
+import Tauri from "../Tauri";
+import { calculateAdjacentIndices } from "../Utils";
 
 (async () => {
   const width = 40;
   const height = 30;
 
-  if (window.__TAURI__) {
-    const { listen } = window.__TAURI__.event;
+  if (Tauri) {
+    const { listen } = Tauri.event;
     listen("SWIVEL::INIT_SAVE", async (e) => {
-      const { invoke } = window.__TAURI__.tauri;
+      if (!Tauri) return;
+      const { invoke } = Tauri.tauri;
       const activeIndices = Array
         .from(document.querySelectorAll(".cell.active"))
-        .map(e => +e.getAttribute("data-index"));
+        .map(e => Number(e.getAttribute("data-index")));
       const saveSuccess = await invoke("save_painted_map", {
         activeIndices,
         width,
@@ -17,12 +20,16 @@
       });
     });
     listen("SWIVEL::INIT_NEW", async (e) => {
-  
+      console.log("Create new map painter!");
     });
   }
 
   const total = width * height;
-  const gridEle = document.querySelector("#grid");
+  const gridEle = document.querySelector<HTMLDivElement>("#grid");
+  if (!gridEle) {
+    console.error("Cannot find grid element");
+    return;
+  }
   gridEle.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
 
   for (let i = 0; i < total; i++) {
@@ -50,7 +57,7 @@
         const active = !!ele && ele.classList.contains("active");
         if (!!ele && !active) {
           ele.classList.add("active");
-          const neighbors = Utils.calculateAdjacentIndices(index, width, height);
+          const neighbors = calculateAdjacentIndices(index, width, height);
           Object.values(neighbors).forEach((ni) => {
             if (!ni && ni !== 0) return;
             flood(ni);
@@ -86,11 +93,11 @@
       });
     });
 
-    document.querySelector("#paintMode").addEventListener("click", () => {
+    document.querySelector("#paintMode")?.addEventListener("click", () => {
       painting = false;
       mode = "paint";
     });
-    document.querySelector("#floodMode").addEventListener("click", () => {
+    document.querySelector("#floodMode")?.addEventListener("click", () => {
       painting = false;
       mode = "flood";
     });

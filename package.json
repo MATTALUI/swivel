@@ -4,9 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tauri dev",
+    "start": "concurrently 'bun build:ui:watch' 'tauri dev'",
     "test": "bun test",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "build": "bun build:ui",
+    "build:ui": "bun build ui/__src/targets/*.ts --outdir ui/assets/js --minify",
+    "build:ui:watch": "bun build ui/__src/targets/*.ts --outdir ui/assets/js --minify --watch",
+    "cleanup": "rm ./ui/assets/js/*.js"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +18,8 @@
   "devDependencies": {
     "@tauri-apps/cli": "^1.4.0",
     "@types/jest": "^29.5.4"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
   }
 }

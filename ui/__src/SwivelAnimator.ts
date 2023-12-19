@@ -1,4 +1,43 @@
-class SwivelAnimator {
+import { buildFramePreview } from "./ElementBuilder";
+import Frame from "./Frame";
+import ObjectNode from "./ObjectNode";
+import Tauri from "./Tauri";
+import { startFullscreenLoading, stopFullscreenLoading } from "./UIManager";
+import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "./Utils";
+import Vec2 from "./Vec2";
+
+export default class SwivelAnimator {
+  // Project Data
+  id: string | null;
+  width: number;
+  height: number;
+  frames: Frame[];
+  fps: number;
+  // App Data
+  currentFrameIndex: number;
+  name: string;
+  allControlNodes: ObjectNode[];
+  targetNode: ObjectNode | null;
+  targetNodeActive: boolean;
+  mouseDownInitialValues: {
+    x: number;
+    y: number;
+    originalParentNode: ObjectNode | null;
+    originalNodeRoot: ObjectNode;
+  } | null;
+  playing: boolean;
+  lastFrameTime: Date | null;
+  webmode: boolean;
+  // UI Elements
+  canvas: HTMLCanvasElement;
+  playButton: HTMLButtonElement;
+  addFrameButton: HTMLButtonElement;
+  canvasContainer: HTMLDivElement;
+  framesEle: HTMLDivElement;
+  projectNameInput: HTMLInputElement;
+  projectWidthInput: HTMLInputElement;
+  projectHeightInput: HTMLInputElement;
+
   constructor() {
     this.setupNewProject();
     this.registerEventListeners();
@@ -44,14 +83,36 @@ class SwivelAnimator {
   }
 
   registerElements() {
-    this.canvas = document.querySelector("canvas");
-    this.playButton = document.querySelector("#play");
-    this.addFrameButton = document.querySelector("#addFrame");
-    this.canvasContainer = document.querySelector("#canvasContainer");
-    this.framesEle = document.querySelector("#frames");
-    this.projectNameInput = document.querySelector("#projectName");
-    this.projectWidthInput = document.querySelector("#projectWidth");
-    this.projectHeightInput = document.querySelector("#projectHeight");
+    const canvas = document.querySelector<HTMLCanvasElement>("canvas");
+    const playButton = document.querySelector<HTMLButtonElement>("#play");
+    const addFrameButton = document.querySelector<HTMLButtonElement>("#addFrame");
+    const canvasContainer = document.querySelector<HTMLDivElement>("#canvasContainer");
+    const framesEle = document.querySelector<HTMLDivElement>("#frames");
+    const projectNameInput = document.querySelector<HTMLInputElement>("#projectName");
+    const projectWidthInput = document.querySelector<HTMLInputElement>("#projectWidth");
+    const projectHeightInput = document.querySelector<HTMLInputElement>("#projectHeight");
+
+    if (
+      !canvas ||
+      !playButton ||
+      !addFrameButton ||
+      !canvasContainer ||
+      !framesEle ||
+      !projectNameInput ||
+      !projectWidthInput ||
+      !projectHeightInput
+    ) {
+      throw new Error("SwivelAnimator is missing critical elements");
+    }
+
+    this.canvas = canvas;
+    this.playButton = playButton;
+    this.addFrameButton = addFrameButton;
+    this.canvasContainer = canvasContainer;
+    this.framesEle = framesEle;
+    this.projectNameInput = projectNameInput;
+    this.projectWidthInput = projectWidthInput;
+    this.projectHeightInput = projectHeightInput;
   }
 
   repaint() {
@@ -61,8 +122,8 @@ class SwivelAnimator {
 
   updateForms() {
     this.projectNameInput.value = this.name || "Untitled Project";
-    this.projectWidthInput.value = this.width || 1920;
-    this.projectHeightInput.value = this.height || 1080;
+    this.projectWidthInput.value = (this.width || 1920).toString();
+    this.projectHeightInput.value = (this.height || 1080).toString();
   }
 
   registerEventListeners() {
@@ -116,6 +177,9 @@ class SwivelAnimator {
     // Draw all points
     const frame = this.currentFrame;
     const ctx = this.canvas.getContext('2d');
+    if (!ctx) {
+      throw new Error("Context unavailable");
+    }
     ctx.clearRect(0, 0, width, height);
 
     // Create a registry of just the points that we can build as we go so that
@@ -169,7 +233,7 @@ class SwivelAnimator {
   renderFramePreviews() {
     this.framesEle.innerHTML = "";
     this.frames.forEach((frame, index) => {
-      this.framesEle.appendChild(ElementBuilder.buildFramePreview(frame, index, this.currentFrameIndex));
+      this.framesEle.appendChild(buildFramePreview(frame, index, this.currentFrameIndex));
     });
     if (!this.currentFrame.previewImage) this._updateCurrentFramePreview();
   }
@@ -184,16 +248,19 @@ class SwivelAnimator {
   _updateCurrentFramePreview() {
     const url = this.canvas.toDataURL();
     const container = document.querySelector(`.framePreviewContainer[data-frame-index="${this.currentFrameIndex}"]`);
+    if (!container) {
+      console.log("Could not fint preview frame container");
+      return;
+    }
     const noPreview = container.querySelector(".noPreview");
     this.currentFrame.previewImage = url;
     if (noPreview) {
-      container.replaceWith(ElementBuilder.buildFramePreview(this.currentFrame, this.currentFrameIndex, this.currentFrameIndex));
+      container.replaceWith(buildFramePreview(this.currentFrame, this.currentFrameIndex, this.currentFrameIndex));
     } else {
-      container.querySelector(".framePreview").setAttribute("src", url);
+      container.querySelector(".framePreview")?.setAttribute("src", url);
     }
   }
-
-  updateCurrentFramePreview = Utils.debounce(() => this._updateCurrentFramePreview(), 500);
+  updateCurrentFramePreview = debounce(() => this._updateCurrentFramePreview(), 500);
 
   togglePlayback(event) {
     this.playButton.innerHTML = this.playing ? "PLAY" : "STOP";
@@ -211,7 +278,8 @@ class SwivelAnimator {
     if (this.lastFrameTime) {
       const msInSecond = 1000;
       const frameDifferential = msInSecond / this.fps;
-      if (currentTime - frameDifferential < this.lastFrameTime)
+      const timeSinceLastFrame = Number(currentTime) - frameDifferential;
+      if (timeSinceLastFrame < Number(this.lastFrameTime))
         return;
     }
     this.lastFrameTime = currentTime;
@@ -281,13 +349,14 @@ class SwivelAnimator {
         this.canvas.classList.remove("clickable");
         this.targetNode = null;
       }
-    } else if (this.targetNode.isRoot) {
+    } else if (this.targetNode?.isRoot) {
       const { offsetX, offsetY } = event;
       const { width, height } = this.canvas.getBoundingClientRect();
       // You'd think I wouldn't need to clamp here, but I was seeing events come
       // out where fast mouse movements could over/undershoot bounds.
-      const mouseX = Utils.clamp(offsetX, 0, width);
-      const mouseY = Utils.clamp(offsetY, 0, height);
+      const mouseX = clamp(offsetX, 0, width);
+      const mouseY = clamp(offsetY, 0, height);
+      if (!this.mouseDownInitialValues) throw new Error("No initial values for the mouse");
       const { x: originalX, y: originalY, originalNodeRoot } = this.mouseDownInitialValues;
       const deltaX = mouseX - originalX;
       const deltaY = mouseY - originalY;
@@ -307,7 +376,8 @@ class SwivelAnimator {
       this.buildCanvas();
     } else {
       const { width, height } = this.canvas;
-      const swivelPoint = this.targetNode.parent;
+      const swivelPoint = this.targetNode?.parent || undefined;
+      if (!swivelPoint) throw new Error("No valid swivel point");
       const [swivelX, swivelY] =
         swivelPoint.position.getRenderedPositionTuple(width, height);
       // This logic assumes only two types of movment should come from a node.
@@ -319,32 +389,33 @@ class SwivelAnimator {
         });
         const [originalX, originalY] =
           originalNode.position.getRenderedPositionTuple(width, height);
-        const distance = Utils.getPositionDistance(swivelX, swivelY, originalX, originalY);
-        const originalAngle = Utils.getAngleOfChange(
+        const distance = getPositionDistance(swivelX, swivelY, originalX, originalY);
+        const originalAngle = getAngleOfChange(
           swivelX,
           swivelY,
           originalX,
           originalY
         );
         const newAngle = originalAngle + deltaDeg;
-        const newX = swivelX + (Math.cos(Utils.degToRad(newAngle)) * distance);
-        const newY = swivelY + (Math.sin(Utils.degToRad(newAngle)) * distance);
+        const newX = swivelX + (Math.cos(degToRad(newAngle)) * distance);
+        const newY = swivelY + (Math.sin(degToRad(newAngle)) * distance);
         node.setPosition(new Vec2(
           newX / width,
           newY / height
         ));
       }
       const { offsetX, offsetY } = event;
-      const originalNode = this.targetNode.clone();
+      const originalNode = this.targetNode?.clone();
+      if (!originalNode) throw new Error("No original node");
       const [originalX, originalY] =
         originalNode.position.getRenderedPositionTuple(width, height);
-      const originalAngle = Utils.getAngleOfChange(
+      const originalAngle = getAngleOfChange(
         swivelX,
         swivelY,
         originalX,
         originalY
       );
-      const newAngle = Utils.getAngleOfChange(
+      const newAngle = getAngleOfChange(
         swivelX,
         swivelY,
         offsetX,
@@ -383,30 +454,36 @@ class SwivelAnimator {
   }
 
   async handleInitSave(event) {
-    UIManager.startFullscreenLoading("Saving");
+    if (!Tauri) {
+      throw new Error("cant save yet");
+    }
+    startFullscreenLoading("Saving");
     await new Promise(res => setTimeout(res, 1000));
     if (this.isNewProject) this.id = crypto.randomUUID();
     const projectData = this.serialize();
-    const { invoke } = window.__TAURI__.tauri;
+    const { invoke } = Tauri.tauri;
     const saveSuccess = await invoke("save_project", { projectData });
-    UIManager.stopFullscreenLoading();
+    stopFullscreenLoading();
   }
 
   async handleInitExport(event) {
-    UIManager.startFullscreenLoading("Exporting");
+    if (!Tauri) {
+      throw new Error("cant save yet");
+    }
+    startFullscreenLoading("Exporting");
     await new Promise(res => setTimeout(res, 1000));
     const projectData = this.serialize();
-    const { invoke } = window.__TAURI__.tauri;
+    const { invoke } = Tauri.tauri;
     const saveSuccess = await invoke("export_project", { projectData });
     console.log("done invoking")
-    UIManager.stopFullscreenLoading();
+    stopFullscreenLoading();
   }
 
   async handleInitNew(event) {
-    UIManager.startFullscreenLoading("Setting Up New Project");
+    startFullscreenLoading("Setting Up New Project");
     await new Promise(res => setTimeout(res, 1000));
     this.setupNewProject();
-    UIManager.stopFullscreenLoading();
+    stopFullscreenLoading();
   }
 
   handleFrameChange(event) {

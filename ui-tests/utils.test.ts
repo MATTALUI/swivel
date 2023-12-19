@@ -1,4 +1,4 @@
-import Utils from "../ui/assets/js/Utils";
+import { calculateAdjacentIndices, clamp, degToRad, getAngleOfChange, getPositionDistance, radToDeg } from "../ui/__src/Utils";
 
 const SQTOT = Math.sqrt(3) / 2; // SQuare of Three Over Two
 const HALF = 1 / 2;
@@ -16,7 +16,7 @@ type AdjacentTileMap = {
   right: number | null;
 };
 
-describe("Utils.clamp", () => {
+describe("clamp", () => {
   const precision = 5;
   const testCases: MassTestCase<Vec3, number> = [
     { args: [50, 0, 100], expectation: 50 },
@@ -27,12 +27,12 @@ describe("Utils.clamp", () => {
 
   testCases.forEach(({ args, expectation }) => {
     it(`keeps ${args[0]} between ${args[1]} and ${args[2]} by returning ${expectation}`, () => {
-      expect(Utils.clamp(...args).toFixed(precision)).toEqual(expectation.toFixed(precision));
+      expect(clamp(...args).toFixed(precision)).toEqual(expectation.toFixed(precision));
     });
   });
 });
 
-describe("Utils.degToRad", () => {
+describe("degToRad", () => {
   const precision = 5;
   const testCases: MassTestCase<number, number> = [
     { expectation: Math.PI / 6, args: 30 },
@@ -43,12 +43,12 @@ describe("Utils.degToRad", () => {
 
   testCases.forEach(({ args, expectation }) => {
     it(`${expectation} rads`, () => {
-      expect(Utils.degToRad(args).toFixed(precision)).toEqual(expectation.toFixed(precision));
+      expect(degToRad(args).toFixed(precision)).toEqual(expectation.toFixed(precision));
     });
   });
 });
 
-describe("Utils.radToDeg", () => {
+describe("radToDeg", () => {
   const precision = 5;
   const testCases: MassTestCase<number, number> = [
     { args: Math.PI / 6, expectation: 30 },
@@ -59,12 +59,12 @@ describe("Utils.radToDeg", () => {
 
   testCases.forEach(({ args, expectation }) => {
     it(`${expectation} degrees`, () => {
-      expect(Utils.radToDeg(args).toFixed(precision)).toEqual(expectation.toFixed(precision));
+      expect(radToDeg(args).toFixed(precision)).toEqual(expectation.toFixed(precision));
     });
   });
 });
 
-describe("Utils.getPositionDistance", () => {
+describe("getPositionDistance", () => {
   const precision = 5;
   const testCases: MassTestCase<Vec4, number> = [
     { args: [0, 0, 3, 4], expectation: 5 },
@@ -76,12 +76,12 @@ describe("Utils.getPositionDistance", () => {
 
   testCases.forEach(({ args, expectation }) => {
     it(`(${args[0]}, ${args[1]}) -> (${args[2]}, ${args[3]}) = ${expectation}`, () => {
-      expect(Utils.getPositionDistance(...args).toFixed(precision)).toEqual(expectation.toFixed(precision));
+      expect(getPositionDistance(...args).toFixed(precision)).toEqual(expectation.toFixed(precision));
     });
   });
 });
 
-describe("Utils.calculateAdjacentIndices", () => {
+describe("calculateAdjacentIndices", () => {
   const testCases: MassTestCase<Vec3, AdjacentTileMap> = [
     { args: [0, 3, 3], expectation: { top: null, left: null, right: 1, bottom: 3 } },
     { args: [4, 3, 3], expectation: { top: 1, left: 3, right: 5, bottom: 7 } },
@@ -97,12 +97,12 @@ describe("Utils.calculateAdjacentIndices", () => {
     const { top, left, bottom, right } = expectation;
     const itMsg = `${args.join(',')} => t: ${top}, l: ${left}, b:${bottom}, r: ${right}`;
     it(itMsg, () => {
-      expect(Utils.calculateAdjacentIndices(...args)).toEqual(expectation);
+      expect(calculateAdjacentIndices(...args)).toEqual(expectation);
     });
   });
 });
 
-describe("Utils.getAngleOfChange", () => {
+describe("getAngleOfChange", () => {
   const precision = 5;
   const testCases: MassTestCase<Vec4, number> = [
     // Q1
@@ -129,7 +129,7 @@ describe("Utils.getAngleOfChange", () => {
 
   testCases.forEach(({ args, expectation }) => {
     it(`${expectation} degrees`, () => {
-      expect(Utils.getAngleOfChange(...args).toFixed(precision)).toEqual(expectation.toFixed(precision));
+      expect(getAngleOfChange(...args).toFixed(precision)).toEqual(expectation.toFixed(precision));
     });
   });
 });

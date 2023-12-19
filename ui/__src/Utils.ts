@@ -1,6 +1,5 @@
-export default class Utils { }
 
-Utils.debounce = (func, timeout = 300) => {
+export const debounce = (func: Function, timeout = 300) => {
   let timer;
   return (...args) => {
     clearTimeout(timer);
@@ -8,38 +7,49 @@ Utils.debounce = (func, timeout = 300) => {
   };
 }
 
-Utils.clamp = (val, min, max) => Math.min(Math.max(val, min), max);
+export const clamp = (val: number, min: number, max: number) =>
+  Math.min(Math.max(val, min), max);
 
-Utils.degToRad = (deg) => deg * (Math.PI / 180);
+export const degToRad = (deg: number) => deg * (Math.PI / 180);
 
-Utils.radToDeg = (rad) => rad * (180 / Math.PI);
+export const radToDeg = (rad: number) => rad * (180 / Math.PI);
 
-Utils.getPositionDistance = (x1, y1, x2, y2) => {
+export const getPositionDistance = (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) => {
   const deltaX = Math.abs(x2 - x1);
   const deltaY = Math.abs(y2 - y1);
 
   return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
 }
 
-Utils.getAngleOfChange = (x1, y1, x2, y2) => {
+export const getAngleOfChange = (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) => {
   const deltaX = x2 - x1;
   const deltaY = y2 - y1;
-  let angle = Utils.radToDeg(Math.atan(Math.abs(deltaY) / Math.abs(deltaX)));
+  let angle = radToDeg(Math.atan(Math.abs(deltaY) / Math.abs(deltaX)));
   // Q1 has no offset; we'll default there;
   let quadrantOffset = 0;
   let quadrant = 1;
   // Q2 is TL and has an offset of 90deg;
-  if (deltaX < 0 && deltaY > 0){
+  if (deltaX < 0 && deltaY > 0) {
     quadrant = 2;
     quadrantOffset = 90;
   }
   // Q3 is BL and has an offset of 180deg;
-  if (deltaX <= 0 && deltaY <= 0){
+  if (deltaX <= 0 && deltaY <= 0) {
     quadrant = 3;
     quadrantOffset = 180;
   }
   // Q4 is BR and has an offset of 270deg;
-  if (deltaX > 0 && deltaY < 0){
+  if (deltaX > 0 && deltaY < 0) {
     quadrant = 4;
     quadrantOffset = 270;
   }
@@ -54,18 +64,28 @@ Utils.getAngleOfChange = (x1, y1, x2, y2) => {
   return angle + quadrantOffset;
 }
 
-Utils.calculateAdjacentIndices = (index, width, height) => {
-  const map = { top: null, left: null, right: null, bottom: null };
+type AdjacentIndexMap = {
+  top: number | null;
+  left: number | null;
+  bottom: number | null;
+  right: number | null;
+};
+export const calculateAdjacentIndices = (
+  index: number,
+  width: number,
+  height: number
+) => {
+  const map: AdjacentIndexMap = {
+    top: null,
+    left: null,
+    right: null,
+    bottom: null,
+  };
 
   if (index % width !== 0) map.left = index - 1;
   if (index % width !== width - 1) map.right = index + 1;
-  if (index >= width ) map.top = index - width;
+  if (index >= width) map.top = index - width;
   if (index < (width * height - 1) - width) map.bottom = index + width;
 
   return map;
 }
-
-// This is a short term measure that lets us use this code in the client the
-// same as in the tests. Eventually we'll move to a more module-based design and
-// might not need this?
-try { window.Utils = Utils; } catch (e) { }

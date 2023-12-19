@@ -1,4 +1,18 @@
-class ObjectNode {
+import Vec2 from "./Vec2";
+import type { SerializableVec2 } from "./Vec2";
+
+export type SerializableObjectNode = {
+  position: SerializableVec2;
+  size: number;
+  children: SerializableObjectNode[];
+};
+
+export default class ObjectNode {
+  parent: ObjectNode | null;
+  position: Vec2;
+  children: ObjectNode[];
+  size: number;
+
   constructor() {
     this.parent = null;
     this.position = new Vec2();
@@ -6,12 +20,12 @@ class ObjectNode {
     this.size = 5;
   }
 
-  get isRoot () {
+  get isRoot() {
     return !this.parent;
   }
 
-  get objectRootNode () {
-    let root = this;
+  get objectRootNode() {
+    let root: ObjectNode = this;
     while (root.parent) {
       root = root.parent;
     }
@@ -27,7 +41,7 @@ class ObjectNode {
     this.position = pos;
   }
 
-  toSerializableObject() {
+  toSerializableObject(): SerializableObjectNode {
     return {
       position: this.position.toSerializableObject(),
       size: this.size,
