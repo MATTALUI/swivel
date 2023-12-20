@@ -152,8 +152,68 @@ export default class SwivelAnimator {
     listen("SWIVEL::INIT_EXPORT", (e) => this.handleInitExport(e));
   }
 
+  drawCurrentFrameToCanvas(canvas: HTMLCanvasElement, previewMode = false) {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      throw new Error("Context unavailable");
+    }
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    // Create a registry of just the points that we can build as we go so that
+    // we can draw the control points on top of all the lines at the end without having to recurse again
+    this.allControlNodes = [];
+    const connectNodeToChildren = (node, controllable = true) => {
+      node.children.forEach((child) => {
+        if (child.children.length) connectNodeToChildren(child, controllable);
+        if (controllable) this.allControlNodes.push(child);
+        const { x: startX, y: startY } = child.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+        const { x: endX, y: endY } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+        const alpha = controllable ? 1 : 0.5;
+
+
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(0,0,0,${alpha})`;
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.lineWidth = child.size;
+        ctx.lineCap = "round";
+        ctx.stroke();
+
+      });
+    }
+    // Draw the onion skins
+    if (!this.playing && this.currentFrameIndex && !previewMode) {
+      const prevFrame = this.frames[this.currentFrameIndex - 1];
+      prevFrame.objects.forEach((object) => {
+        const { root } = object;
+        connectNodeToChildren(root, false);
+      });
+    }
+    // Draw the scene objects
+    const frame = this.currentFrame;
+    frame.objects.forEach((object) => {
+      const { root } = object;
+      connectNodeToChildren(root);
+      // We're adding the roots to this list, but I suspect there might come a
+      // time when we might want these to be separate
+      this.allControlNodes.push(root);
+    });
+    // Draw control nodes
+    if (!this.playing && !previewMode) {
+      this.allControlNodes.forEach(({ position, isRoot }) => {
+        if (!ctx) {
+          throw new Error("Context unavailable");
+        }
+        const { x, y } = position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+        ctx.beginPath();
+        ctx.arc(x, y, 6.9, 0, 2 * Math.PI);
+        ctx.fillStyle = isRoot ? "#ff8000" : "#bf0404";
+        ctx.fill();
+      });
+    }
+  }
+
   buildCanvas() {
-    // Set canvas size
     const {
       width: containerWidth,
       height: containerHeight
@@ -174,60 +234,7 @@ export default class SwivelAnimator {
     this.canvas.width = width;
     this.canvas.height = height;
 
-    // Draw all points
-    const frame = this.currentFrame;
-    const ctx = this.canvas.getContext('2d');
-    if (!ctx) {
-      throw new Error("Context unavailable");
-    }
-    ctx.clearRect(0, 0, width, height);
-
-    // Create a registry of just the points that we can build as we go so that
-    // we can draw the control points on top of all the lines at the end without having to recurse again
-    this.allControlNodes = [];
-    const connectNodeToChildren = (node, controllable = true) => {
-      node.children.forEach((child) => {
-        if (child.children.length) connectNodeToChildren(child, controllable);
-        if (controllable) this.allControlNodes.push(child);
-        const { x: startX, y: startY } = child.position.getRenderedPosition(width, height);
-        const { x: endX, y: endY } = node.position.getRenderedPosition(width, height);
-        const alpha = controllable ? 1 : 0.5;
-
-
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(0,0,0,${alpha})`;
-        ctx.moveTo(startX, startY);
-        ctx.lineTo(endX, endY);
-        ctx.lineWidth = child.size;
-        ctx.lineCap = "round";
-        ctx.stroke();
-
-      });
-    }
-    if (!this.playing && this.currentFrameIndex) {
-      const prevFrame = this.frames[this.currentFrameIndex - 1];
-      prevFrame.objects.forEach((object) => {
-        const { root } = object;
-        connectNodeToChildren(root, false);
-      });
-    }
-    frame.objects.forEach((object) => {
-      const { root } = object;
-      connectNodeToChildren(root);
-      // We're adding the roots to this list, but I suspect there might come a
-      // time when we might want these to be separate
-      this.allControlNodes.push(root);
-    });
-
-    if (!this.playing) {
-      this.allControlNodes.forEach(({ position, isRoot }) => {
-        const { x, y } = position.getRenderedPosition(width, height);
-        ctx.beginPath();
-        ctx.arc(x, y, 6.9, 0, 2 * Math.PI);
-        ctx.fillStyle = isRoot ? "#ff8000" : "#bf0404";
-        ctx.fill();
-      });
-    }
+    this.drawCurrentFrameToCanvas(this.canvas);
   }
 
   renderFramePreviews() {
@@ -246,10 +253,15 @@ export default class SwivelAnimator {
   }
 
   _updateCurrentFramePreview() {
-    const url = this.canvas.toDataURL();
+    const canvas = document.createElement('canvas');
+    canvas.width = this.width;
+    canvas.height = this.height;
+    this.drawCurrentFrameToCanvas(canvas, true);
+    const url = canvas.toDataURL();
+
     const container = document.querySelector(`.framePreviewContainer[data-frame-index="${this.currentFrameIndex}"]`);
     if (!container) {
-      console.log("Could not fint preview frame container");
+      console.log("Could not find preview frame container");
       return;
     }
     const noPreview = container.querySelector(".noPreview");
@@ -373,7 +385,7 @@ export default class SwivelAnimator {
         ));
       }
       moveWithChildren(this.targetNode, originalNodeRoot);
-      this.buildCanvas();
+      this.repaint();
     } else {
       const { width, height } = this.canvas;
       const swivelPoint = this.targetNode?.parent || undefined;
@@ -450,7 +462,7 @@ export default class SwivelAnimator {
   }
 
   handleResize(event) {
-    this.buildCanvas();
+    this.repaint();
   }
 
   async handleInitSave(event) {

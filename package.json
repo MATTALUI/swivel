@@ -9,7 +9,7 @@
     "tauri": "tauri",
     "build": "bun build:ui",
     "build:ui": "bun build ui/__src/targets/*.ts --outdir ui/assets/js --minify",
-    "build:ui:watch": "bun build ui/__src/targets/*.ts --outdir ui/assets/js --minify --watch",
+    "build:ui:watch": "bun build ui/__src/targets/*.ts --outdir ui/assets/js --watch",
     "cleanup": "rm ./ui/assets/js/*.js"
   },
   "keywords": [],
