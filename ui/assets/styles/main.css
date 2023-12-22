@@ -131,6 +131,7 @@ button:hover {
 }
 
 .inputSection label {
+  display: block;
   margin-top: 0.25rem;
   font-weight: bold;
   font-size: 1.125rem;
@@ -138,6 +139,7 @@ button:hover {
 
 .inputSection input {
   margin-top: 0.25rem;
+  width: 100%;
 }
 
 #frames {

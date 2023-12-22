@@ -13,6 +13,7 @@ export default class SwivelAnimator {
   height: number;
   frames: Frame[];
   fps: number;
+  backgroundColor: string;
   // App Data
   currentFrameIndex: number;
   name: string;
@@ -37,6 +38,7 @@ export default class SwivelAnimator {
   projectNameInput: HTMLInputElement;
   projectWidthInput: HTMLInputElement;
   projectHeightInput: HTMLInputElement;
+  backgroundColorInput: HTMLInputElement;
 
   constructor() {
     this.setupNewProject();
@@ -59,8 +61,8 @@ export default class SwivelAnimator {
   setupNewProject() {
     this.initializeData();
     this.registerElements();
-    this.repaint();
     this.updateForms();
+    this.repaint();
   }
 
   initializeData() {
@@ -71,6 +73,7 @@ export default class SwivelAnimator {
     this.height = 1080;
     this.fps = 10;
     this.name = "Untitled Project";
+    this.backgroundColor = "#ffffff";
     // App Data
     this.currentFrameIndex = 0;
     this.allControlNodes = [];
@@ -83,36 +86,21 @@ export default class SwivelAnimator {
   }
 
   registerElements() {
-    const canvas = document.querySelector<HTMLCanvasElement>("canvas");
-    const playButton = document.querySelector<HTMLButtonElement>("#play");
-    const addFrameButton = document.querySelector<HTMLButtonElement>("#addFrame");
-    const canvasContainer = document.querySelector<HTMLDivElement>("#canvasContainer");
-    const framesEle = document.querySelector<HTMLDivElement>("#frames");
-    const projectNameInput = document.querySelector<HTMLInputElement>("#projectName");
-    const projectWidthInput = document.querySelector<HTMLInputElement>("#projectWidth");
-    const projectHeightInput = document.querySelector<HTMLInputElement>("#projectHeight");
-
-    if (
-      !canvas ||
-      !playButton ||
-      !addFrameButton ||
-      !canvasContainer ||
-      !framesEle ||
-      !projectNameInput ||
-      !projectWidthInput ||
-      !projectHeightInput
-    ) {
-      throw new Error("SwivelAnimator is missing critical elements");
-    }
-
-    this.canvas = canvas;
-    this.playButton = playButton;
-    this.addFrameButton = addFrameButton;
-    this.canvasContainer = canvasContainer;
-    this.framesEle = framesEle;
-    this.projectNameInput = projectNameInput;
-    this.projectWidthInput = projectWidthInput;
-    this.projectHeightInput = projectHeightInput;
+    Object.entries({
+      canvas: "canvas",
+      playButton: "#play",
+      addFrameButton: "#addFrame",
+      canvasContainer: "#canvasContainer",
+      framesEle: "#frames",
+      projectNameInput: "#projectName",
+      projectWidthInput: "#projectWidth",
+      projectHeightInput: "#projectHeight",
+      backgroundColorInput: "#backgroundColor",
+    }).forEach(([propertyName, elementSelector]) => {
+      const ele = document.querySelector(elementSelector);
+      if (!ele) throw new Error(`SwivelAnimator is missing critical elements: ${propertyName} - ${elementSelector} `);
+      this[propertyName] = ele;
+    });
   }
 
   repaint() {
@@ -124,6 +112,7 @@ export default class SwivelAnimator {
     this.projectNameInput.value = this.name || "Untitled Project";
     this.projectWidthInput.value = (this.width || 1920).toString();
     this.projectHeightInput.value = (this.height || 1080).toString();
+    this.backgroundColorInput.value = this.backgroundColor || "#ffffff";
   }
 
   registerEventListeners() {
@@ -136,6 +125,7 @@ export default class SwivelAnimator {
     this.projectNameInput.addEventListener("change", (e) => this.handleProjectNameChange(e));
     this.projectWidthInput.addEventListener("change", (e) => this.handleProjectDimensionChange(e));
     this.projectHeightInput.addEventListener("change", (e) => this.handleProjectDimensionChange(e));
+    this.backgroundColorInput.addEventListener("change", (e) => this.updateBackgroundColor(e))
     window.addEventListener("resize", (e) => this.handleResize(e));
     window.addEventListener("SWIVEL::framechange", (e) => this.handleFrameChange(e));
   }
@@ -158,6 +148,10 @@ export default class SwivelAnimator {
       throw new Error("Context unavailable");
     }
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    // Draw in the background color
+    ctx.fillStyle = this.backgroundColor;
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     // Create a registry of just the points that we can build as we go so that
     // we can draw the control points on top of all the lines at the end without having to recurse again
@@ -252,25 +246,30 @@ export default class SwivelAnimator {
     this.repaint();
   }
 
-  _updateCurrentFramePreview() {
+  updateFramePreview(index:number) {
     const canvas = document.createElement('canvas');
+    const frame = this.frames[index];
     canvas.width = this.width;
     canvas.height = this.height;
     this.drawCurrentFrameToCanvas(canvas, true);
     const url = canvas.toDataURL();
 
-    const container = document.querySelector(`.framePreviewContainer[data-frame-index="${this.currentFrameIndex}"]`);
+    const container = document.querySelector(`.framePreviewContainer[data-frame-index="${index}"]`);
     if (!container) {
       console.log("Could not find preview frame container");
       return;
     }
     const noPreview = container.querySelector(".noPreview");
-    this.currentFrame.previewImage = url;
+    frame.previewImage = url;
     if (noPreview) {
-      container.replaceWith(buildFramePreview(this.currentFrame, this.currentFrameIndex, this.currentFrameIndex));
+      container.replaceWith(buildFramePreview(frame, index, index));
     } else {
       container.querySelector(".framePreview")?.setAttribute("src", url);
     }
+  }
+
+  _updateCurrentFramePreview() {
+    this.updateFramePreview(this.currentFrameIndex);
   }
   updateCurrentFramePreview = debounce(() => this._updateCurrentFramePreview(), 500);
 
@@ -326,6 +325,12 @@ export default class SwivelAnimator {
     this.width = widthVal;
     this.height = heightVal;
     this.updateForms();
+    this.repaint();
+  }
+
+  updateBackgroundColor(event) {
+    this.backgroundColor = event.target.value;
+    this.frames.forEach((_, i) => this.updateFramePreview(i));
     this.repaint();
   }
 
@@ -487,7 +492,6 @@ export default class SwivelAnimator {
     const projectData = this.serialize();
     const { invoke } = Tauri.tauri;
     const saveSuccess = await invoke("export_project", { projectData });
-    console.log("done invoking")
     stopFullscreenLoading();
   }
 
