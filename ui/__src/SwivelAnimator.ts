@@ -1,22 +1,15 @@
 import { buildFramePreview } from "./ElementBuilder";
-import Frame from "./Frame";
 import ObjectNode from "./ObjectNode";
+import SwivelProject from "./SwivelProject";
 import Tauri from "./Tauri";
 import { startFullscreenLoading, stopFullscreenLoading } from "./UIManager";
 import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "./Utils";
 import Vec2 from "./Vec2";
 
 export default class SwivelAnimator {
-  // Project Data
-  id: string | null;
-  width: number;
-  height: number;
-  frames: Frame[];
-  fps: number;
-  backgroundColor: string;
   // App Data
+  project: SwivelProject;
   currentFrameIndex: number;
-  name: string;
   allControlNodes: ObjectNode[];
   targetNode: ObjectNode | null;
   targetNodeActive: boolean;
@@ -46,16 +39,8 @@ export default class SwivelAnimator {
     this.registerTauriEventListeners();
   }
 
-  get aspectRatio() {
-    return this.width / this.height;
-  }
-
   get currentFrame() {
-    return this.frames[this.currentFrameIndex];
-  }
-
-  get isNewProject() {
-    return !this.id;
+    return this.project.frames[this.currentFrameIndex];
   }
 
   setupNewProject() {
@@ -66,15 +51,8 @@ export default class SwivelAnimator {
   }
 
   initializeData() {
-    // Project Data
-    this.id = null;
-    this.frames = new Array(1).fill(new Frame());
-    this.width = 1920;
-    this.height = 1080;
-    this.fps = 10;
-    this.name = "Untitled Project";
-    this.backgroundColor = "#ffffff";
     // App Data
+    this.project = new SwivelProject();
     this.currentFrameIndex = 0;
     this.allControlNodes = [];
     this.targetNode = null;
@@ -109,10 +87,10 @@ export default class SwivelAnimator {
   }
 
   updateForms() {
-    this.projectNameInput.value = this.name || "Untitled Project";
-    this.projectWidthInput.value = (this.width || 1920).toString();
-    this.projectHeightInput.value = (this.height || 1080).toString();
-    this.backgroundColorInput.value = this.backgroundColor || "#ffffff";
+    this.projectNameInput.value = this.project.name || "Untitled Project";
+    this.projectWidthInput.value = (this.project.width || 1920).toString();
+    this.projectHeightInput.value = (this.project.height || 1080).toString();
+    this.backgroundColorInput.value = this.project.backgroundColor || "#ffffff";
   }
 
   registerEventListeners() {
@@ -150,7 +128,7 @@ export default class SwivelAnimator {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     // Draw in the background color
-    ctx.fillStyle = this.backgroundColor;
+    ctx.fillStyle = this.project.backgroundColor;
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     // Create a registry of just the points that we can build as we go so that
@@ -177,7 +155,7 @@ export default class SwivelAnimator {
     }
     // Draw the onion skins
     if (!this.playing && this.currentFrameIndex && !previewMode) {
-      const prevFrame = this.frames[this.currentFrameIndex - 1];
+      const prevFrame = this.project.frames[this.currentFrameIndex - 1];
       prevFrame.objects.forEach((object) => {
         const { root } = object;
         connectNodeToChildren(root, false);
@@ -218,12 +196,12 @@ export default class SwivelAnimator {
 
     let width = 50;
     let height = 50;
-    if (this.aspectRatio > 1) {
+    if (this.project.aspectRatio > 1) {
       width = maxContainerWidth;
-      height = maxContainerWidth / this.aspectRatio;
+      height = maxContainerWidth / this.project.aspectRatio;
     } else {
       height = maxContainerHeight;
-      width = maxContainerHeight * this.aspectRatio;
+      width = maxContainerHeight * this.project.aspectRatio;
     }
     this.canvas.width = width;
     this.canvas.height = height;
@@ -233,7 +211,7 @@ export default class SwivelAnimator {
 
   renderFramePreviews() {
     this.framesEle.innerHTML = "";
-    this.frames.forEach((frame, index) => {
+    this.project.frames.forEach((frame, index) => {
       this.framesEle.appendChild(buildFramePreview(frame, index, this.currentFrameIndex));
     });
     if (!this.currentFrame.previewImage) this._updateCurrentFramePreview();
@@ -241,16 +219,16 @@ export default class SwivelAnimator {
 
   addFrame(event) {
     this.playing = false;
-    this.frames.push(this.currentFrame.clone());
-    this.currentFrameIndex = this.frames.length - 1;
+    this.project.frames.push(this.currentFrame.clone());
+    this.currentFrameIndex = this.project.frames.length - 1;
     this.repaint();
   }
 
   updateFramePreview(index:number) {
     const canvas = document.createElement('canvas');
-    const frame = this.frames[index];
-    canvas.width = this.width;
-    canvas.height = this.height;
+    const frame = this.project.frames[index];
+    canvas.width = this.project.width;
+    canvas.height = this.project.height;
     this.drawCurrentFrameToCanvas(canvas, true);
     const url = canvas.toDataURL();
 
@@ -288,49 +266,38 @@ export default class SwivelAnimator {
     const currentTime = new Date();
     if (this.lastFrameTime) {
       const msInSecond = 1000;
-      const frameDifferential = msInSecond / this.fps;
+      const frameDifferential = msInSecond / this.project.fps;
       const timeSinceLastFrame = Number(currentTime) - frameDifferential;
       if (timeSinceLastFrame < Number(this.lastFrameTime))
         return;
     }
     this.lastFrameTime = currentTime;
     this.currentFrameIndex++;
-    if (this.currentFrameIndex === this.frames.length)
+    if (this.currentFrameIndex === this.project.frames.length)
       this.currentFrameIndex = 0;
     this.repaint();
   }
 
-  serialize() {
-    return JSON.stringify({
-      id: this.id,
-      name: this.name,
-      width: this.width,
-      height: this.height,
-      fps: this.fps,
-      frames: this.frames.map(f => f.toSerializableObject()),
-    });
-  }
-
   handleProjectNameChange(event) {
     const newVal = event.target.value;
-    this.name = newVal;
+    this.project.name = newVal;
     this.updateForms();
   }
 
   handleProjectDimensionChange(event) {
     const widthRawVal = +this.projectWidthInput.value;
     const heightRawVal = +this.projectHeightInput.value;
-    const widthVal = isNaN(widthRawVal) ? this.width : widthRawVal;
-    const heightVal = isNaN(heightRawVal) ? this.height : heightRawVal;
-    this.width = widthVal;
-    this.height = heightVal;
+    const widthVal = isNaN(widthRawVal) ? this.project.width : widthRawVal;
+    const heightVal = isNaN(heightRawVal) ? this.project.height : heightRawVal;
+    this.project.width = widthVal;
+    this.project.height = heightVal;
     this.updateForms();
     this.repaint();
   }
 
   updateBackgroundColor(event) {
-    this.backgroundColor = event.target.value;
-    this.frames.forEach((_, i) => this.updateFramePreview(i));
+    this.project.backgroundColor = event.target.value;
+    this.project.frames.forEach((_, i) => this.updateFramePreview(i));
     this.repaint();
   }
 
@@ -476,8 +443,7 @@ export default class SwivelAnimator {
     }
     startFullscreenLoading("Saving");
     await new Promise(res => setTimeout(res, 1000));
-    if (this.isNewProject) this.id = crypto.randomUUID();
-    const projectData = this.serialize();
+    const projectData = this.project.serialize();
     const { invoke } = Tauri.tauri;
     const saveSuccess = await invoke("save_project", { projectData });
     stopFullscreenLoading();
@@ -489,7 +455,7 @@ export default class SwivelAnimator {
     }
     startFullscreenLoading("Exporting");
     await new Promise(res => setTimeout(res, 1000));
-    const projectData = this.serialize();
+    const projectData = this.project.serialize();
     const { invoke } = Tauri.tauri;
     const saveSuccess = await invoke("export_project", { projectData });
     stopFullscreenLoading();
