@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swivel Animator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/styles/main.css">
+  <script src="/assets/js/main.js" defer></script>
+</head>
+
+<body>
+  <nav></nav>
+  <aside>
+    <div class="inputSection">
+      <label>Project Name</label>
+      <input id="projectName" type="text" />
+    </div>
+    <div class="inputSection">
+      <label>Dimensions</label>
+      <div class="grid-2">
+        <span>Width</span>
+        <span>Height</span>
+        <input id="projectWidth" type="number" />
+        <input id="projectHeight" type="number" />
+      </div>
+    </div>
+    <div class="inputSection">
+      <label>Background Color</label>
+      <input id="backgroundColor" type="color" />
+    </div>
+  </aside>
+  <main>
+    <div id="frames"></div>
+    <div id="controls">
+      <div>
+        <button id="play">PLAY</button>
+      </div>
+      <div>
+        <button id="addFrame">ADD FRAME</button>
+      </div>
+    </div>
+    <div id="canvasContainer">
+      <canvas></canvas>
+    </div>
+  </main>
+  <footer></footer>
+
+  <div id="fullscreenLoader">
+    <div class="loader"></div>
+    <div class="loadingMessage">Initializing</div>
+  </div>
+
+  <template id="framePreviewTemplate">
+    <div class="framePreviewContainer">
+      <img class="framePreview clickable" src="" alt="" />
+      <div class="noPreview clickable"></div>
+    </div>
+  </template>
+</body>
+
+</html>
