@@ -32,12 +32,12 @@ export default class ObjectNode {
     return root;
   }
 
-  appendChild(child) {
+  appendChild(child: ObjectNode) {
     child.parent = this;
     this.children.push(child);
   }
 
-  setPosition(pos) {
+  setPosition(pos: Vec2) {
     this.position = pos;
   }
 

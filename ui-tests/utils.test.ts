@@ -1,4 +1,4 @@
-import { calculateAdjacentIndices, clamp, degToRad, getAngleOfChange, getPositionDistance, radToDeg } from "../ui/__src/Utils";
+import { calculateAdjacentIndices, clamp, degToRad, getAngleOfChange, getPositionDistance, radToDeg } from "../ui/src/utils";
 
 const SQTOT = Math.sqrt(3) / 2; // SQuare of Three Over Two
 const HALF = 1 / 2;

@@ -1,5 +1,5 @@
 import styles from "./SwivelSidebar.module.scss";
-import ProjectSettings from "./projectSettings";
+import ProjectSettings from "./ProjectSettings";
 
 const SwivelSidebar = () => {
   return (
