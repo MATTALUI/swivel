@@ -1,0 +1,19 @@
+@import "./variables.module.scss";
+
+html,
+body,
+#root {
+  padding: 0;
+  margin: 0;
+  background-color: $light;
+  min-height: 100vh;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}

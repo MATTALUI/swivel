@@ -20,6 +20,7 @@
     "@tauri-apps/cli": "^1.4.0",
     "@types/jest": "^29.5.4",
     "concurrently": "^8.2.2",
+    "sass": "^1.69.5",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
     "vite-plugin-solid": "^2.8.0"
