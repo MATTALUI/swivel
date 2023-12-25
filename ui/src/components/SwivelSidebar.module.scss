@@ -1,4 +1,7 @@
+@import "../variables.module.scss";
+
 .container {
   flex: 1;
-  background-color: pink;
+  padding: 0.5rem 0.75rem;
+  border-right: 2px solid rgba($primary, 0.25);
 }

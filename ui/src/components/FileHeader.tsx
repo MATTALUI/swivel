@@ -7,7 +7,6 @@ const FileHeader = () => {
     <header class={styles.container}>
       <a href="/">
         <img src="/original.png" />
-        {/* Swivel */}
       </a>
       <a>
         File
