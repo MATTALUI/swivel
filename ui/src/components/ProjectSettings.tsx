@@ -1,23 +1,24 @@
 import type { JSX } from 'solid-js';
 import styles from "./ProjectSettings.module.scss";
+import { projectBackgroundColor, projectHeight, projectName, projectWidth, setProjectBackgroundColor, setProjectHeight, setProjectName, setProjectWidth } from '../state/project';
 
 type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
 
 const ProjectSettings = () => {
   const updateProjectName: InputHandler = (event) => {
-    console.log("updateProjectName", event.target.value);
+    setProjectName(event.target.value);
   }
 
   const updateProjectWidth: InputHandler = (event) => {
-    console.log("updateProjectWidth", event.target.value);
+    setProjectWidth(+event.target.value);
   }
 
   const updateProjectHeight: InputHandler = (event) => {
-    console.log("updateProjectHeight", event.target.value);
+    setProjectHeight(+event.target.value);
   }
 
   const updateProjectBackgroundColor: InputHandler = (event) => {
-    console.log("updateProjectBackgroundColor", event.target.value);
+    setProjectBackgroundColor(event.target.value);
   }
 
   return (
@@ -26,7 +27,7 @@ const ProjectSettings = () => {
         <label>Project Name</label>
         <input
           type="text"
-          value={"Untitled Project"}
+          value={projectName()}
           onChange={updateProjectName}
         />
       </div>
@@ -37,7 +38,7 @@ const ProjectSettings = () => {
             <label>Width</label>
             <input
               type="text"
-              value={1920}
+              value={projectWidth()}
               onChange={updateProjectWidth}
             />
           </div>
@@ -45,7 +46,7 @@ const ProjectSettings = () => {
             <label>Height</label>
             <input
               type="text"
-              value={1080}
+              value={projectHeight()}
               onchange={updateProjectHeight}
             />
           </div>
@@ -55,7 +56,7 @@ const ProjectSettings = () => {
         <label>Background Color</label>
         <input
           type="color"
-          value={"#ffffff"}
+          value={projectBackgroundColor()}
           onChange={updateProjectBackgroundColor}
         />
       </div>

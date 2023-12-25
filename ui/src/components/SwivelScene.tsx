@@ -1,9 +1,10 @@
+import { projectName } from "../state/project";
 import styles from "./SwivelScene.module.scss";
 
 const SwivelScene = () => {
   return (
     <div class={styles.container}>
-      Swivel Scene
+      Swivel Scene: {projectName()}
     </div>
   )
 }
