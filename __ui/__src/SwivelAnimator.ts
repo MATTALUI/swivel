@@ -7,9 +7,6 @@ import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from
 import Vec2 from "./Vec2";
 
 export default class SwivelAnimator {
-  // App Data
-  // project: SwivelProject;
-  // currentFrameIndex: number;
   allControlNodes: ObjectNode[];
   targetNode: ObjectNode | null;
   targetNodeActive: boolean;
@@ -19,19 +16,6 @@ export default class SwivelAnimator {
     originalParentNode: ObjectNode | null;
     originalNodeRoot: ObjectNode;
   } | null;
-  // playing: boolean;
-  // lastFrameTime: Date | null;
-  // webmode: boolean;
-  // UI Elements
-  // canvas: HTMLCanvasElement;
-  // playButton: HTMLButtonElement;
-  // addFrameButton: HTMLButtonElement;
-  // canvasContainer: HTMLDivElement;
-  // framesEle: HTMLDivElement;
-  // projectNameInput: HTMLInputElement;
-  // projectWidthInput: HTMLInputElement;
-  // projectHeightInput: HTMLInputElement;
-  // backgroundColorInput: HTMLInputElement;
 
   constructor() {
     this.setupNewProject();
@@ -39,14 +23,8 @@ export default class SwivelAnimator {
     this.registerTauriEventListeners();
   }
 
-  // get currentFrame() {
-  //   return this.project.frames[this.currentFrameIndex];
-  // }
-
   setupNewProject() {
     this.initializeData();
-    // this.registerElements();
-    this.updateForms();
     this.repaint();
   }
 
@@ -63,34 +41,9 @@ export default class SwivelAnimator {
     this.webmode = false;
   }
 
-  // registerElements() {
-  //   Object.entries({
-  //     canvas: "canvas",
-  //     playButton: "#play",
-  //     addFrameButton: "#addFrame",
-  //     canvasContainer: "#canvasContainer",
-  //     framesEle: "#frames",
-  //     projectNameInput: "#projectName",
-  //     projectWidthInput: "#projectWidth",
-  //     projectHeightInput: "#projectHeight",
-  //     backgroundColorInput: "#backgroundColor",
-  //   }).forEach(([propertyName, elementSelector]) => {
-  //     const ele = document.querySelector(elementSelector);
-  //     if (!ele) throw new Error(`SwivelAnimator is missing critical elements: ${propertyName} - ${elementSelector} `);
-  //     this[propertyName] = ele;
-  //   });
-  // }
-
   repaint() {
     this.buildCanvas();
     this.renderFramePreviews();
-  }
-
-  updateForms() {
-    this.projectNameInput.value = this.project.name || "Untitled Project";
-    this.projectWidthInput.value = (this.project.width || 1920).toString();
-    this.projectHeightInput.value = (this.project.height || 1080).toString();
-    this.backgroundColorInput.value = this.project.backgroundColor || "#ffffff";
   }
 
   registerEventListeners() {
@@ -98,13 +51,7 @@ export default class SwivelAnimator {
     this.canvas.addEventListener("mousedown", (e) => this.handleMouseDown(e));
     this.canvas.addEventListener("mouseup", (e) => this.handleMouseUp(e));
     this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
-    this.addFrameButton.addEventListener("click", (e) => this.addFrame(e));
     this.playButton.addEventListener("click", (e) => this.togglePlayback(e))
-    this.projectNameInput.addEventListener("change", (e) => this.handleProjectNameChange(e));
-    this.projectWidthInput.addEventListener("change", (e) => this.handleProjectDimensionChange(e));
-    this.projectHeightInput.addEventListener("change", (e) => this.handleProjectDimensionChange(e));
-    this.backgroundColorInput.addEventListener("change", (e) => this.updateBackgroundColor(e))
-    window.addEventListener("resize", (e) => this.handleResize(e));
     window.addEventListener("SWIVEL::framechange", (e) => this.handleFrameChange(e));
   }
 
@@ -118,110 +65,6 @@ export default class SwivelAnimator {
     listen("SWIVEL::INIT_SAVE", (e) => this.handleInitSave(e));
     listen("SWIVEL::INIT_NEW", (e) => this.handleInitNew(e));
     listen("SWIVEL::INIT_EXPORT", (e) => this.handleInitExport(e));
-  }
-
-  drawCurrentFrameToCanvas(canvas: HTMLCanvasElement, previewMode = false) {
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      throw new Error("Context unavailable");
-    }
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    // Draw in the background color
-    ctx.fillStyle = this.project.backgroundColor;
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    // Create a registry of just the points that we can build as we go so that
-    // we can draw the control points on top of all the lines at the end without having to recurse again
-    this.allControlNodes = [];
-    const connectNodeToChildren = (node, controllable = true) => {
-      node.children.forEach((child) => {
-        if (child.children.length) connectNodeToChildren(child, controllable);
-        if (controllable) this.allControlNodes.push(child);
-        const { x: startX, y: startY } = child.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
-        const { x: endX, y: endY } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
-        const alpha = controllable ? 1 : 0.5;
-
-
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(0,0,0,${alpha})`;
-        ctx.moveTo(startX, startY);
-        ctx.lineTo(endX, endY);
-        ctx.lineWidth = child.size;
-        ctx.lineCap = "round";
-        ctx.stroke();
-
-      });
-    }
-    // Draw the onion skins
-    if (!this.playing && this.currentFrameIndex && !previewMode) {
-      const prevFrame = this.project.frames[this.currentFrameIndex - 1];
-      prevFrame.objects.forEach((object) => {
-        const { root } = object;
-        connectNodeToChildren(root, false);
-      });
-    }
-    // Draw the scene objects
-    const frame = this.currentFrame;
-    frame.objects.forEach((object) => {
-      const { root } = object;
-      connectNodeToChildren(root);
-      // We're adding the roots to this list, but I suspect there might come a
-      // time when we might want these to be separate
-      this.allControlNodes.push(root);
-    });
-    // Draw control nodes
-    if (!this.playing && !previewMode) {
-      this.allControlNodes.forEach(({ position, isRoot }) => {
-        if (!ctx) {
-          throw new Error("Context unavailable");
-        }
-        const { x, y } = position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
-        ctx.beginPath();
-        ctx.arc(x, y, 6.9, 0, 2 * Math.PI);
-        ctx.fillStyle = isRoot ? "#ff8000" : "#bf0404";
-        ctx.fill();
-      });
-    }
-  }
-
-  // buildCanvas() {
-  //   const {
-  //     width: containerWidth,
-  //     height: containerHeight
-  //   } = this.canvasContainer.getBoundingClientRect();
-  //   const containerPadding = 20;
-  //   const maxContainerWidth = containerWidth - (containerPadding * 2);
-  //   const maxContainerHeight = containerHeight - (containerPadding * 2);
-
-  //   let width = 50;
-  //   let height = 50;
-  //   if (this.project.aspectRatio > 1) {
-  //     width = maxContainerWidth;
-  //     height = maxContainerWidth / this.project.aspectRatio;
-  //   } else {
-  //     height = maxContainerHeight;
-  //     width = maxContainerHeight * this.project.aspectRatio;
-  //   }
-  //   this.canvas.width = width;
-  //   this.canvas.height = height;
-
-  //   this.drawCurrentFrameToCanvas(this.canvas);
-  // }
-
-  renderFramePreviews() {
-    this.framesEle.innerHTML = "";
-    this.project.frames.forEach((frame, index) => {
-      this.framesEle.appendChild(buildFramePreview(frame, index, this.currentFrameIndex));
-    });
-    if (!this.currentFrame.previewImage) this._updateCurrentFramePreview();
-  }
-
-  addFrame(event) {
-    this.playing = false;
-    this.project.frames.push(this.currentFrame.clone());
-    this.currentFrameIndex = this.project.frames.length - 1;
-    this.repaint();
   }
 
   updateFramePreview(index:number) {
@@ -251,15 +94,6 @@ export default class SwivelAnimator {
   }
   updateCurrentFramePreview = debounce(() => this._updateCurrentFramePreview(), 500);
 
-  togglePlayback(event) {
-    this.playButton.innerHTML = this.playing ? "PLAY" : "STOP";
-    this.playing = !this.playing;
-    if (!this.playing)
-      this.repaint();
-    if (this.playing)
-      window.requestAnimationFrame(() => this.playAnimation());
-  }
-
   playAnimation() {
     if (!this.playing) return;
     window.requestAnimationFrame(() => this.playAnimation());
@@ -275,29 +109,6 @@ export default class SwivelAnimator {
     this.currentFrameIndex++;
     if (this.currentFrameIndex === this.project.frames.length)
       this.currentFrameIndex = 0;
-    this.repaint();
-  }
-
-  handleProjectNameChange(event) {
-    const newVal = event.target.value;
-    this.project.name = newVal;
-    this.updateForms();
-  }
-
-  handleProjectDimensionChange(event) {
-    const widthRawVal = +this.projectWidthInput.value;
-    const heightRawVal = +this.projectHeightInput.value;
-    const widthVal = isNaN(widthRawVal) ? this.project.width : widthRawVal;
-    const heightVal = isNaN(heightRawVal) ? this.project.height : heightRawVal;
-    this.project.width = widthVal;
-    this.project.height = heightVal;
-    this.updateForms();
-    this.repaint();
-  }
-
-  updateBackgroundColor(event) {
-    this.project.backgroundColor = event.target.value;
-    this.project.frames.forEach((_, i) => this.updateFramePreview(i));
     this.repaint();
   }
 
@@ -433,10 +244,6 @@ export default class SwivelAnimator {
     this.updateCurrentFramePreview();
   }
 
-  handleResize(event) {
-    this.repaint();
-  }
-
   async handleInitSave(event) {
     if (!Tauri) {
       throw new Error("cant save yet");
@@ -466,11 +273,5 @@ export default class SwivelAnimator {
     await new Promise(res => setTimeout(res, 1000));
     this.setupNewProject();
     stopFullscreenLoading();
-  }
-
-  handleFrameChange(event) {
-    const { index } = event.detail;
-    this.currentFrameIndex = index;
-    this.repaint();
   }
 }

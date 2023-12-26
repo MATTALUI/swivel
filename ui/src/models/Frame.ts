@@ -72,11 +72,13 @@ type SerializableFrame = {
 };
 
 export default class Frame {
+  index: number | null;
   previewImage: string | null;
   objects: AnimationObject[];
 
 
   constructor() {
+    this.index = null;
     this.previewImage = null;
     this.objects = buildDefaultObjects();
   }

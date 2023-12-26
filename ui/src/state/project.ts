@@ -23,6 +23,7 @@ export const projectAspectRatio = () => projectWidth() / projectHeight();
 export const addProjectFrame = () => {
   const existingFrames = projectFrames();
   const newFrame = existingFrames[existingFrames.length - 1].clone();
+  newFrame.index = existingFrames.length;
   setProjectFrames([...existingFrames, newFrame]);
   setCurrentFrameIndex(projectFrames().length - 1);
 }

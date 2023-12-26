@@ -10,8 +10,11 @@ export default class SwivelProject {
   backgroundColor: string;
 
   constructor() {
+    const frame = new Frame();
+    frame.index = 0;
+
     this.id = crypto.randomUUID();
-    this.frames = new Array(1).fill(new Frame());
+    this.frames = [frame];
     this.width = 1920;
     this.height = 1080;
     this.fps = 10;

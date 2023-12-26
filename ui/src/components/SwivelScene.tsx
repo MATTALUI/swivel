@@ -3,6 +3,8 @@ import { projectAspectRatio } from "../state/project";
 import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
+import { drawFrameToCanvas } from "../utilities/canvas";
+import { currentFrame } from "../state/app";
 
 const SwivelScene = () => {
   let canvasContainerRef: HTMLDivElement | undefined;
@@ -33,6 +35,10 @@ const SwivelScene = () => {
   }
 
   createEffect(setCanvasSize);
+  createEffect(() => {
+    if (!canvasRef) return;
+    drawFrameToCanvas(canvasRef, currentFrame(), {});
+  })
   window.addEventListener("resize", setCanvasSize);
 
   return (
