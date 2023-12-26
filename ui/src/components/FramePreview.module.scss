@@ -3,7 +3,6 @@
 .framePreviewContainer {
   width: 4rem;
   height: 4rem;
-  background-color: $primary-trans;
   border-radius: 3px;
   display: inline;
   margin-right: 0.5rem;
@@ -13,4 +12,13 @@
 .frameImage {
   max-width: 100%;
   max-height: 100%;
+  border-radius: 3px;
+  border-width: 3px;
+  border-style: solid;
+  border-color: transparent;
+  transition: border-color 250ms;
+
+  &.selected {
+    border-color: $primary;
+  }
 }

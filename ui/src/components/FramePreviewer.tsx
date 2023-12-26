@@ -9,6 +9,10 @@ const FramePreviewer = () => {
 
   const resizeFramesContainer = () => {
     if (!containerRef || !framesContainerRef) return;
+    // Set the size of the frame container to 0 before getting the size of the
+    // parent container otherwise the size of the child will force the parent to
+    // be bigger than it should be and break the style reactivity.
+    framesContainerRef.style.width = `0px`;
     const { width } = containerRef.getBoundingClientRect();
     framesContainerRef.style.width = `${width}px`;
   }
@@ -25,8 +29,11 @@ const FramePreviewer = () => {
         class={styles.framesContainer}
       >
         <div class={styles.scroller}>
-          {projectFrames().map(frame => (
-            <FramePreview frame={frame} />
+          {projectFrames().map((frame, index) => (
+            <FramePreview
+              frame={frame}
+              frameIndex={index}
+            />
           ))}
         </div>
 

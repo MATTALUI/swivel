@@ -1,5 +1,6 @@
 import { createSignal } from "solid-js";
 import SwivelProject from "../models/SwivelProject";
+import { setCurrentFrameIndex } from "./app";
 
 const defaultProject = new SwivelProject();
 
@@ -23,4 +24,5 @@ export const addProjectFrame = () => {
   const existingFrames = projectFrames();
   const newFrame = existingFrames[existingFrames.length - 1].clone();
   setProjectFrames([...existingFrames, newFrame]);
+  setCurrentFrameIndex(projectFrames().length - 1);
 }
