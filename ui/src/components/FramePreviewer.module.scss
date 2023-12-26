@@ -1,7 +1,6 @@
 @import "../variables.module.scss";
 
 .container {
-  flex: 1;
+  background-color: $primary-trans;
   padding: 0.5rem 0.75rem;
-  border-left: 2px solid $primary-trans;
 }

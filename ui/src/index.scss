@@ -17,6 +17,14 @@ body,
   -moz-osx-font-smoothing: grayscale;
 }
 
+button {
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
 #root {
   display: flex;
   flex-direction: column;

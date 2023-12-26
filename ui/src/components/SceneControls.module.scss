@@ -1,0 +1,8 @@
+@import "../variables.module.scss";
+
+.container {
+  background-color: $primary-trans;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+}

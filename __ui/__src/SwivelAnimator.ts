@@ -8,8 +8,8 @@ import Vec2 from "./Vec2";
 
 export default class SwivelAnimator {
   // App Data
-  project: SwivelProject;
-  currentFrameIndex: number;
+  // project: SwivelProject;
+  // currentFrameIndex: number;
   allControlNodes: ObjectNode[];
   targetNode: ObjectNode | null;
   targetNodeActive: boolean;
@@ -19,19 +19,19 @@ export default class SwivelAnimator {
     originalParentNode: ObjectNode | null;
     originalNodeRoot: ObjectNode;
   } | null;
-  playing: boolean;
-  lastFrameTime: Date | null;
-  webmode: boolean;
+  // playing: boolean;
+  // lastFrameTime: Date | null;
+  // webmode: boolean;
   // UI Elements
-  canvas: HTMLCanvasElement;
-  playButton: HTMLButtonElement;
-  addFrameButton: HTMLButtonElement;
-  canvasContainer: HTMLDivElement;
-  framesEle: HTMLDivElement;
-  projectNameInput: HTMLInputElement;
-  projectWidthInput: HTMLInputElement;
-  projectHeightInput: HTMLInputElement;
-  backgroundColorInput: HTMLInputElement;
+  // canvas: HTMLCanvasElement;
+  // playButton: HTMLButtonElement;
+  // addFrameButton: HTMLButtonElement;
+  // canvasContainer: HTMLDivElement;
+  // framesEle: HTMLDivElement;
+  // projectNameInput: HTMLInputElement;
+  // projectWidthInput: HTMLInputElement;
+  // projectHeightInput: HTMLInputElement;
+  // backgroundColorInput: HTMLInputElement;
 
   constructor() {
     this.setupNewProject();
@@ -39,9 +39,9 @@ export default class SwivelAnimator {
     this.registerTauriEventListeners();
   }
 
-  get currentFrame() {
-    return this.project.frames[this.currentFrameIndex];
-  }
+  // get currentFrame() {
+  //   return this.project.frames[this.currentFrameIndex];
+  // }
 
   setupNewProject() {
     this.initializeData();

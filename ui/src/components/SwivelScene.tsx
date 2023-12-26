@@ -1,6 +1,8 @@
 import { createEffect } from "solid-js";
 import { projectAspectRatio } from "../state/project";
 import styles from "./SwivelScene.module.scss";
+import FramePreviewer from "./FramePreviewer";
+import SceneControls from "./SceneControls";
 
 const SwivelScene = () => {
   let canvasContainerRef: HTMLDivElement | undefined;
@@ -27,7 +29,7 @@ const SwivelScene = () => {
       width = maxContainerHeight * projectAspectRatio();
     }
     canvasRef.width = width;
-    canvasRef.height = height;                                                                                           
+    canvasRef.height = height;
   }
 
   createEffect(setCanvasSize);
@@ -35,13 +37,19 @@ const SwivelScene = () => {
 
   return (
     <div
-      ref={canvasContainerRef}
       class={styles.container}
     >
-      <canvas
-        class={styles.canvas}
-        ref={canvasRef}
-      />
+      <FramePreviewer />
+      <SceneControls />
+      <div
+        ref={canvasContainerRef}
+        class={styles.canvasContainer}
+      >
+        <canvas
+          class={styles.canvas}
+          ref={canvasRef}
+        />
+      </div>
     </div>
   )
 }
