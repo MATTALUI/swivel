@@ -1,6 +1,6 @@
 import Frame from "../models/Frame";
 import { currentFrameIndex, setCurrentFrameIndex } from "../state/app";
-import style from "./FramePreview.module.scss";
+import styles from "./FramePreview.module.scss";
 import cx from "classnames";
 
 interface IFramePreviewProps {
@@ -18,14 +18,14 @@ const FramePreview = (props: IFramePreviewProps) => {
       onClick={changeFrame}
       class={cx(
         "preview-frame",
-        style.framePreviewContainer
+        styles.framePreviewContainer
       )}
     >
       <img
         class={cx(
-          style.frameImage,
+          styles.frameImage,
           {
-            [style.selected]: currentFrameIndex() === props.frameIndex,
+            [styles.selected]: currentFrameIndex() === props.frameIndex,
           },
         )}
         src={props.frame.previewImage || "/original.png"}

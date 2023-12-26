@@ -1,6 +1,15 @@
 import type { JSX } from 'solid-js';
 import styles from "./ProjectSettings.module.scss";
-import { projectBackgroundColor, projectHeight, projectName, projectWidth, setProjectBackgroundColor, setProjectHeight, setProjectName, setProjectWidth } from '../state/project';
+import {
+  projectBackgroundColor,
+  projectHeight,
+  projectName,
+  projectWidth,
+  setProjectBackgroundColor,
+  setProjectHeight,
+  setProjectName,
+  setProjectWidth,
+} from '../state/project';
 
 type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
 

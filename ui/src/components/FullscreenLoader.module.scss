@@ -1,0 +1,71 @@
+@import "../variables.module.scss";
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: $primary;
+  transition: opacity 250ms;
+  z-index: 100;
+  cursor: progress;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  &.on {
+    opacity: 1;
+  }
+
+  &.off {
+    opacity: 0;
+  }
+}
+
+/* Stolen from https://cssloaders.github.io/ */
+.loader {
+  width: 64px;
+  height: 12px;
+  background:
+    radial-gradient(circle 6px, $light 100%, transparent 0),
+    radial-gradient(circle 6px, $light 100%, transparent 0);
+  background-size: 12px 12px;
+  background-position: left center, right center;
+  background-repeat: no-repeat;
+  position: relative;
+
+  &:before {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #FF3D00;
+    inset: 0;
+    margin: auto;
+    animation: mvX 0.6s, mvY 0.3s;
+    animation-timing-function: cubic-bezier(.5, -300, .5, 300);
+    animation-iteration-count: infinite;
+  }
+}
+
+.loadingMessage {
+  margin-top: 2.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: $light;
+}
+
+@keyframes mvX {
+  100% {
+    left: 0.85px
+  }
+}
+
+@keyframes mvY {
+  100% {
+    top: 0.5px
+  }
+}
