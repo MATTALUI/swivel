@@ -45,7 +45,7 @@ export default class SwivelAnimator {
 
   setupNewProject() {
     this.initializeData();
-    this.registerElements();
+    // this.registerElements();
     this.updateForms();
     this.repaint();
   }
@@ -63,23 +63,23 @@ export default class SwivelAnimator {
     this.webmode = false;
   }
 
-  registerElements() {
-    Object.entries({
-      canvas: "canvas",
-      playButton: "#play",
-      addFrameButton: "#addFrame",
-      canvasContainer: "#canvasContainer",
-      framesEle: "#frames",
-      projectNameInput: "#projectName",
-      projectWidthInput: "#projectWidth",
-      projectHeightInput: "#projectHeight",
-      backgroundColorInput: "#backgroundColor",
-    }).forEach(([propertyName, elementSelector]) => {
-      const ele = document.querySelector(elementSelector);
-      if (!ele) throw new Error(`SwivelAnimator is missing critical elements: ${propertyName} - ${elementSelector} `);
-      this[propertyName] = ele;
-    });
-  }
+  // registerElements() {
+  //   Object.entries({
+  //     canvas: "canvas",
+  //     playButton: "#play",
+  //     addFrameButton: "#addFrame",
+  //     canvasContainer: "#canvasContainer",
+  //     framesEle: "#frames",
+  //     projectNameInput: "#projectName",
+  //     projectWidthInput: "#projectWidth",
+  //     projectHeightInput: "#projectHeight",
+  //     backgroundColorInput: "#backgroundColor",
+  //   }).forEach(([propertyName, elementSelector]) => {
+  //     const ele = document.querySelector(elementSelector);
+  //     if (!ele) throw new Error(`SwivelAnimator is missing critical elements: ${propertyName} - ${elementSelector} `);
+  //     this[propertyName] = ele;
+  //   });
+  // }
 
   repaint() {
     this.buildCanvas();
@@ -185,29 +185,29 @@ export default class SwivelAnimator {
     }
   }
 
-  buildCanvas() {
-    const {
-      width: containerWidth,
-      height: containerHeight
-    } = this.canvasContainer.getBoundingClientRect();
-    const containerPadding = 20;
-    const maxContainerWidth = containerWidth - (containerPadding * 2);
-    const maxContainerHeight = containerHeight - (containerPadding * 2);
+  // buildCanvas() {
+  //   const {
+  //     width: containerWidth,
+  //     height: containerHeight
+  //   } = this.canvasContainer.getBoundingClientRect();
+  //   const containerPadding = 20;
+  //   const maxContainerWidth = containerWidth - (containerPadding * 2);
+  //   const maxContainerHeight = containerHeight - (containerPadding * 2);
 
-    let width = 50;
-    let height = 50;
-    if (this.project.aspectRatio > 1) {
-      width = maxContainerWidth;
-      height = maxContainerWidth / this.project.aspectRatio;
-    } else {
-      height = maxContainerHeight;
-      width = maxContainerHeight * this.project.aspectRatio;
-    }
-    this.canvas.width = width;
-    this.canvas.height = height;
+  //   let width = 50;
+  //   let height = 50;
+  //   if (this.project.aspectRatio > 1) {
+  //     width = maxContainerWidth;
+  //     height = maxContainerWidth / this.project.aspectRatio;
+  //   } else {
+  //     height = maxContainerHeight;
+  //     width = maxContainerHeight * this.project.aspectRatio;
+  //   }
+  //   this.canvas.width = width;
+  //   this.canvas.height = height;
 
-    this.drawCurrentFrameToCanvas(this.canvas);
-  }
+  //   this.drawCurrentFrameToCanvas(this.canvas);
+  // }
 
   renderFramePreviews() {
     this.framesEle.innerHTML = "";
