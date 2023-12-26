@@ -1,4 +1,5 @@
 import { isPlaying, setIsPlaying } from "../state/app";
+import { addProjectFrame } from "../state/project";
 import styles from "./SceneControls.module.scss";
 
 const SceneControls = () => {
@@ -12,7 +13,7 @@ const SceneControls = () => {
         <button onClick={togglePlayback}>{isPlaying() ? "Stop" : "Start"}</button>
       </div>
       <div>
-        <button>Add Frame</button>
+        <button onClick={addProjectFrame}>Add Frame</button>
       </div>
     </div>
   )

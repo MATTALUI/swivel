@@ -19,3 +19,8 @@ export const [projectFPS, setProjectFPS] =
 export const [projectBackgroundColor, setProjectBackgroundColor] =
   createSignal(defaultProject.backgroundColor);
 export const projectAspectRatio = () => projectWidth() / projectHeight();
+export const addProjectFrame = () => {
+  const existingFrames = projectFrames();
+  const newFrame = existingFrames[existingFrames.length - 1].clone();
+  setProjectFrames([...existingFrames, newFrame]);
+}
