@@ -9,6 +9,7 @@ import {
   setProjectHeight,
   setProjectName,
   setProjectWidth,
+  updateFramePreviews,
 } from '../state/project';
 
 type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
@@ -20,14 +21,17 @@ const ProjectSettings = () => {
 
   const updateProjectWidth: InputHandler = (event) => {
     setProjectWidth(+event.target.value);
+    updateFramePreviews();
   }
 
   const updateProjectHeight: InputHandler = (event) => {
     setProjectHeight(+event.target.value);
+    updateFramePreviews();
   }
 
   const updateProjectBackgroundColor: InputHandler = (event) => {
     setProjectBackgroundColor(event.target.value);
+    updateFramePreviews();
   }
 
   return (

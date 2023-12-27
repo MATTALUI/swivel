@@ -1,6 +1,8 @@
 import { createSignal } from "solid-js";
 import SwivelProject from "../models/SwivelProject";
 import { setCurrentFrameIndex } from "./app";
+import Frame from "../models/Frame";
+import { getFramePreviewUrl } from "../utilities/canvas";
 
 const defaultProject = new SwivelProject();
 
@@ -26,4 +28,19 @@ export const addProjectFrame = () => {
   newFrame.index = existingFrames.length;
   setProjectFrames([...existingFrames, newFrame]);
   setCurrentFrameIndex(projectFrames().length - 1);
+}
+export const updateProjectFrame = (index: number, updates: Partial<Frame>) => {
+  const existingFrames = projectFrames();
+  const newFrames = [...existingFrames];
+  Object.assign(newFrames[index], updates);
+  setProjectFrames(newFrames);
+}
+export const updateFramePreviews = async () => {
+  const existingFrames = projectFrames();
+  const newFrames = await Promise.all([...existingFrames].map(async (frame) => {
+    frame.previewImage = getFramePreviewUrl(frame);
+
+    return frame;
+  }));
+  setProjectFrames(newFrames);
 }

@@ -25,7 +25,7 @@ export const drawFrameToCanvas = (
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   // Create a registry of just the points that we can build as we go so that
   // we can draw the control points on top of all the lines at the end without having to recurse again
-  const allControlNodes:ObjectNode[] = [];
+  const allControlNodes: ObjectNode[] = [];
   const connectNodeToChildren = (node: ObjectNode, controllable = true) => {
     node.children.forEach((child) => {
       if (child.children.length) connectNodeToChildren(child, controllable);
@@ -73,4 +73,15 @@ export const drawFrameToCanvas = (
       ctx.fill();
     });
   }
+}
+
+export const getFramePreviewUrl = (frame: Frame) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = projectWidth();
+  canvas.height = projectHeight();
+  drawFrameToCanvas(canvas, frame, {
+    preview: true,
+  });
+
+  return canvas.toDataURL();
 }

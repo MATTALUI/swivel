@@ -6,12 +6,12 @@
 
 .framesContainer {
   overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
   width: 0px; // Making this 0 allows the scroll magic to happen
-  scrollbar-color: pink;
 }
 
 .scroller {
-  padding: 0.5rem 0.75rem;
-  height: 84px;
+  padding: 0.25rem 0.75rem;
+  max-height: 7.5rem;
 }
