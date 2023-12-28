@@ -12,14 +12,14 @@ export default class Vec2 {
     this.y = y;
   }
 
-  getRenderedPosition(width, height) {
+  getRenderedPosition(width: number, height: number) {
     return {
       x: this.x * width,
       y: this.y * height,
     };
   }
 
-  getRenderedPositionTuple(width, height) {
+  getRenderedPositionTuple(width: number, height: number) {
     const { x, y } = this.getRenderedPosition(width, height);
 
     return [x, y];

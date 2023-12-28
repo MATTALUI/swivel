@@ -1,0 +1,36 @@
+@import "../variables.module.scss";
+
+.container {
+  background-color: $primary;
+  color: $light;
+  display: flex;
+  align-items: center;
+  justify-items: flex-start;
+
+  a {
+    text-decoration: none;
+    font-size: 2rem;
+    color: $light;
+    cursor: pointer;
+    padding: 0.25rem 1rem;
+    display: flex;
+    align-items: center;
+
+    & img {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 15px;
+    }
+
+    &:first-child {
+      font-size: 3rem;
+      &:hover {
+        background-color: $primary;
+      }
+    }
+
+    &:hover {
+      background-color: $primary-hover;
+    }
+  }
+}

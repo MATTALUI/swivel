@@ -1,0 +1,50 @@
+@import "../variables.module.scss";
+
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mapContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mappainter {
+  background-color: $primary-trans;
+  display: flex;
+  padding: 1rem;
+  border-radius: 3px;
+}
+
+.controls {
+  padding: 0.5rem 0.75rem;
+  min-width: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  & button {
+    margin-bottom: 0.25rem;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: 3px;
+  background-color: $primary-trans;
+  padding: 1rem;
+  border-radius: 3px;
+}
+
+.cell {
+  width: 15px;
+  height: 15px;
+  background-color: $light;
+
+  &.active {
+    background-color: $primary;
+  }
+}

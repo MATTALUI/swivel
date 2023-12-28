@@ -2,24 +2,32 @@
   "name": "swivel",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "start": "concurrently 'bun build:ui:watch' 'tauri dev'",
+    "start": "npm run dev",
+    "dev": "npm run build:ui && concurrently 'npm run build:ui:watch' 'tauri dev'",
+    "ui": "vite ui",
     "test": "bun test",
     "tauri": "tauri",
-    "build": "bun build:ui",
-    "build:ui": "bun build ui/__src/targets/*.ts --outdir ui/assets/js --minify",
-    "build:ui:watch": "bun build ui/__src/targets/*.ts --outdir ui/assets/js --watch",
-    "cleanup": "rm ./ui/assets/js/*.js"
+    "build:ui": "tsc && vite build ui",
+    "build:ui:watch": "tsc && vite build ui --watch",
+    "typecheck": "tsc",
+    "cleanup": "rm -rf ./ui/dist"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@tauri-apps/cli": "^1.4.0",
-    "@types/jest": "^29.5.4"
+    "@types/jest": "^29.5.4",
+    "concurrently": "^8.2.2",
+    "sass": "^1.69.5",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8",
+    "vite-plugin-solid": "^2.8.0"
   },
   "dependencies": {
-    "concurrently": "^8.2.2"
+    "@solidjs/router": "^0.10.5",
+    "classnames": "^2.4.0",
+    "solid-js": "^1.8.7"
   }
 }

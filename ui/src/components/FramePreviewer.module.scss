@@ -1,0 +1,17 @@
+@import "../variables.module.scss";
+
+.container {
+  background-color: $primary-trans;
+}
+
+.framesContainer {
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  width: 0px; // Making this 0 allows the scroll magic to happen
+}
+
+.scroller {
+  padding: 0.25rem 0.75rem;
+  max-height: 7.5rem;
+}

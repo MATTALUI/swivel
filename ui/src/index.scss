@@ -1,0 +1,31 @@
+@import "./variables.module.scss";
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  padding: 0;
+  margin: 0;
+  background-color: $light;
+  min-height: 100vh;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  outline: none;
+  border: none;
+  border-radius: 3px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}

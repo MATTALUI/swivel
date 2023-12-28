@@ -1,0 +1,26 @@
+@import "../variables.module.scss";
+
+$max-size: 7.25rem;
+
+.framePreviewContainer {
+  width: $max-size;
+  height: $max-size;
+  border-radius: 3px;
+  display: inline;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.frameImage {
+  max-width: $max-size;
+  max-height: $max-size;
+  border-radius: 3px;
+  border-width: 3px;
+  border-style: solid;
+  border-color: transparent;
+  transition: border-color 250ms;
+
+  &.selected {
+    border-color: $primary;
+  }
+}
