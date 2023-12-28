@@ -1,4 +1,4 @@
-import { createEffect, createMemo } from "solid-js";
+import { createEffect, createMemo, onMount } from "solid-js";
 import { projectAspectRatio, updateProjectFrame } from "../state/project";
 import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
@@ -7,7 +7,7 @@ import { drawFrameToCanvas, getFramePreviewUrl } from "../utilities/canvas";
 import { currentFrame, currentFrameIndex } from "../state/app";
 import ObjectNode from "../models/ObjectNode";
 import { MouseDownValues, mouseDownInitialValues, selectedNode, setCanvasCursor, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
-import { clamp, debounce } from "../utils";
+import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utils";
 import Vec2 from "../models/Vec2";
 
 const SwivelScene = () => {
@@ -17,9 +17,13 @@ const SwivelScene = () => {
   const controllableNodes = createMemo(() => {
     const frame = currentFrame();
     const nodes: ObjectNode[] = [];
+    const addNodeControls = (node: ObjectNode) => {
+      nodes.push(node);
+      // node.children.forEach(n => addNodeControls(n));
+    }
 
     frame.objects.forEach((ao) => {
-      nodes.push(ao.root);
+      addNodeControls(ao.root);
     });
 
     return nodes;
@@ -115,6 +119,57 @@ const SwivelScene = () => {
       moveWithChildren(currentSelectedNode, originalNodeRoot);
       repaintCanvas();
       updateCurrentFramePreview();
+    } else {
+      const { width, height } = canvasRef;
+      const swivelPoint = currentSelectedNode?.parent || undefined;
+      if (!swivelPoint) throw new Error("No valid swivel point");
+      const [swivelX, swivelY] =
+        swivelPoint.position.getRenderedPositionTuple(width, height);
+      // This logic assumes only two types of movment should come from a node.
+      // If we want to have more types of movement that are differentiated by
+      // more than root and not root we will have to update this here.
+      const rotateWithChildren = (deltaDeg: number, node: ObjectNode, originalNode: ObjectNode) => {
+        node.children.forEach((child, index) => {
+          rotateWithChildren(deltaDeg, child, originalNode.children[index]);
+        });
+        const [originalX, originalY] =
+          originalNode.position.getRenderedPositionTuple(width, height);
+        const distance = getPositionDistance(swivelX, swivelY, originalX, originalY);
+        const originalAngle = getAngleOfChange(
+          swivelX,
+          swivelY,
+          originalX,
+          originalY
+        );
+        const newAngle = originalAngle + deltaDeg;
+        const newX = swivelX + (Math.cos(degToRad(newAngle)) * distance);
+        const newY = swivelY + (Math.sin(degToRad(newAngle)) * distance);
+        node.setPosition(new Vec2(
+          newX / width,
+          newY / height
+        ));
+      }
+      const { offsetX, offsetY } = event;
+      const originalNode = currentSelectedNode?.clone();
+      if (!originalNode) throw new Error("No original node");
+      const [originalX, originalY] =
+        originalNode.position.getRenderedPositionTuple(width, height);
+      const originalAngle = getAngleOfChange(
+        swivelX,
+        swivelY,
+        originalX,
+        originalY
+      );
+      const newAngle = getAngleOfChange(
+        swivelX,
+        swivelY,
+        offsetX,
+        offsetY
+      );
+      const deltaAngle = newAngle - originalAngle;
+      rotateWithChildren(deltaAngle, currentSelectedNode, originalNode);
+      repaintCanvas();
+      updateCurrentFramePreview();
     }
   }
 
@@ -157,6 +212,11 @@ const SwivelScene = () => {
   document.addEventListener("mousemove", handleMouseMove);
   document.addEventListener("mousedown", handleMouseDown);
   document.addEventListener("mouseup", handleMouseUp);
+  onMount(() => {
+    if (!canvasRef)
+      throw new Error("No canvas available for event listeners");
+    canvasRef.addEventListener("contextmenu", (e) => e.preventDefault());
+  });
 
   return (
     <div
