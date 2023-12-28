@@ -29,6 +29,7 @@ const FramePreview = (props: IFramePreviewProps) => {
       )}
     >
       <img
+        data-frame-preview={props.frameIndex}
         class={cx(
           styles.frameImage,
           {

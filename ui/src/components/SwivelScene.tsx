@@ -1,12 +1,14 @@
 import { createEffect, createMemo } from "solid-js";
-import { projectAspectRatio } from "../state/project";
+import { projectAspectRatio, updateProjectFrame } from "../state/project";
 import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
-import { drawFrameToCanvas } from "../utilities/canvas";
-import { currentFrame } from "../state/app";
+import { drawFrameToCanvas, getFramePreviewUrl } from "../utilities/canvas";
+import { currentFrame, currentFrameIndex } from "../state/app";
 import ObjectNode from "../models/ObjectNode";
-import { selectedNode, setCanvasCursor, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
+import { MouseDownValues, mouseDownInitialValues, selectedNode, setCanvasCursor, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
+import { clamp, debounce } from "../utils";
+import Vec2 from "../models/Vec2";
 
 const SwivelScene = () => {
   let canvasContainerRef: HTMLDivElement | undefined;
@@ -51,9 +53,15 @@ const SwivelScene = () => {
     drawFrameToCanvas(canvasRef, currentFrame(), {});
   }
 
+  const updateCurrentFramePreview = debounce(() => {
+    const previewImage = getFramePreviewUrl(currentFrame());
+    updateProjectFrame(currentFrameIndex(), { previewImage })
+  }, 500);
+
   const handleMouseMove = (event: MouseEvent) => {
     if (event.target !== canvasRef || !canvasRef) return;
-    if (!selectedNode()) {
+    const currentSelectedNode = selectedNode();
+    if (!currentSelectedNode) {
       // No interaction has been initiated by selecting a node so we're just
       // checking interactables and setting the hover states.
       const { offsetX, offsetY } = event;
@@ -80,29 +88,67 @@ const SwivelScene = () => {
       } else {
         setCanvasCursor(null);
       }
+    } else if (currentSelectedNode.isRoot) {
+      const { offsetX, offsetY } = event;
+      const { width, height } = canvasRef;
+      // Need to clamp here because fast mouse movement can still result in
+      // out-of-bounds canvas positions
+      const mouseX = clamp(offsetX, 0, width);
+      const mouseY = clamp(offsetY, 0, height);
+      const initialValues = mouseDownInitialValues();
+      if (!initialValues) throw new Error("No initial values for the mouse");
+      const { x: originalX, y: originalY, originalNodeRoot } = initialValues;
+      const deltaX = mouseX - originalX;
+      const deltaY = mouseY - originalY;
+      const moveWithChildren = (node: ObjectNode, originalNode: ObjectNode) => {
+        node.children.forEach((child, index) => {
+          moveWithChildren(child, originalNode.children[index]);
+        });
+        const { x: originalNodeX, y: originalNodeY } = originalNode.position.getRenderedPosition(width, height);
+        const newX = originalNodeX + deltaX;
+        const newY = originalNodeY + deltaY;
+        node.setPosition(new Vec2(
+          newX / width,
+          newY / height
+        ));
+      }
+      moveWithChildren(currentSelectedNode, originalNodeRoot);
+      repaintCanvas();
+      updateCurrentFramePreview();
     }
   }
 
   const handleMouseDown = (event: MouseEvent) => {
+    const node = targetNode();
     if (
       event.target !== canvasRef ||
-      !targetNode()
+      !node
     ) return;
+    const mouseDownValues: MouseDownValues = {
+      x: event.offsetX,
+      y: event.offsetY,
+      originalParentNode: null,
+      originalNodeRoot: node.objectRootNode.clone(),
+    }
+    if (node.parent)
+      mouseDownValues.originalParentNode = node.parent.clone();
     setCanvasCursor("grabbing");
-    setSelectedNode(targetNode());
+    setSelectedNode(node);
+    setMouseDownInitialValues(mouseDownValues);
   }
 
   const handleMouseUp = (event: MouseEvent) => {
     if (
       !selectedNode()
     ) return;
+
     const cursor = event.target === canvasRef
       ? "grab"
       : null;
-    setSelectedNode(null);
     setCanvasCursor(cursor);
+    setSelectedNode(null);
     setTargetNode(null);
-    console.log("handleMouseUp");
+    setMouseDownInitialValues(null);
   }
 
   createEffect(setCanvasSize);
