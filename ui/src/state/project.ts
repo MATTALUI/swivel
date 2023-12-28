@@ -1,6 +1,6 @@
 import { createSignal } from "solid-js";
 import SwivelProject from "../models/SwivelProject";
-import { setCurrentFrameIndex } from "./app";
+import { setCurrentFrameIndex, setIsPlaying, setLastFrameTime, setSelectedObjects } from "./app";
 import Frame from "../models/Frame";
 import { getFramePreviewUrl } from "../utilities/canvas";
 
@@ -43,4 +43,32 @@ export const updateFramePreviews = async () => {
     return frame;
   }));
   setProjectFrames(newFrames);
+}
+export const getCurrentStateProject = () => {
+  const project = new SwivelProject();
+
+  project.id = projectId();
+  project.name = projectName();
+  project.width = projectWidth();
+  project.height = projectHeight();
+  project.frames = projectFrames();
+  project.fps = projectFPS();
+  project.backgroundColor = projectBackgroundColor();
+
+  return project;
+}
+export const resetProject = () => {
+  const project = new SwivelProject();
+  // Reset App State
+  setCurrentFrameIndex(0);
+  setIsPlaying(false);
+  setLastFrameTime(null);
+  setSelectedObjects([]);
+  // Reset project state
+  setProjectName(project.name);
+  setProjectWidth(project.width);
+  setProjectHeight(project.height);
+  setProjectFrames(project.frames);
+  setProjectFPS(project.fps);
+  setProjectBackgroundColor(project.backgroundColor);
 }

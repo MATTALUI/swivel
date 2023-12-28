@@ -29,6 +29,11 @@ const SwivelScene = () => {
     return nodes;
   });
 
+  const repaintCanvas = () => {
+    if (!canvasRef) return;
+    drawFrameToCanvas(canvasRef, currentFrame(), {});
+  }
+
   const setCanvasSize = () => {
     if (!canvasContainerRef || !canvasRef) return;
     const {
@@ -50,11 +55,7 @@ const SwivelScene = () => {
     }
     canvasRef.width = width;
     canvasRef.height = height;
-  }
-
-  const repaintCanvas = () => {
-    if (!canvasRef) return;
-    drawFrameToCanvas(canvasRef, currentFrame(), {});
+    repaintCanvas();
   }
 
   const playAnimationFrame = () => {
