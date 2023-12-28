@@ -29,7 +29,7 @@ export const drawFrameToCanvas = (
   const connectNodeToChildren = (node: ObjectNode, controllable = true) => {
     node.children.forEach((child) => {
       if (child.children.length) connectNodeToChildren(child, controllable);
-      if (controllable) allControlNodes.push(child);
+      // if (controllable) allControlNodes.push(child); // Children nodes
       const { x: startX, y: startY } = child.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
       const { x: endX, y: endY } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
       const alpha = controllable ? 1 : 0.5;
@@ -59,7 +59,7 @@ export const drawFrameToCanvas = (
     connectNodeToChildren(root);
     // We're adding the roots to this list, but I suspect there might come a
     // time when we might want these to be separate
-    allControlNodes.push(root);
+    allControlNodes.push(root); // Root nodes
   });
   if (!isPlaying() && !options.preview) {
     allControlNodes.forEach(({ position, isRoot }) => {
