@@ -1,10 +1,10 @@
 import { createEffect, createMemo, onMount } from "solid-js";
-import { projectAspectRatio, updateProjectFrame } from "../state/project";
+import { projectAspectRatio, projectFPS, projectFrames } from "../state/project";
 import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
 import { drawFrameToCanvas, getFramePreviewUrl } from "../utilities/canvas";
-import { currentFrame, currentFrameIndex } from "../state/app";
+import { currentFrame, currentFrameIndex, isPlaying, lastFrameTime, setCurrentFrameIndex, setLastFrameTime } from "../state/app";
 import ObjectNode from "../models/ObjectNode";
 import { MouseDownValues, mouseDownInitialValues, selectedNode, setCanvasCursor, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
 import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utils";
@@ -57,9 +57,30 @@ const SwivelScene = () => {
     drawFrameToCanvas(canvasRef, currentFrame(), {});
   }
 
+  const playAnimationFrame = () => {
+    if (!isPlaying()) return;
+    window.requestAnimationFrame(playAnimationFrame);
+    const currentTime = new Date();
+    if (lastFrameTime()) {
+      const msInSecond = 1000;
+      const frameDifferential = msInSecond / projectFPS();
+      const timeSinceLastFrame = Number(currentTime) - frameDifferential;
+      if (timeSinceLastFrame < Number(lastFrameTime()))
+        return;
+    }
+    let nextIndex = currentFrameIndex() + 1;
+    if (nextIndex === projectFrames().length) nextIndex = 0;
+
+    setLastFrameTime(currentTime);
+    setCurrentFrameIndex(nextIndex);
+  }
+
   const updateCurrentFramePreview = debounce(() => {
     const previewImage = getFramePreviewUrl(currentFrame());
-    updateProjectFrame(currentFrameIndex(), { previewImage })
+    currentFrame().previewImage = previewImage;
+    const imgEle = document.querySelector<HTMLImageElement>(`[data-frame-preview="${currentFrameIndex()}"]`);
+    if (!imgEle) throw new Error("No image preview to update!");
+    imgEle.src = previewImage;
   }, 500);
 
   const handleMouseMove = (event: MouseEvent) => {
@@ -208,6 +229,7 @@ const SwivelScene = () => {
 
   createEffect(setCanvasSize);
   createEffect(repaintCanvas);
+  createEffect(playAnimationFrame)
   window.addEventListener("resize", setCanvasSize);
   document.addEventListener("mousemove", handleMouseMove);
   document.addEventListener("mousedown", handleMouseDown);
