@@ -2,10 +2,12 @@ import type { JSX } from 'solid-js';
 import styles from "./ProjectSettings.module.scss";
 import {
   projectBackgroundColor,
+  projectFPS,
   projectHeight,
   projectName,
   projectWidth,
   setProjectBackgroundColor,
+  setProjectFPS,
   setProjectHeight,
   setProjectName,
   setProjectWidth,
@@ -32,6 +34,10 @@ const ProjectSettings = () => {
   const updateProjectBackgroundColor: InputHandler = (event) => {
     setProjectBackgroundColor(event.target.value);
     updateFramePreviews();
+  }
+
+  const updateProjectFPS:InputHandler = (event) => {
+    setProjectFPS(+event.target.value);
   }
 
   return (
@@ -71,6 +77,17 @@ const ProjectSettings = () => {
           type="color"
           value={projectBackgroundColor()}
           onChange={updateProjectBackgroundColor}
+        />
+      </div>
+      <div class={styles.settingContainer}>
+        <label>FPS</label>
+        <input
+          type="range"
+          min={1}
+          max={30}
+          step={1}
+          value={projectFPS()}
+          onChange={updateProjectFPS}
         />
       </div>
     </>

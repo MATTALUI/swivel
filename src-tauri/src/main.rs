@@ -5,6 +5,7 @@ use base64::{engine::general_purpose, Engine as _};
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 use std::collections::HashMap;
 use std::process::Command;
+use std::str;
 
 fn main() {
     // File
@@ -77,22 +78,11 @@ fn export_project(projectData: &str) -> bool {
         let path = format!("./tmp/img_{:0>5}.png", index);
         let _ = std::fs::write(path, img);
     }
-    // I'd rather use a crate for this, but the current ffmpeg crates don't look
-    // like they're maintained anymore and don't have any helpful info. So
-    // this'll have to do for now.
-    // Command::new("ffmpeg")
-    //     .args([
-    //         "-framerate",
-    //         "1",
-    //         "-i",
-    //         "./tmp/img_%05d.png",
-    //         "./tmp/output.gif",
-    //     ])
-    //     .output()
-    //     .expect("failed convert to gif");
-    // convert -set dispose background tmp/img*.png ~/Desktop/output.gif
+    let delay = 100 / project.fps;
     Command::new("convert")
         .args([
+            "-delay",
+            &format!("{:?}", delay),
             "-set",
             "dispose",
             "background",

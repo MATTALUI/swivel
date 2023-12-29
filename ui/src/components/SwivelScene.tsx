@@ -44,8 +44,8 @@ const SwivelScene = () => {
     const maxContainerWidth = containerWidth - (containerPadding * 2);
     const maxContainerHeight = containerHeight - (containerPadding * 2);
 
-    let width = 50;
-    let height = 50;
+    let width = 10;
+    let height = 10;
     if (projectAspectRatio() > 1) {
       width = maxContainerWidth;
       height = maxContainerWidth / projectAspectRatio();
