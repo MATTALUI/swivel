@@ -1,5 +1,5 @@
 import type { JSX } from 'solid-js';
-import styles from "./ProjectSettings.module.scss";
+import styles from "./Settings.module.scss";
 import {
   projectBackgroundColor,
   projectFPS,
@@ -42,8 +42,9 @@ const ProjectSettings = () => {
 
   return (
     <>
+      <h2 class={styles.title}>Project</h2>
       <div class={styles.settingContainer}>
-        <label>Project Name</label>
+        <label>Name</label>
         <input
           type="text"
           value={projectName()}

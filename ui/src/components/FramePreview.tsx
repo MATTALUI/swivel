@@ -1,5 +1,5 @@
 import Frame from "../models/Frame";
-import { currentFrameIndex, setCurrentFrameIndex } from "../state/app";
+import { SelectionType, currentFrameIndex, setCurrentFrameIndex, setSelectedObjects } from "../state/app";
 import { updateProjectFrame } from "../state/project";
 import { getFramePreviewUrl } from "../utilities/canvas";
 import styles from "./FramePreview.module.scss";
@@ -11,8 +11,13 @@ interface IFramePreviewProps {
 }
 
 const FramePreview = (props: IFramePreviewProps) => {
-  const changeFrame = () => {
+  const changeFrame = (e: Event) => {
+    e.stopPropagation();
     setCurrentFrameIndex(props.frameIndex);
+    setSelectedObjects({
+      type: SelectionType.FRAME,
+      objects: [props.frame],
+    });
   }
 
   if (!props.frame.previewImage && props.frame.index !== null) {

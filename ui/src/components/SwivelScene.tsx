@@ -4,7 +4,7 @@ import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
 import { drawFrameToCanvas, getFramePreviewUrl } from "../utilities/canvas";
-import { currentFrame, currentFrameIndex, isPlaying, lastFrameTime, setCurrentFrameIndex, setLastFrameTime } from "../state/app";
+import { currentFrame, currentFrameIndex, deselectObjects, isPlaying, lastFrameTime, setCurrentFrameIndex, setLastFrameTime } from "../state/app";
 import ObjectNode from "../models/ObjectNode";
 import { MouseDownValues, mouseDownInitialValues, selectedNode, setCanvasCursor, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
 import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utils";
@@ -201,6 +201,7 @@ const SwivelScene = () => {
       event.target !== canvasRef ||
       !node
     ) return;
+    event.stopImmediatePropagation();
     const mouseDownValues: MouseDownValues = {
       x: event.offsetX,
       y: event.offsetY,
@@ -244,6 +245,7 @@ const SwivelScene = () => {
   return (
     <div
       class={styles.container}
+      onMouseDown={deselectObjects}
     >
       <FramePreviewer />
       <SceneControls />
@@ -252,6 +254,7 @@ const SwivelScene = () => {
         class={styles.canvasContainer}
       >
         <canvas
+          id="canvas"
           class={styles.canvas}
           ref={canvasRef}
         />

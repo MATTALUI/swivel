@@ -21,7 +21,7 @@ export const drawFrameToCanvas = (
   // Clear it out
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   // Draw in the background color
-  ctx.fillStyle = projectBackgroundColor();
+  ctx.fillStyle = frame.backgroundColor || projectBackgroundColor();
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   // Create a registry of just the points that we can build as we go so that
   // we can draw the control points on top of all the lines at the end without having to recurse again

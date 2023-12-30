@@ -75,12 +75,14 @@ export default class Frame {
   index: number | null;
   previewImage: string | null;
   objects: AnimationObject[];
+  backgroundColor: string | null;
 
 
   constructor() {
     this.index = null;
     this.previewImage = null;
     this.objects = buildDefaultObjects();
+    this.backgroundColor = null;
   }
 
   toSerializableObject(): SerializableFrame {

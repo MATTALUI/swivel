@@ -3,11 +3,15 @@ import { addProjectFrame } from "../state/project";
 import styles from "./SceneControls.module.scss";
 
 const SceneControls = () => {
-  const togglePlayback = () => {
+  const togglePlayback = (event: Event) => {
+    event.stopPropagation();
+    event.preventDefault();
     setIsPlaying(!isPlaying());
   }
 
-  const addFrame = () => {
+  const addFrame = (event: Event) => {
+    event.stopPropagation();
+    event.preventDefault();
     addProjectFrame();
     const previewFrames = document.querySelectorAll(".preview-frame");
     previewFrames[previewFrames.length - 1].scrollIntoView({ behavior: 'smooth' });

@@ -63,7 +63,7 @@ export const resetProject = () => {
   setCurrentFrameIndex(0);
   setIsPlaying(false);
   setLastFrameTime(null);
-  setSelectedObjects([]);
+  setSelectedObjects(null);
   // Reset project state
   setProjectName(project.name);
   setProjectWidth(project.width);
