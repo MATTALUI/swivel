@@ -6,64 +6,114 @@ import AnimationObject, { SerializableAnimationObject } from "./AnimationObject"
 // blank object.
 const buildDefaultObjects = (): AnimationObject[] => {
   let child, newestChild;
-  const objects: AnimationObject[] = [];
-  // M
-  const m = new AnimationObject();
-  m.root.setPosition(new Vec2(0.1, 0.69));
-  child = new ObjectNode();
-  m.root.appendChild(child);
-  child.setPosition(new Vec2(0.1, 0.5));
-  newestChild = new ObjectNode()
-  child.appendChild(newestChild);
-  child = newestChild;
-  child.setPosition(new Vec2(0.15, 0.58));
-  newestChild = new ObjectNode()
-  child.appendChild(newestChild);
-  child = newestChild;
-  child.setPosition(new Vec2(0.2, 0.5));
-  newestChild = new ObjectNode()
-  child.appendChild(newestChild);
-  child = newestChild;
-  child.setPosition(new Vec2(0.2, 0.69));
-  // A
-  const a = new AnimationObject();
-  a.root.setPosition(new Vec2(0.25, 0.69));
-  child = new ObjectNode();
-  a.root.appendChild(child);
-  child.setPosition(new Vec2(0.275, 0.5));
-  newestChild = new ObjectNode()
-  child.appendChild(newestChild);
-  child = newestChild;
-  child.setPosition(new Vec2(0.3, 0.69));
-  // T
-  const t1 = new AnimationObject();
-  t1.root.setPosition(new Vec2(0.375, 0.69));
-  child = new ObjectNode();
-  t1.root.appendChild(child);
-  child.setPosition(new Vec2(0.375, 0.5));
-  newestChild = new ObjectNode()
-  child.appendChild(newestChild);
-  newestChild.setPosition(new Vec2(0.35, 0.5));
-  newestChild = new ObjectNode()
-  child.appendChild(newestChild);
-  newestChild.setPosition(new Vec2(0.4, 0.5));
-  // T
-  const t2 = new AnimationObject();
-  t2.root.setPosition(new Vec2(0.475, 0.5));
-  child = new ObjectNode();
-  t2.root.appendChild(child);
-  child.setPosition(new Vec2(0.45, 0.5));
-  child = new ObjectNode();
-  t2.root.appendChild(child);
+
+  const dino = new AnimationObject();
+  const root = dino.root;
+  child = root;
   child.setPosition(new Vec2(0.5, 0.5));
-  child = new ObjectNode();
-  t2.root.appendChild(child);
-  child.setPosition(new Vec2(0.475, 0.69));
 
-  objects.push(m, a, t1, t2);
+  newestChild = new ObjectNode();
+  const belly = newestChild;
+  newestChild.setPosition(new Vec2(0.53, 0.4));
+  child.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  const head = newestChild;
+  newestChild.setPosition(new Vec2(0.58, 0.3));
+  child.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.6, 0.3));
+  child.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.65, 0.35));
+  child.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.6, 0.4));
+  head.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.56, 0.4));
+  belly.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.56, 0.43));
+  belly.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.56, 0.63));
+  root.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.56, 0.73));
+  child.appendChild(newestChild);
+  child = newestChild;
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.58, 0.73));
+  child.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.52, 0.66));
+  root.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.52, 0.76));
+  child.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.54, 0.76));
+  child.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.43, 0.59));
+  root.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.33, 0.7));
+  child.appendChild(newestChild);
+  child = newestChild;
+
+  const box = new AnimationObject();
+  child = box.root;
+  child.setPosition(new Vec2(0.7, 0.7));
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.7, 0.8));
+  child.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.8, 0.8));
+  child.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.8, 0.7));
+  child.appendChild(newestChild);
+  child = newestChild;
+
+  newestChild = new ObjectNode();
+  newestChild.setPosition(new Vec2(0.72, 0.7));
+  child.appendChild(newestChild);
+  child = newestChild;
 
 
-  return objects;
+  return [dino, box];
 }
 
 type SerializableFrame = {
