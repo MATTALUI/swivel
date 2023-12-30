@@ -10,6 +10,7 @@ export default class AnimationObject {
 
   constructor() {
     this.root = new ObjectNode();
+    this.root.object = this;
   }
 
   toSerializableObject(): SerializableAnimationObject {

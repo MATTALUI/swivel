@@ -1,8 +1,11 @@
+import Color from "color";
 import Frame from "../models/Frame"
 import ObjectNode from "../models/ObjectNode";
-import { isPlaying } from "../state/app";
+import { SelectionType, isPlaying, selectedObjects } from "../state/app";
 import { projectBackgroundColor, projectFrames, projectHeight, projectWidth } from "../state/project";
 
+const ROOT_NODE_COLOR = "#ff8000";
+const NODE_COLOR = "#bf0404";
 interface IDrawFrameToCanvasOptions {
   preview?: boolean;
 }
@@ -15,6 +18,7 @@ export const drawFrameToCanvas = (
   if (!ctx) {
     throw new Error("Context unavailable");
   }
+  const shouldDrawHelpers = !isPlaying() && !options.preview;
   // These checks simply help subscribe to these changes
   projectWidth();
   projectHeight();
@@ -29,7 +33,7 @@ export const drawFrameToCanvas = (
   const connectNodeToChildren = (node: ObjectNode, controllable = true) => {
     node.children.forEach((child) => {
       if (child.children.length) connectNodeToChildren(child, controllable);
-      // if (controllable) allControlNodes.push(child); // Children nodes
+      if (controllable) allControlNodes.push(child); // Children nodes
       const { x: startX, y: startY } = child.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
       const { x: endX, y: endY } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
       const alpha = controllable ? 1 : 0.5;
@@ -45,7 +49,7 @@ export const drawFrameToCanvas = (
     });
   }
   // Draw the onion skins
-  if (!isPlaying() && frame.index && !options.preview) {
+  if (shouldDrawHelpers && frame.index) {
     const allFrames = projectFrames();
     const prevFrame = allFrames[frame.index - 1];
     prevFrame.objects.forEach((object) => {
@@ -61,7 +65,7 @@ export const drawFrameToCanvas = (
     // time when we might want these to be separate
     allControlNodes.push(root); // Root nodes
   });
-  if (!isPlaying() && !options.preview) {
+  if (shouldDrawHelpers) {
     allControlNodes.forEach(({ position, isRoot }) => {
       if (!ctx) {
         throw new Error("Context unavailable");
@@ -69,9 +73,26 @@ export const drawFrameToCanvas = (
       const { x, y } = position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
       ctx.beginPath();
       ctx.arc(x, y, 6.9, 0, 2 * Math.PI);
-      ctx.fillStyle = isRoot ? "#ff8000" : "#bf0404";
+      ctx.fillStyle = isRoot ? ROOT_NODE_COLOR : NODE_COLOR;
       ctx.fill();
     });
+    const selection = selectedObjects();
+    if (selection?.type === SelectionType.ANIMATION_OBJECT) {
+      selection.objects.forEach((o) => {
+        const drawNodes = (node: ObjectNode) => {
+          const { x, y } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+          ctx.beginPath();
+          ctx.arc(x, y, 2.9, 0, 2 * Math.PI);
+          ctx.fillStyle = node.isRoot
+            ? Color(ROOT_NODE_COLOR).negate().hex()
+            : Color(NODE_COLOR).negate().hex();
+          ctx.fill();
+          node.children.forEach(n => drawNodes(n));
+        }
+        drawNodes(o.root);
+      });
+    }
+
   }
 }
 

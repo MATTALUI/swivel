@@ -4,22 +4,29 @@ import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
 import { drawFrameToCanvas, getFramePreviewUrl } from "../utilities/canvas";
-import { currentFrame, currentFrameIndex, deselectObjects, isPlaying, lastFrameTime, setCurrentFrameIndex, setLastFrameTime } from "../state/app";
+import { SelectionType, currentFrame, currentFrameIndex, deselectObjects, isPlaying, lastFrameTime, selectedObjects, setCurrentFrameIndex, setLastFrameTime, setSelectedObjects } from "../state/app";
 import ObjectNode from "../models/ObjectNode";
 import { MouseDownValues, mouseDownInitialValues, selectedNode, setCanvasCursor, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
 import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utils";
 import Vec2 from "../models/Vec2";
+import AnimationObject from "../models/AnimationObject";
 
 const SwivelScene = () => {
   let canvasContainerRef: HTMLDivElement | undefined;
   let canvasRef: HTMLCanvasElement | undefined;
+  let skipDeselect = false;
+
+  const tryDeselect = () => {
+    if (!skipDeselect) deselectObjects();
+    skipDeselect = false;
+  }
 
   const controllableNodes = createMemo(() => {
     const frame = currentFrame();
     const nodes: ObjectNode[] = [];
     const addNodeControls = (node: ObjectNode) => {
       nodes.push(node);
-      // node.children.forEach(n => addNodeControls(n));
+      node.children.forEach(n => addNodeControls(n));
     }
 
     frame.objects.forEach((ao) => {
@@ -112,6 +119,7 @@ const SwivelScene = () => {
         setTargetNode(nextTargetNode);
         setCanvasCursor("grab");
       } else {
+        setTargetNode(null);
         setCanvasCursor(null);
       }
     } else if (currentSelectedNode.isRoot) {
@@ -201,7 +209,8 @@ const SwivelScene = () => {
       event.target !== canvasRef ||
       !node
     ) return;
-    event.stopImmediatePropagation();
+    skipDeselect = true;
+    const clickedObject = node.object;
     const mouseDownValues: MouseDownValues = {
       x: event.offsetX,
       y: event.offsetY,
@@ -213,6 +222,23 @@ const SwivelScene = () => {
     setCanvasCursor("grabbing");
     setSelectedNode(node);
     setMouseDownInitialValues(mouseDownValues);
+    if (clickedObject) {
+      const selection = selectedObjects();
+      let selectedAnimationObjects: AnimationObject[] =
+        selection?.type === SelectionType.ANIMATION_OBJECT && event.shiftKey
+          ? [...selection.objects]
+          : []
+      if (selectedAnimationObjects.includes(clickedObject)) {
+        selectedAnimationObjects = selectedAnimationObjects.filter(o => o !== clickedObject);
+      } else {
+        selectedAnimationObjects.push(clickedObject)
+      }
+
+      setSelectedObjects({
+        type: SelectionType.ANIMATION_OBJECT,
+        objects: selectedAnimationObjects,
+      });
+    }
   }
 
   const handleMouseUp = (event: MouseEvent) => {
@@ -220,13 +246,14 @@ const SwivelScene = () => {
       !selectedNode()
     ) return;
 
-    const cursor = event.target === canvasRef
-      ? "grab"
-      : null;
-    setCanvasCursor(cursor);
+    // For now we can assume that if the user is still on the canvas they're
+    // going to be hovering over the same point that they were initially on.
+    const stillOnTarget = event.target === canvasRef;
+    const cursor = stillOnTarget ? "grab" : null;
     setSelectedNode(null);
-    setTargetNode(null);
     setMouseDownInitialValues(null);
+    setCanvasCursor(cursor);
+    if (!stillOnTarget) setTargetNode(null);
   }
 
   createEffect(setCanvasSize);
@@ -234,7 +261,6 @@ const SwivelScene = () => {
   createEffect(playAnimationFrame)
   window.addEventListener("resize", setCanvasSize);
   document.addEventListener("mousemove", handleMouseMove);
-  document.addEventListener("mousedown", handleMouseDown);
   document.addEventListener("mouseup", handleMouseUp);
   onMount(() => {
     if (!canvasRef)
@@ -245,18 +271,19 @@ const SwivelScene = () => {
   return (
     <div
       class={styles.container}
-      onMouseDown={deselectObjects}
     >
       <FramePreviewer />
       <SceneControls />
       <div
         ref={canvasContainerRef}
         class={styles.canvasContainer}
+        onClick={tryDeselect}
       >
         <canvas
           id="canvas"
           class={styles.canvas}
           ref={canvasRef}
+          onMouseDown={handleMouseDown}
         />
       </div>
     </div>

@@ -1,3 +1,4 @@
+import AnimationObject from "./AnimationObject";
 import Vec2 from "./Vec2";
 import type { SerializableVec2 } from "./Vec2";
 
@@ -8,12 +9,14 @@ export type SerializableObjectNode = {
 };
 
 export default class ObjectNode {
+  object: AnimationObject | null;
   parent: ObjectNode | null;
   position: Vec2;
   children: ObjectNode[];
   size: number;
 
   constructor() {
+    this.object = null;
     this.parent = null;
     this.position = new Vec2();
     this.children = [];
@@ -25,6 +28,7 @@ export default class ObjectNode {
   }
 
   get objectRootNode() {
+    if (this.object) return this.object.root;
     let root: ObjectNode = this;
     while (root.parent) {
       root = root.parent;
@@ -33,6 +37,7 @@ export default class ObjectNode {
   }
 
   appendChild(child: ObjectNode) {
+    child.object = this.object;
     child.parent = this;
     this.children.push(child);
   }
@@ -51,6 +56,7 @@ export default class ObjectNode {
 
   clone() {
     const clone = new ObjectNode();
+    clone.parent = this.parent;
     clone.size = this.size;
     clone.setPosition(this.position.clone());
     this.children.forEach(c => clone.appendChild(c.clone()));

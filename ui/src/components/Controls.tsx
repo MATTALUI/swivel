@@ -4,16 +4,18 @@ import { SelectionType } from "../state/app";
 import styles from "./Controls.module.scss";
 import ProjectSettings from "./ProjectSettings";
 import FrameSettings from "./FrameSettings";
+import AnimationObjectSettings from "./AnimationObjectSettings";
 
 const DEFAULT = "DEFAULT";
 type MapKey = SelectionType | "DEFAULT";
-const selectedControlsMap: Record<MapKey, JSX.Element | null> = {
-  frame: <FrameSettings />,
-  animationObject: null,
-  [DEFAULT]: <ProjectSettings />,
-};
 
 const Controls = () => {
+  const selectedControlsMap: Record<MapKey, JSX.Element | null> = {
+    frame: <FrameSettings />,
+    animationObject: <AnimationObjectSettings />,
+    [DEFAULT]: <ProjectSettings />,
+  };
+
   return (
     <div class={styles.container}>
       {selectedControlsMap[selectedObjects()?.type || DEFAULT]}

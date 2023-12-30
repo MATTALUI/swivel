@@ -81,7 +81,7 @@ const ProjectSettings = () => {
         />
       </div>
       <div class={styles.settingContainer}>
-        <label>FPS</label>
+        <label>Frame Rate</label>
         <input
           type="range"
           min={1}

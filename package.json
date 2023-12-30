@@ -18,6 +18,7 @@
   "license": "ISC",
   "devDependencies": {
     "@tauri-apps/cli": "^1.4.0",
+    "@types/color": "^3.0.6",
     "@types/jest": "^29.5.4",
     "concurrently": "^8.2.2",
     "sass": "^1.69.5",
@@ -28,6 +29,7 @@
   "dependencies": {
     "@solidjs/router": "^0.10.5",
     "classnames": "^2.4.0",
+    "color": "^4.2.3",
     "solid-js": "^1.8.7"
   }
 }
