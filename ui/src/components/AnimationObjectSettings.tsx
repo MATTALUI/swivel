@@ -1,10 +1,32 @@
+import { SelectionType, currentFrame, currentFrameIndex, selectedObjects, setSelectedObjects } from "../state/app";
+import { updateProjectFrame } from "../state/project";
+import { drawFrameToCanvas, getMainCanvas } from "../utilities/canvas";
 import styles from "./Settings.module.scss";
 
 const AnimationObjectSettings = () => {
+  const removeObjects = () => {
+    const selection = selectedObjects();
+    if (selection?.type !== SelectionType.ANIMATION_OBJECT)
+      throw new Error("Non AnimationObject is selected");
+    const { objects } = selection;
+    const cf = currentFrame();
+    cf.objects = cf.objects.filter(o => !objects.includes(o));
+    updateProjectFrame(currentFrameIndex());
+    drawFrameToCanvas(getMainCanvas(), currentFrame(), {});
+    setSelectedObjects(null); // You've just deleted everything selected
+  }
 
   return (
     <>
       <h2 class={styles.title}>Object</h2>
+      <div class={styles.settingContainer}>
+        <button
+          onClick={removeObjects}
+          class={styles.danger}
+        >
+          Remove
+        </button>
+      </div>
     </>
   );
 }

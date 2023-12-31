@@ -106,3 +106,10 @@ export const getFramePreviewUrl = (frame: Frame) => {
 
   return canvas.toDataURL();
 }
+
+export const getMainCanvas = () => {
+  const canvas = document.querySelector<HTMLCanvasElement>('#canvas');
+  if (!canvas) throw new Error("Can't find the main canvas!");
+
+  return canvas;
+}

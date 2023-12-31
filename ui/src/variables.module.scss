@@ -1,7 +1,9 @@
 $violet: #3E2F5B;
+$cardinal: #AD343E;
 $light: #f0f0f0;
 $dark: #0A0A0A;
 
 $primary: $violet;
 $primary-hover: lighten($primary, 10%);
 $primary-trans: rgba($primary, 0.25);
+$danger: rgba($cardinal, 1);

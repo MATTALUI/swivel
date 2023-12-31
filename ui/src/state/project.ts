@@ -29,11 +29,14 @@ export const addProjectFrame = () => {
   setProjectFrames([...existingFrames, newFrame]);
   setCurrentFrameIndex(projectFrames().length - 1);
 }
-export const updateProjectFrame = (index: number, updates: Partial<Frame>) => {
-  const existingFrames = projectFrames();
-  const newFrames = [...existingFrames];
-  Object.assign(newFrames[index], updates);
-  setProjectFrames(newFrames);
+export const updateProjectFrame = (index: number, updates: Partial<Frame> = {}) => {
+  const frame = projectFrames()[index];
+  Object.assign(frame, updates);
+  if ("previewImage" in updates) return;
+  const previewImage = updates.previewImage ?? getFramePreviewUrl(frame);
+  frame.previewImage = previewImage;
+  const imgEle = document.querySelector<HTMLImageElement>(`[data-frame-preview="${index}"]`);
+  if (imgEle) imgEle.src = previewImage;
 }
 export const updateFramePreviews = async () => {
   const existingFrames = projectFrames();

@@ -1,9 +1,9 @@
 import { createEffect, createMemo, onMount } from "solid-js";
-import { projectAspectRatio, projectFPS, projectFrames } from "../state/project";
+import { projectAspectRatio, projectFPS, projectFrames, updateProjectFrame } from "../state/project";
 import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
-import { drawFrameToCanvas, getFramePreviewUrl } from "../utilities/canvas";
+import { drawFrameToCanvas } from "../utilities/canvas";
 import { SelectionType, currentFrame, currentFrameIndex, deselectObjects, isPlaying, lastFrameTime, selectedObjects, setCurrentFrameIndex, setLastFrameTime, setSelectedObjects } from "../state/app";
 import ObjectNode from "../models/ObjectNode";
 import { MouseDownValues, mouseDownInitialValues, selectedNode, setCanvasCursor, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
@@ -84,11 +84,7 @@ const SwivelScene = () => {
   }
 
   const updateCurrentFramePreview = debounce(() => {
-    const previewImage = getFramePreviewUrl(currentFrame());
-    currentFrame().previewImage = previewImage;
-    const imgEle = document.querySelector<HTMLImageElement>(`[data-frame-preview="${currentFrameIndex()}"]`);
-    if (!imgEle) throw new Error("No image preview to update!");
-    imgEle.src = previewImage;
+    updateProjectFrame(currentFrameIndex());
   }, 500);
 
   const handleMouseMove = (event: MouseEvent) => {
