@@ -8,9 +8,9 @@ const AnimationObjectSettings = () => {
     const selection = selectedObjects();
     if (selection?.type !== SelectionType.ANIMATION_OBJECT)
       throw new Error("Non AnimationObject is selected");
-    const { objects } = selection;
+    const { objectIds } = selection;
     const cf = currentFrame();
-    cf.objects = cf.objects.filter(o => !objects.includes(o));
+    cf.objects = cf.objects.filter(o => !objectIds.includes(o.id));
     updateProjectFrame(currentFrameIndex());
     drawFrameToCanvas(getMainCanvas(), currentFrame(), {});
     setSelectedObjects(null); // You've just deleted everything selected

@@ -9,7 +9,6 @@ import ObjectNode from "../models/ObjectNode";
 import { MouseDownValues, mouseDownInitialValues, selectedNode, setCanvasCursor, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
 import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utils";
 import Vec2 from "../models/Vec2";
-import AnimationObject from "../models/AnimationObject";
 
 const SwivelScene = () => {
   let canvasContainerRef: HTMLDivElement | undefined;
@@ -220,19 +219,19 @@ const SwivelScene = () => {
     setMouseDownInitialValues(mouseDownValues);
     if (clickedObject) {
       const selection = selectedObjects();
-      let selectedAnimationObjects: AnimationObject[] =
+      let selectedIds: string[] =
         selection?.type === SelectionType.ANIMATION_OBJECT && event.shiftKey
-          ? [...selection.objects]
+          ? [...selection.objectIds]
           : []
-      if (selectedAnimationObjects.includes(clickedObject)) {
-        selectedAnimationObjects = selectedAnimationObjects.filter(o => o !== clickedObject);
+      if (selectedIds.includes(clickedObject.id)) {
+        selectedIds = selectedIds.filter(id => id !== clickedObject.id);
       } else {
-        selectedAnimationObjects.push(clickedObject)
+        selectedIds.push(clickedObject.id);
       }
 
       setSelectedObjects({
         type: SelectionType.ANIMATION_OBJECT,
-        objects: selectedAnimationObjects,
+        objectIds: selectedIds,
       });
     }
   }

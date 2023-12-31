@@ -16,7 +16,7 @@ const FramePreview = (props: IFramePreviewProps) => {
     setCurrentFrameIndex(props.frameIndex);
     setSelectedObjects({
       type: SelectionType.FRAME,
-      objects: [props.frame],
+      objectIds: [props.frame.id],
     });
   }
 

@@ -117,11 +117,14 @@ const buildDefaultObjects = (): AnimationObject[] => {
 }
 
 type SerializableFrame = {
+  id: string;
+  index: number | null;
   previewImage: string | null;
   objects: SerializableAnimationObject[];
 };
 
 export default class Frame {
+  id: string;
   index: number | null;
   previewImage: string | null;
   objects: AnimationObject[];
@@ -129,6 +132,7 @@ export default class Frame {
 
 
   constructor() {
+    this.id = crypto.randomUUID();
     this.index = null;
     this.previewImage = null;
     this.objects = buildDefaultObjects();
@@ -137,6 +141,8 @@ export default class Frame {
 
   toSerializableObject(): SerializableFrame {
     return {
+      id: this.id,
+      index: this.index,
       previewImage: this.previewImage,
       objects: this.objects.map(o => o.toSerializableObject()),
     };
@@ -144,6 +150,10 @@ export default class Frame {
 
   clone() {
     const clone = new Frame();
+    clone.id = this.id;
+    clone.index = this.index;
+    clone.previewImage = this.previewImage;
+    clone.backgroundColor = this.backgroundColor;
     clone.objects = this.objects.map(o => o.clone());
 
     return clone;

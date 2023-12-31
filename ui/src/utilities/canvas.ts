@@ -78,18 +78,20 @@ export const drawFrameToCanvas = (
     });
     const selection = selectedObjects();
     if (selection?.type === SelectionType.ANIMATION_OBJECT) {
-      selection.objects.forEach((o) => {
-        const drawNodes = (node: ObjectNode) => {
-          const { x, y } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
-          ctx.beginPath();
-          ctx.arc(x, y, 2.9, 0, 2 * Math.PI);
-          ctx.fillStyle = node.isRoot
-            ? Color(ROOT_NODE_COLOR).negate().hex()
-            : Color(NODE_COLOR).negate().hex();
-          ctx.fill();
-          node.children.forEach(n => drawNodes(n));
-        }
-        drawNodes(o.root);
+      const drawNodes = (node: ObjectNode) => {
+        const { x, y } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+        ctx.beginPath();
+        ctx.arc(x, y, 2.9, 0, 2 * Math.PI);
+        ctx.fillStyle = node.isRoot
+          ? Color(ROOT_NODE_COLOR).negate().hex()
+          : Color(NODE_COLOR).negate().hex();
+        ctx.fill();
+        node.children.forEach(n => drawNodes(n));
+      }
+
+      selection.objectIds.forEach((id) => {
+        const object = frame.objects.find(o => o.id === id);
+        if (object) drawNodes(object.root);
       });
     }
 
