@@ -6,5 +6,6 @@ $dark: #0A0A0A;
 
 $primary: $violet;
 $danger: $cardinal;
-$primary-hover: lighten($primary, 10%);
 $primary-trans: rgba($primary, 0.25);
+$primary-hover: lighten($primary-trans, 10%);
+$primary-active: rgba($primary, 0.5);

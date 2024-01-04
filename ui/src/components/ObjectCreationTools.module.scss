@@ -1,0 +1,26 @@
+@import "../variables.module.scss";
+
+.title {
+  margin: 0 0 2rem 0;
+  border-bottom: 1px solid $primary-trans;
+}
+
+.toolsContainer {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.25rem;
+}
+
+.toolButton {
+  border-radius: 3px;
+  background-color: $primary-trans;
+  aspect-ratio: 1;
+
+  &:hover {
+    background-color: $primary-hover;
+  }
+
+  &:active {
+    background-color: $primary-active;
+  }
+}

@@ -2,6 +2,7 @@ import { Match, Switch } from "solid-js";
 import FrameObjectsManager from "./FrameObjectsManager";
 import styles from "./SwivelSidebar.module.scss";
 import { CanvasMode, canvasMode } from "../state/app";
+import ObjectCreationTools from "./ObjectCreationTools";
 
 const SwivelSidebar = () => {
   return (
@@ -11,7 +12,7 @@ const SwivelSidebar = () => {
           <FrameObjectsManager />
         </Match>
         <Match when={canvasMode() === CanvasMode.OBJECT_CREATOR}>
-          <span>creation tools here</span>
+          <ObjectCreationTools />
         </Match>
       </Switch>
     </div>
