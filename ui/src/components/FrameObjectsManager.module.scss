@@ -1,0 +1,20 @@
+@import "../variables.module.scss";
+
+.objectsListContainer {
+  flex: 1;
+  overflow: hidden;
+}
+
+.scroller {
+  overflow: auto;
+}
+
+.newButton {
+  width: 100%;
+  margin-bottom: 0.5rem;
+  background-color: $primary-trans;
+
+  &:active {
+    background-color: rgba($primary, 0.5);
+  }
+}

@@ -1,4 +1,4 @@
-import { isPlaying, setIsPlaying } from "../state/app";
+import { isPlaying, setIsPlaying, setSelectedObjects } from "../state/app";
 import { addProjectFrame } from "../state/project";
 import styles from "./SceneControls.module.scss";
 
@@ -7,6 +7,7 @@ const SceneControls = () => {
     event.stopPropagation();
     event.preventDefault();
     setIsPlaying(!isPlaying());
+    setSelectedObjects(null);
   }
 
   const addFrame = (event: Event) => {

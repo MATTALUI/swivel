@@ -1,24 +1,21 @@
 import { selectedObjects } from "../state/app";
-import { JSX } from "solid-js";
-import { SelectionType } from "../state/app";
+import { Match, Switch } from "solid-js";
 import styles from "./Controls.module.scss";
 import ProjectSettings from "./ProjectSettings";
 import FrameSettings from "./FrameSettings";
 import AnimationObjectSettings from "./AnimationObjectSettings";
 
-const DEFAULT = "DEFAULT";
-type MapKey = SelectionType | "DEFAULT";
-
 const Controls = () => {
-  const selectedControlsMap: Record<MapKey, JSX.Element | null> = {
-    frame: <FrameSettings />,
-    animationObject: <AnimationObjectSettings />,
-    [DEFAULT]: <ProjectSettings />,
-  };
-
   return (
     <div class={styles.container}>
-      {selectedControlsMap[selectedObjects()?.type || DEFAULT]}
+      <Switch fallback={<ProjectSettings />}>
+        <Match when={selectedObjects()?.type === "frame"}>
+          <FrameSettings />
+        </Match>
+        <Match when={selectedObjects()?.type === "animationObject"}>
+          <AnimationObjectSettings />
+        </Match>
+      </Switch>
     </div>
   )
 }
