@@ -86,7 +86,7 @@ const SwivelScene = () => {
     updateProjectFrame(currentFrameIndex());
   }, 500);
 
-  const handleMouseMove = (event: MouseEvent) => {
+  const handleMouseMove = (event: MouseEvent) =>  {
     if (event.target !== canvasRef || !canvasRef) return;
     const currentSelectedNode = selectedNode();
     if (!currentSelectedNode) {

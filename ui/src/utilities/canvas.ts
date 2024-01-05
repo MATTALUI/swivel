@@ -123,7 +123,9 @@ export const drawAnimationObjectToCanvas = (
 ) => {
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Context unavailable");
-  console.log("drawAnimationObjectToCanvas");
+  // Clear it out
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
   const allControlNodes: ObjectNode[] = [];
   const connectNodeToChildren = (node: ObjectNode, controllable = true) => {
     node.children.forEach((child) => {

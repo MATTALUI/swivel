@@ -2,7 +2,9 @@ import { createEffect, onCleanup, onMount } from "solid-js";
 import styles from "./ObjectCreatorCanvas.module.scss";
 import { CreatorToolNames, creationObject, creatorControllableNodes, currentCreatorTool } from "../state/objectCreator";
 import { drawAnimationObjectToCanvas } from "../utilities/canvas";
-import { CursorOption, selectedNode, setCanvasCursor, setTargetNode, targetNode } from "../state/canvas";
+import { CursorOption, selectedNode, setCanvasCursor, setTargetNode, targetNode, MouseDownValues, setSelectedNode, setMouseDownInitialValues, mouseDownInitialValues } from "../state/canvas";
+import { clamp } from "../utils";
+import Vec2 from "../models/Vec2";
 
 const ObjectCreatorCanvas = () => {
   let containerRef: HTMLDivElement | undefined;
@@ -30,12 +32,44 @@ const ObjectCreatorCanvas = () => {
     canvasRef.width = constrainingDimenstion;
   }
 
-  const handleMouseDown = () => {
-    console.log(targetNode());
+  const handleMouseDown = (event: MouseEvent) => {
+    const isGroupTool = currentCreatorTool() === CreatorToolNames.GROUP;
+    if (isGroupTool) {
+      console.log("were doing something else here");
+      return;
+    }
+    const node = targetNode();
+    if (event.target !== canvasRef || !node) return;
+
+    const mouseDownValues: MouseDownValues = {
+      x: event.offsetX,
+      y: event.offsetY,
+      originalParentNode: null,
+      originalNodeRoot: node.objectRootNode.clone(),
+    }
+    if (node.parent)
+      mouseDownValues.originalParentNode = node.parent.clone();
+    if (currentCreatorTool() === CreatorToolNames.SELECT)
+      setCanvasCursor("grabbing");
+    setSelectedNode(node);
+    setMouseDownInitialValues(mouseDownValues);
   }
 
-  const handleMouseUp = () => {
-    console.log("handleMouseUp");
+  const handleMouseUp = (event: MouseEvent) => {
+    if (!selectedNode()) return;
+
+    // For now we can assume that if the user is still on the canvas they're
+    // going to be hovering over the same point that they were initially on.
+    const stillOnTarget = event.target === canvasRef;
+    let cursor: CursorOption = null;
+    if (stillOnTarget && currentCreatorTool() === CreatorToolNames.SELECT)
+      cursor = "grab";
+    if (stillOnTarget && currentCreatorTool() === CreatorToolNames.ADD)
+      cursor = "crosshair";
+    setSelectedNode(null);
+    setMouseDownInitialValues(null);
+    setCanvasCursor(cursor);
+    if (!stillOnTarget) setTargetNode(null);
   }
 
   const handleMouseMove = (event: MouseEvent) => {
@@ -84,6 +118,29 @@ const ObjectCreatorCanvas = () => {
         setTargetNode(null);
         setCanvasCursor(null);
       }
+    } else if (currentCreatorTool() === CreatorToolNames.SELECT) {
+      if (event.target !== canvasRef) return;
+      let { offsetX, offsetY } = event;
+      const { width, height } = canvasRef;
+      // Need to clamp here because fast mouse movement can still result in
+      // out-of-bounds canvas positions
+      const mouseX = clamp(offsetX, 0, width);
+      const mouseY = clamp(offsetY, 0, height);
+      const initialValues = mouseDownInitialValues();
+      if (!initialValues) throw new Error("No initial values for the mouse");
+      const { x: originalX, y: originalY, originalNodeRoot } = initialValues;
+      const deltaX = mouseX - originalX;
+      const deltaY = mouseY - originalY;
+
+      const { x: originalNodeX, y: originalNodeY } = originalNodeRoot.position.getRenderedPosition(width, height);
+      const newX = originalNodeX + deltaX;
+      const newY = originalNodeY + deltaY;
+      currentSelectedNode.setPosition(new Vec2(
+        newX / width,
+        newY / height
+      ));
+
+      redrawCanvas();
     }
   }
 
