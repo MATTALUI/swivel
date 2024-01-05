@@ -211,6 +211,7 @@ const SwivelScene = () => {
       y: event.offsetY,
       originalParentNode: null,
       originalNodeRoot: node.objectRootNode.clone(),
+      originalNode: node.clone(),
     }
     if (node.parent)
       mouseDownValues.originalParentNode = node.parent.clone();

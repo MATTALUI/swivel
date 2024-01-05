@@ -14,6 +14,7 @@ export type MouseDownValues = {
   y: number;
   originalParentNode: ObjectNode | null;
   originalNodeRoot: ObjectNode;
+  originalNode: ObjectNode;
 }
 
 export const [canvasCursor, setCanvasCursor] =
