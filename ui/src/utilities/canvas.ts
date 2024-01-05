@@ -3,6 +3,7 @@ import Frame from "../models/Frame"
 import ObjectNode from "../models/ObjectNode";
 import { SelectionType, isPlaying, selectedObjects } from "../state/app";
 import { projectBackgroundColor, projectFrames, projectHeight, projectWidth } from "../state/project";
+import AnimationObject from "../models/AnimationObject";
 
 const ROOT_NODE_COLOR = "#ff8000";
 const NODE_COLOR = "#bf0404";
@@ -114,4 +115,47 @@ export const getMainCanvas = () => {
   if (!canvas) throw new Error("Can't find the main canvas!");
 
   return canvas;
+}
+
+export const drawAnimationObjectToCanvas = (
+  object: AnimationObject,
+  canvas: HTMLCanvasElement,
+) => {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Context unavailable");
+  console.log("drawAnimationObjectToCanvas");
+  const allControlNodes: ObjectNode[] = [];
+  const connectNodeToChildren = (node: ObjectNode, controllable = true) => {
+    node.children.forEach((child) => {
+      if (child.children.length) connectNodeToChildren(child, controllable);
+      if (controllable) allControlNodes.push(child); // Children nodes
+      const { x: startX, y: startY } = child.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+      const { x: endX, y: endY } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+      const alpha = controllable ? 1 : 0.5;
+
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(0,0,0,${alpha})`;
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
+      ctx.lineWidth = child.size;
+      ctx.lineCap = "round";
+      ctx.stroke();
+
+    });
+  }
+  const { root } = object;
+    connectNodeToChildren(root);
+    // We're adding the roots to this list, but I suspect there might come a
+    // time when we might want these to be separate
+    allControlNodes.push(root); // Root nodes
+  allControlNodes.forEach(({ position, isRoot }) => {
+    if (!ctx) {
+      throw new Error("Context unavailable");
+    }
+    const { x, y } = position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+    ctx.beginPath();
+    ctx.arc(x, y, 6.9, 0, 2 * Math.PI);
+    ctx.fillStyle = isRoot ? ROOT_NODE_COLOR : NODE_COLOR;
+    ctx.fill();
+  });
 }

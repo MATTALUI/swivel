@@ -1,4 +1,4 @@
-import { createEffect, createMemo, onMount } from "solid-js";
+import { createEffect, createMemo, onCleanup, onMount } from "solid-js";
 import { projectAspectRatio, projectFPS, projectFrames, updateProjectFrame } from "../state/project";
 import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
@@ -261,6 +261,11 @@ const SwivelScene = () => {
     if (!canvasRef)
       throw new Error("No canvas available for event listeners");
     canvasRef.addEventListener("contextmenu", (e) => e.preventDefault());
+  });
+  onCleanup(() => {
+    window.removeEventListener("resize", setCanvasSize);
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
   });
 
   return (

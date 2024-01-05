@@ -3,6 +3,8 @@ import styles from "./FrameObjectsManager.module.scss";
 import controlStyles from "./Settings.module.scss";
 import ObjectThumbnail from "./ObjectThumbnail";
 import { CanvasMode, setCanvasMode } from "../state/app";
+import AnimationObject from "../models/AnimationObject";
+import { setCreationObject, setCreatorControllableNodes } from "../state/objectCreator";
 
 const FrameObjectsManager = () => {
   let container: HTMLDivElement | undefined;
@@ -10,6 +12,9 @@ const FrameObjectsManager = () => {
 
   const startCreateCanvas = () => {
     setCanvasMode(CanvasMode.OBJECT_CREATOR);
+    const newObject = new AnimationObject();
+    setCreationObject(newObject);
+    setCreatorControllableNodes([newObject.root]);
   }
 
   const setScrollerHeight = () => {

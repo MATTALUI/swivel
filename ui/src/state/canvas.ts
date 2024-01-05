@@ -6,6 +6,7 @@ import ObjectNode from "../models/ObjectNode";
 export type CursorOption =
   "grab" |
   "grabbing" |
+  "crosshair" |
   null;
 
 export type MouseDownValues = {

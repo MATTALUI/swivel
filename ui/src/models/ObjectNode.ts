@@ -60,6 +60,7 @@ export default class ObjectNode {
 
   clone() {
     const clone = new ObjectNode();
+    clone.id = this.id;
     clone.parent = this.parent;
     clone.size = this.size;
     clone.object = this.object;
