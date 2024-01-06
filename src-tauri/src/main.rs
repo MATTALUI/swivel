@@ -40,7 +40,8 @@ fn main() {
             greet,
             export_project,
             save_project,
-            save_painted_map
+            save_painted_map,
+            save_prefab_object
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -161,6 +162,18 @@ fn save_painted_map(activeIndices: Vec<u16>, width: u16) -> bool {
     }
     let _ = std::fs::create_dir("./saves");
     let _ = std::fs::write("./saves/output.obj", output);
+
+    return true;
+}
+
+#[tauri::command]
+#[allow(non_snake_case)] // Properties come from JS so inevitable for now
+fn save_prefab_object(saveData: &str) -> bool {
+    println!("\n\n\n\nDATA: {:?}\n\n\n\n", saveData);
+    let prefab: PrefabAnimationObject = serde_json::from_str(saveData).unwrap();
+    let _ = std::fs::create_dir("./objects");
+    let file_name = format!("./objects/{}.swob", prefab.id);
+    let _ = std::fs::write(file_name, saveData);
 
     return true;
 }
@@ -301,4 +314,14 @@ struct AnimationProject {
     height: u16,
     fps: u8,
     name: String,
+}
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+#[allow(non_snake_case)] // Properties come from JS so inevitable for now
+struct PrefabAnimationObject {
+    id: String,
+    name: String,
+    previewImage: String,
+    object: AnimationObject,
+    createdAt: String,
 }

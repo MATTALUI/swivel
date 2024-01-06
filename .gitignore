@@ -4,6 +4,7 @@ node_modules
 # will have compiled files and executablessrc-tauri/
 target
 saves
+objects
 tmp
 ui/assets/js/*.js
 

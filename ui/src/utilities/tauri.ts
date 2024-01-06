@@ -1,4 +1,5 @@
 import Tauri from "../Tauri";
+import PrefabAnimationObject from "../models/PrefabAnimationObject";
 import { startFullscreenLoading, stopFullscreenLoading } from "../state/loader";
 import { getCurrentStateProject, resetProject } from "../state/project";
 
@@ -11,6 +12,7 @@ enum TauriClientEvents {
 
 enum TauriServerFunctions {
   SAVE = "save_project",
+  SAVE_PREFAB = "save_prefab_object",
   EXPORT = "export_project",
   SAVEMAPPAINTER = "save_painted_map",
 }
@@ -110,4 +112,17 @@ const mappainterSave = async () => {
 
 const mappainterNew = () => {
   console.log("Create new map painter!");
+}
+
+export const saveSwivelObject = async (prefab: PrefabAnimationObject): Promise<boolean> => {
+  if (!Tauri) {
+    // Add a web service call here
+    return false;
+  }
+  const { invoke } = Tauri.tauri;
+  // await new Promise(res => setTimeout(res, 1000));
+  const saveData = JSON.stringify(prefab.toSerializableObject());
+  await invoke(TauriServerFunctions.SAVE_PREFAB, { saveData });
+
+  return true;
 }

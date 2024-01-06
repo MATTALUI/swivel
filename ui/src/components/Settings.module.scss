@@ -29,10 +29,21 @@
   &>button {
     width: 100%;
 
+    &.primary {
+      background-color: $primary;
+      color: $light;
+      font-weight: bold;
+
+      &:active {
+        background-color: rgba($primary, 0.75);
+      }
+    }
+
     &.danger {
       background-color: $danger;
       color: $light;
       font-weight: bold;
+
       &:active {
         background-color: rgba($danger, 0.75);
       }

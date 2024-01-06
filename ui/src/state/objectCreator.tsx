@@ -12,4 +12,5 @@ export const [creationObject, setCreationObject] =
 export const [creatorControllableNodes, setCreatorControllableNodes] =
   createSignal<ObjectNode[]>([]);
 export const [currentCreatorTool, setCurrentCreatorTool] =
-  createSignal(CreatorToolNames.ADD);
+  createSignal(CreatorToolNames.SELECT);
+export const [newObjectName, setNewObjectName] = createSignal("New Object");
