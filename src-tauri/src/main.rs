@@ -41,7 +41,8 @@ fn main() {
             export_project,
             save_project,
             save_painted_map,
-            save_prefab_object
+            save_prefab_object,
+            load_prefab_objects,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -176,6 +177,20 @@ fn save_prefab_object(saveData: &str) -> bool {
     let _ = std::fs::write(file_name, saveData);
 
     return true;
+}
+
+#[tauri::command]
+fn load_prefab_objects() -> Vec<PrefabAnimationObject> {
+    let _ = std::fs::create_dir("./objects");
+    let mut prefabs: Vec<PrefabAnimationObject> = Vec::new();
+    let paths = std::fs::read_dir("./objects").unwrap();
+    for path in paths {
+        let data = std::fs::read_to_string(path.unwrap().path()).unwrap();
+        let prefab:PrefabAnimationObject = serde_json::from_str(&data).unwrap();
+        prefabs.push(prefab);
+    }
+
+    return prefabs;
 }
 
 fn manage_menu_event(event: tauri::WindowMenuEvent) {

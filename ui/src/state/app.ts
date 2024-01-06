@@ -1,5 +1,6 @@
-import { createSignal } from "solid-js";
+import { createResource, createSignal } from "solid-js";
 import { projectFrames } from "./project";
+import { loadSwivelObjects } from "../utilities/tauri";
 
 export enum CanvasMode {
   ANIMATOR = "ANIMATOR",
@@ -23,3 +24,4 @@ export const deselectObjects = (e?: Event) => {
   e?.preventDefault();
   setSelectedObjects(null);
 }
+export const [savedObjects, { refetch: refetchSavedObjects }] = createResource(loadSwivelObjects);

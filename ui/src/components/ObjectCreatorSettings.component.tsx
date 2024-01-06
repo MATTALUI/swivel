@@ -2,7 +2,7 @@ import { JSX } from "solid-js";
 import controlStyles from "./Settings.module.scss";
 import { creationObject, newObjectName, setCreationObject, setNewObjectName } from "../state/objectCreator";
 import { saveSwivelObject } from "../utilities/tauri";
-import { CanvasMode, setCanvasMode } from "../state/app";
+import { CanvasMode, refetchSavedObjects, setCanvasMode } from "../state/app";
 import PrefabAnimationObject from "../models/PrefabAnimationObject";
 
 type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
@@ -19,6 +19,7 @@ const ObjectCreatorSettings = () => {
     prefab.name = newObjectName();
     prefab.previewImage = document.querySelector("canvas")?.toDataURL() || "";
     await saveSwivelObject(prefab);
+    await refetchSavedObjects();
     setCreationObject(null);
     setCanvasMode(CanvasMode.ANIMATOR);
   }

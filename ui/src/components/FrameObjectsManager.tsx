@@ -2,7 +2,7 @@ import { For, onMount } from "solid-js";
 import styles from "./FrameObjectsManager.module.scss";
 import controlStyles from "./Settings.module.scss";
 import ObjectThumbnail from "./ObjectThumbnail";
-import { CanvasMode, setCanvasMode } from "../state/app";
+import { CanvasMode, savedObjects, setCanvasMode } from "../state/app";
 import AnimationObject from "../models/AnimationObject";
 import { setCreationObject, setCreatorControllableNodes } from "../state/objectCreator";
 
@@ -39,8 +39,8 @@ const FrameObjectsManager = () => {
       </div>
       <div ref={container} class={styles.objectsListContainer}>
         <div ref={scroller} class={styles.scroller}>
-          <For each={new Array(30)}>
-            {() => (<ObjectThumbnail />)}
+          <For each={savedObjects()}>
+            {(prefab) => (<ObjectThumbnail prefab={prefab}/>)}
           </For>
         </div>
       </div>

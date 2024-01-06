@@ -1,6 +1,11 @@
+import PrefabAnimationObject from "../models/PrefabAnimationObject";
 import styles from "./ObjectThumbnail.module.scss";
 
-const ObjectThumbnail = () => {
+interface IObjectThumbnailProps {
+  prefab: PrefabAnimationObject;
+}
+
+const ObjectThumbnail = (props: IObjectThumbnailProps) => {
   const addObjectToFrame = () => {
     console.log("addObjectToFrame");
   }
@@ -10,7 +15,8 @@ const ObjectThumbnail = () => {
       onClick={addObjectToFrame}
       class={styles.thumbnail}
     >
-      <img src="https://picsum.photos/200/200" />
+      <img src={props.prefab.previewImage || "/original.png"} />
+      <span class={styles.name}>{props.prefab.name}</span>
     </div>
   );
 }

@@ -13,6 +13,7 @@ enum TauriClientEvents {
 enum TauriServerFunctions {
   SAVE = "save_project",
   SAVE_PREFAB = "save_prefab_object",
+  LOAD_PREFABS = "load_prefab_objects",
   EXPORT = "export_project",
   SAVEMAPPAINTER = "save_painted_map",
 }
@@ -125,4 +126,15 @@ export const saveSwivelObject = async (prefab: PrefabAnimationObject): Promise<b
   await invoke(TauriServerFunctions.SAVE_PREFAB, { saveData });
 
   return true;
+}
+
+export const loadSwivelObjects = async (): Promise<PrefabAnimationObject[]> => {
+  if (!Tauri) {
+    // Add a web service call here
+    return [];
+  }
+  const { invoke } = Tauri.tauri;
+  const prefabs = await invoke<PrefabAnimationObject[]>(TauriServerFunctions.LOAD_PREFABS);
+
+  return prefabs;
 }

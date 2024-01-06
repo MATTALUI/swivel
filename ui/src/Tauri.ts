@@ -2,10 +2,10 @@
 // predefined somewhere, but for now we'll just stub out the parts that we use.
 interface ITauri {
   event: {
-    listen: (event: string, fn:Function) => void;
+    listen: (event: string, fn: Function) => void;
   },
   tauri: {
-    invoke: <T=any>(eventName:string, data:T) => void;
+    invoke: <T = void, D = any>(eventName: string, data?: D) => Promise<T>;
   },
 };
 
