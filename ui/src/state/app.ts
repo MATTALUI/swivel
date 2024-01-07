@@ -14,7 +14,7 @@ type Selectable =
   { type: SelectionType.FRAME, objectIds: string[] } |
   { type: SelectionType.ANIMATION_OBJECT, objectIds: string[] };
 
-export const [currentFrameIndex, setCurrentFrameIndex] = createSignal(0);
+export const [currentFrameIndex, setCurrentFrameIndex] = createSignal(0, { equals: false });
 export const [isPlaying, setIsPlaying] = createSignal(false);
 export const [lastFrameTime, setLastFrameTime] = createSignal<Date | null>(null);
 export const [selectedObjects, setSelectedObjects] = createSignal<Selectable | null>(null);

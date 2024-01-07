@@ -12,14 +12,14 @@ export default class PrefabAnimationObject {
   id: string;
   name: string;
   previewImage: string;
-  object: AnimationObject;
+  private object: SerializableAnimationObject;
   createdAt: Date;
 
   constructor(object: AnimationObject) {
     this.id = crypto.randomUUID();
     this.name = "Unnamed Object";
     this.previewImage = "";
-    this.object = object;
+    this.object = object.toSerializableObject();
     this.createdAt = new Date();
   }
 
@@ -28,7 +28,7 @@ export default class PrefabAnimationObject {
       id: this.id,
       name: this.name,
       previewImage: this.previewImage,
-      object: this.object.toSerializableObject(),
+      object: this.object,
       createdAt: this.createdAt.toString(),
     }
   }

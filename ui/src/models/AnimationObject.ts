@@ -12,7 +12,12 @@ export default class AnimationObject {
 
   constructor() {
     this.id = crypto.randomUUID();
-    this.root = new ObjectNode();
+    this. root = new ObjectNode()
+    this.setRoot(this.root);
+  }
+
+  setRoot(node: ObjectNode) {
+    this.root = node;
     this.root.object = this;
   }
 
