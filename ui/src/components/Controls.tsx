@@ -7,6 +7,7 @@ import AnimationObjectSettings from "./AnimationObjectSettings";
 import ObjectCreatorSettings from "./ObjectCreatorSettings.component";
 
 const Controls = () => {
+  const poo = null
   return (
     <div class={styles.container}>
       <Switch>
