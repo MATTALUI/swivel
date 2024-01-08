@@ -8,7 +8,6 @@ import MapPainter from "./components/MapPainter";
 export const App = () => {
   // For now, we're just stubbing out some loading that take time at startup
   onMount(() => stopFullscreenLoading({ delayMs: 1000 }));
-  let cats = true
   return (
     <>
       <FullscreenLoader />
