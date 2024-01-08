@@ -30,7 +30,7 @@ const ObjectCreationTools = () => {
         </For>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default ObjectCreationTools;

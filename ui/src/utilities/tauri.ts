@@ -126,7 +126,7 @@ export const saveSwivelObject = async (prefab: PrefabAnimationObject): Promise<b
   await invoke(TauriServerFunctions.SAVE_PREFAB, { saveData });
 
   return true;
-}
+};
 
 export const loadSwivelObjects = async (): Promise<SerializablePrefabAnimationObject[]> => {
   if (!Tauri) {
@@ -137,4 +137,4 @@ export const loadSwivelObjects = async (): Promise<SerializablePrefabAnimationOb
   const prefabs = await invoke<SerializablePrefabAnimationObject[]>(TauriServerFunctions.LOAD_PREFABS);
 
   return prefabs;
-}
+};

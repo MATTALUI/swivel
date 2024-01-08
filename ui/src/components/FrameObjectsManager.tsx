@@ -15,14 +15,14 @@ const FrameObjectsManager = () => {
     const newObject = new AnimationObject();
     setCreationObject(newObject);
     setCreatorControllableNodes([newObject.root]);
-  }
+  };
 
   const setScrollerHeight = () => {
     if (!container || !scroller) return;
-    scroller.style.height = '0px';
+    scroller.style.height = "0px";
     const height = container.getBoundingClientRect().height;
     scroller.style.height = `${height}px`;
-  }
+  };
   onMount(setScrollerHeight);
   window.addEventListener("resize", setScrollerHeight);
 
@@ -46,6 +46,6 @@ const FrameObjectsManager = () => {
       </div>
     </>
   );
-}
+};
 
 export default FrameObjectsManager;

@@ -17,6 +17,6 @@ const SwivelSidebar = () => {
       </Switch>
     </div>
   );
-}
+};
 
 export default SwivelSidebar;

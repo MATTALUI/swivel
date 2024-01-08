@@ -30,6 +30,6 @@ export default class PrefabAnimationObject {
       previewImage: this.previewImage,
       object: this.object,
       createdAt: this.createdAt.toString(),
-    }
+    };
   }
 }

@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from "solid-js";
 import styles from "./Settings.module.scss";
 import {
   projectBackgroundColor,
@@ -12,33 +12,33 @@ import {
   setProjectName,
   setProjectWidth,
   updateFramePreviews,
-} from '../state/project';
+} from "../state/project";
 
 type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
 
 const ProjectSettings = () => {
   const updateProjectName: InputHandler = (event) => {
     setProjectName(event.target.value);
-  }
+  };
 
   const updateProjectWidth: InputHandler = (event) => {
     setProjectWidth(+event.target.value);
     updateFramePreviews();
-  }
+  };
 
   const updateProjectHeight: InputHandler = (event) => {
     setProjectHeight(+event.target.value);
     updateFramePreviews();
-  }
+  };
 
   const updateProjectBackgroundColor: InputHandler = (event) => {
     setProjectBackgroundColor(event.target.value);
     updateFramePreviews();
-  }
+  };
 
   const updateProjectFPS:InputHandler = (event) => {
     setProjectFPS(+event.target.value);
-  }
+  };
 
   return (
     <>
@@ -93,6 +93,6 @@ const ProjectSettings = () => {
       </div>
     </>
   );
-}
+};
 
 export default ProjectSettings;

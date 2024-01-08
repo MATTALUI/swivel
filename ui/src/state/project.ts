@@ -28,7 +28,7 @@ export const addProjectFrame = () => {
   newFrame.index = existingFrames.length;
   setProjectFrames([...existingFrames, newFrame]);
   setCurrentFrameIndex(projectFrames().length - 1);
-}
+};
 export const updateProjectFrame = (index: number, updates: Partial<Frame> = {}) => {
   const frame = projectFrames()[index];
   Object.assign(frame, updates);
@@ -37,7 +37,7 @@ export const updateProjectFrame = (index: number, updates: Partial<Frame> = {}) 
   frame.previewImage = previewImage;
   const imgEle = document.querySelector<HTMLImageElement>(`[data-frame-preview="${index}"]`);
   if (imgEle) imgEle.src = previewImage;
-}
+};
 export const updateFramePreviews = async () => {
   const existingFrames = projectFrames();
   const newFrames = await Promise.all([...existingFrames].map(async (frame) => {
@@ -46,7 +46,7 @@ export const updateFramePreviews = async () => {
     return frame;
   }));
   setProjectFrames(newFrames);
-}
+};
 export const getCurrentStateProject = () => {
   const project = new SwivelProject();
 
@@ -59,7 +59,7 @@ export const getCurrentStateProject = () => {
   project.backgroundColor = projectBackgroundColor();
 
   return project;
-}
+};
 export const resetProject = () => {
   const project = new SwivelProject();
   // Reset App State
@@ -74,4 +74,4 @@ export const resetProject = () => {
   setProjectFrames(project.frames);
   setProjectFPS(project.fps);
   setProjectBackgroundColor(project.backgroundColor);
-}
+};

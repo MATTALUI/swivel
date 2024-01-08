@@ -18,7 +18,7 @@ const SwivelScene = () => {
   const tryDeselect = () => {
     if (!skipDeselect) deselectObjects();
     skipDeselect = false;
-  }
+  };
 
   const controllableNodes = createMemo(() => {
     const frame = currentFrame();
@@ -26,7 +26,7 @@ const SwivelScene = () => {
     const addNodeControls = (node: ObjectNode) => {
       nodes.push(node);
       node.children.forEach(n => addNodeControls(n));
-    }
+    };
 
     frame.objects.forEach((ao) => {
       addNodeControls(ao.root);
@@ -38,7 +38,7 @@ const SwivelScene = () => {
   const repaintCanvas = () => {
     if (!canvasRef) return;
     drawFrameToCanvas(canvasRef, currentFrame(), {});
-  }
+  };
 
   const setCanvasSize = () => {
     if (!canvasContainerRef || !canvasRef) return;
@@ -62,7 +62,7 @@ const SwivelScene = () => {
     canvasRef.width = width;
     canvasRef.height = height;
     repaintCanvas();
-  }
+  };
 
   const playAnimationFrame = () => {
     if (!isPlaying()) return;
@@ -80,7 +80,7 @@ const SwivelScene = () => {
 
     setLastFrameTime(currentTime);
     setCurrentFrameIndex(nextIndex);
-  }
+  };
 
   const updateCurrentFramePreview = debounce(() => {
     updateProjectFrame(currentFrameIndex());
@@ -140,7 +140,7 @@ const SwivelScene = () => {
           newX / width,
           newY / height
         ));
-      }
+      };
       moveWithChildren(currentSelectedNode, originalNodeRoot);
       repaintCanvas();
       updateCurrentFramePreview();
@@ -173,7 +173,7 @@ const SwivelScene = () => {
           newX / width,
           newY / height
         ));
-      }
+      };
       const { offsetX, offsetY } = event;
       const originalNode = currentSelectedNode?.clone();
       if (!originalNode) throw new Error("No original node");
@@ -196,7 +196,7 @@ const SwivelScene = () => {
       repaintCanvas();
       updateCurrentFramePreview();
     }
-  }
+  };
 
   const handleMouseDown = (event: MouseEvent) => {
     const node = targetNode();
@@ -212,7 +212,7 @@ const SwivelScene = () => {
       originalParentNode: null,
       originalNodeRoot: node.objectRootNode.clone(),
       originalNode: node.clone(),
-    }
+    };
     if (node.parent)
       mouseDownValues.originalParentNode = node.parent.clone();
     setCanvasCursor("grabbing");
@@ -223,7 +223,7 @@ const SwivelScene = () => {
       let selectedIds: string[] =
         selection?.type === SelectionType.ANIMATION_OBJECT && event.shiftKey
           ? [...selection.objectIds]
-          : []
+          : [];
       if (selectedIds.includes(clickedObject.id)) {
         selectedIds = selectedIds.filter(id => id !== clickedObject.id);
       } else {
@@ -235,7 +235,7 @@ const SwivelScene = () => {
         objectIds: selectedIds,
       });
     }
-  }
+  };
 
   const handleMouseUp = (event: MouseEvent) => {
     if (
@@ -250,11 +250,11 @@ const SwivelScene = () => {
     setMouseDownInitialValues(null);
     setCanvasCursor(cursor);
     if (!stillOnTarget) setTargetNode(null);
-  }
+  };
 
   createEffect(setCanvasSize);
   createEffect(repaintCanvas);
-  createEffect(playAnimationFrame)
+  createEffect(playAnimationFrame);
   window.addEventListener("resize", setCanvasSize);
   document.addEventListener("mousemove", handleMouseMove);
   document.addEventListener("mouseup", handleMouseUp);
@@ -288,7 +288,7 @@ const SwivelScene = () => {
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default SwivelScene;

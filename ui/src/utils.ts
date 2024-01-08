@@ -5,7 +5,7 @@ export const debounce = (func: (...args: any[]) => void, timeout = 300) => {
     clearTimeout(timer);
     timer = setTimeout(() => { func.apply(this, args); }, timeout);
   };
-}
+};
 
 export const clamp = (val: number, min: number, max: number) =>
   Math.min(Math.max(val, min), max);
@@ -24,7 +24,7 @@ export const getPositionDistance = (
   const deltaY = Math.abs(y2 - y1);
 
   return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-}
+};
 
 export const getAngleOfChange = (
   x1: number,
@@ -62,7 +62,7 @@ export const getAngleOfChange = (
   }
 
   return angle + quadrantOffset;
-}
+};
 
 type AdjacentIndexMap = {
   top: number | null;
@@ -88,4 +88,4 @@ export const calculateAdjacentIndices = (
   if (index < (width * height - 1) - width) map.bottom = index + width;
 
   return map;
-}
+};

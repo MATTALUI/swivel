@@ -12,7 +12,7 @@ export default class AnimationObject {
 
   constructor() {
     this.id = crypto.randomUUID();
-    this. root = new ObjectNode()
+    this. root = new ObjectNode();
     this.setRoot(this.root);
   }
 
@@ -25,7 +25,7 @@ export default class AnimationObject {
     return {
       id: this.id,
       root: this.root.toSerializableObject(),
-    }
+    };
   }
 
   clone() {

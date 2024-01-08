@@ -10,7 +10,7 @@ type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
 const ObjectCreatorSettings = () => {
   const updateNewObjectName:InputHandler = (event) => {
     setNewObjectName(event.target.value);
-  }
+  };
 
   const saveObject = async () => {
     const object = creationObject();
@@ -22,7 +22,7 @@ const ObjectCreatorSettings = () => {
     await refetchSavedObjects();
     setCreationObject(null);
     setCanvasMode(CanvasMode.ANIMATOR);
-  }
+  };
 
   return (
     <>
@@ -45,6 +45,6 @@ const ObjectCreatorSettings = () => {
       </div>
     </>
   );
-}
+};
 
 export default ObjectCreatorSettings;

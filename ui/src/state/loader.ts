@@ -39,7 +39,7 @@ export const startFullscreenLoading = async (
   await new Promise(res => setTimeout(res, 0));
   _setIsFullscreenLoadingOpaque(true);
   await new Promise(res => setTimeout(res, ANIMATION_LENGTH));
-}
+};
 
 export const stopFullscreenLoading = async (
   options: IFullscreenLoadingOptions = {}
@@ -54,4 +54,4 @@ export const stopFullscreenLoading = async (
   _setIsFullscreenLoadingOpaque(false);
   await new Promise(res => setTimeout(res, ANIMATION_LENGTH));
   _setIsFullscreenLoading(false);
-}
+};

@@ -114,7 +114,7 @@ const buildDefaultObjects = (): AnimationObject[] => {
 
 
   return [dino, box];
-}
+};
 
 type SerializableFrame = {
   id: string;

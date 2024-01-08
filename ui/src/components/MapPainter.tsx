@@ -36,24 +36,24 @@ const MapPainter = () => {
           flood(ni);
         });
       }
-    }
+    };
     const i = (e.target as HTMLDivElement)?.getAttribute("data-index");
     if (i !== null) flood(+i);
-  }
+  };
 
   const handlerMap = {
     paint: applyPaint,
     flood: applyFlood,
-  }
+  };
 
   document.addEventListener("mousedown", (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (mode !== "paint") return;
     painting = true;
   });
 
   document.addEventListener("mouseup", (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (mode !== "paint") return;
     painting = false;
   });
@@ -107,6 +107,6 @@ const MapPainter = () => {
       </div>
     </div>
   );
-}
+};
 
 export default MapPainter;
