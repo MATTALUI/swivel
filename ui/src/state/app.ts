@@ -23,5 +23,5 @@ export const currentFrame = () => projectFrames()[currentFrameIndex()];
 export const deselectObjects = (e?: Event) => {
   e?.preventDefault();
   setSelectedObjects(null);
-}
+};
 export const [savedObjects, { refetch: refetchSavedObjects }] = createResource(loadSwivelObjects);

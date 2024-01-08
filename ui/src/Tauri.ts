@@ -2,12 +2,13 @@
 // predefined somewhere, but for now we'll just stub out the parts that we use.
 interface ITauri {
   event: {
+    // eslint-disable-next-line  @typescript-eslint/ban-types
     listen: (event: string, fn: Function) => void;
   },
   tauri: {
     invoke: <T = void, D = any>(eventName: string, data?: D) => Promise<T>;
   },
-};
+}
 
 declare global {
   interface Window {

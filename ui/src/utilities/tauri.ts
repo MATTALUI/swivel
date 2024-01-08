@@ -40,7 +40,7 @@ export const mountMappainterTauriListeners = () => {
   listen(TauriClientEvents.SWITCH_TOOLS, switchTools);
   listen(TauriClientEvents.SAVE, mappainterSave);
   listen(TauriClientEvents.NEW, mappainterNew);
-}
+};
 
 type TauriPayload = {
   payload: {
@@ -51,7 +51,7 @@ type TauriPayload = {
 const switchTools = (e: TauriPayload) => {
   const { name } = e.payload;
   window.location.href = name === "index" ? "/" : `/${name}`;
-}
+};
 
 const swivelSave = async () => {
   if (!Tauri) {
@@ -65,7 +65,7 @@ const swivelSave = async () => {
   const { invoke } = Tauri.tauri;
   await invoke(TauriServerFunctions.SAVE, { projectData });
   stopFullscreenLoading();
-}
+};
 
 const swivelExport = async () => {
   if (!Tauri) {
@@ -79,7 +79,7 @@ const swivelExport = async () => {
   const { invoke } = Tauri.tauri;
   await invoke(TauriServerFunctions.EXPORT, { projectData });
   stopFullscreenLoading();
-}
+};
 
 const swivelNew = async () => {
   if (!Tauri) {
@@ -90,7 +90,7 @@ const swivelNew = async () => {
   await new Promise(res => setTimeout(res, 1000));
   resetProject();
   stopFullscreenLoading();
-}
+};
 
 const mappainterSave = async () => {
   if (!Tauri) {
@@ -109,11 +109,11 @@ const mappainterSave = async () => {
     width,
     height,
   });
-}
+};
 
 const mappainterNew = () => {
   console.log("Create new map painter!");
-}
+};
 
 export const saveSwivelObject = async (prefab: PrefabAnimationObject): Promise<boolean> => {
   if (!Tauri) {
@@ -126,7 +126,7 @@ export const saveSwivelObject = async (prefab: PrefabAnimationObject): Promise<b
   await invoke(TauriServerFunctions.SAVE_PREFAB, { saveData });
 
   return true;
-}
+};
 
 export const loadSwivelObjects = async (): Promise<SerializablePrefabAnimationObject[]> => {
   if (!Tauri) {
@@ -137,4 +137,4 @@ export const loadSwivelObjects = async (): Promise<SerializablePrefabAnimationOb
   const prefabs = await invoke<SerializablePrefabAnimationObject[]>(TauriServerFunctions.LOAD_PREFABS);
 
   return prefabs;
-}
+};

@@ -15,7 +15,7 @@ const FileHeader = () => {
         Tools
       </a>
     </header>
-  )
-}
+  );
+};
 
 export default FileHeader;

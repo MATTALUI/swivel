@@ -17,7 +17,7 @@ export const App = () => {
         <Route path="/mappainter" component={MapPainter} />
       </Router>
     </>
-  )
-}
+  );
+};
 
 export default App;

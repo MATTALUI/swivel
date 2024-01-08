@@ -14,7 +14,7 @@ const AnimationObjectSettings = () => {
     updateProjectFrame(currentFrameIndex());
     drawFrameToCanvas(getMainCanvas(), currentFrame(), {});
     setSelectedObjects(null); // You've just deleted everything selected
-  }
+  };
 
   return (
     <>
@@ -29,6 +29,6 @@ const AnimationObjectSettings = () => {
       </div>
     </>
   );
-}
+};
 
 export default AnimationObjectSettings;

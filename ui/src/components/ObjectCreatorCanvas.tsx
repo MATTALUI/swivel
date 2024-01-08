@@ -13,10 +13,10 @@ const ObjectCreatorCanvas = () => {
   let newNode: ObjectNode | null = null;
 
   const redrawCanvas = () => {
-    const obj = creationObject()
+    const obj = creationObject();
     if (!canvasRef || !obj) return;
     drawAnimationObjectToCanvas(obj, canvasRef);
-  }
+  };
 
   const resizeCanvas = () => {
     if (!canvasRef || !containerRef) return;
@@ -33,7 +33,7 @@ const ObjectCreatorCanvas = () => {
     canvasRef.height = constrainingDimenstion;
     canvasRef.width = constrainingDimenstion;
     redrawCanvas();
-  }
+  };
 
   const handleMouseDown = (event: MouseEvent) => {
     const isGroupTool = currentCreatorTool() === CreatorToolNames.GROUP;
@@ -62,12 +62,12 @@ const ObjectCreatorCanvas = () => {
       originalParentNode: null,
       originalNodeRoot: node.objectRootNode.clone(),
       originalNode: node.clone(),
-    }
+    };
     if (currentCreatorTool() === CreatorToolNames.SELECT)
       setCanvasCursor("grabbing");
     setSelectedNode(node);
     setMouseDownInitialValues(mouseDownValues);
-  }
+  };
 
   const handleMouseUp = (event: MouseEvent) => {
     if (!selectedNode()) return;
@@ -84,7 +84,7 @@ const ObjectCreatorCanvas = () => {
     setMouseDownInitialValues(null);
     setCanvasCursor(cursor);
     if (!stillOnTarget) setTargetNode(null);
-  }
+  };
 
   const handleMouseMove = (event: MouseEvent) => {
     if (!canvasRef) return;
@@ -124,7 +124,7 @@ const ObjectCreatorCanvas = () => {
           [CreatorToolNames.SELECT]: "grab",
           [CreatorToolNames.ADD]: "crosshair",
           [CreatorToolNames.GROUP]: "crosshair",
-        }
+        };
         const cursor = cursorMap[currentCreatorTool()];
         setTargetNode(nextTargetNode);
         setCanvasCursor(cursor);
@@ -134,7 +134,7 @@ const ObjectCreatorCanvas = () => {
       }
     } else if (currentCreatorTool() === CreatorToolNames.SELECT) {
       if (event.target !== canvasRef) return;
-      let { offsetX, offsetY } = event;
+      const { offsetX, offsetY } = event;
       const { width, height } = canvasRef;
       // Need to clamp here because fast mouse movement can still result in
       // out-of-bounds canvas positions
@@ -167,7 +167,7 @@ const ObjectCreatorCanvas = () => {
 
       redrawCanvas();
     }
-  }
+  };
 
   createEffect(redrawCanvas);
   onMount(redrawCanvas);
@@ -199,6 +199,6 @@ const ObjectCreatorCanvas = () => {
       </canvas>
     </div>
   );
-}
+};
 
 export default ObjectCreatorCanvas;

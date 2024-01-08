@@ -24,7 +24,7 @@ const Controls = () => {
         </Match>
       </Switch>
     </div>
-  )
-}
+  );
+};
 
 export default Controls;

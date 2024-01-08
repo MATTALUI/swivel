@@ -18,11 +18,11 @@ const FramePreview = (props: IFramePreviewProps) => {
       type: SelectionType.FRAME,
       objectIds: [props.frame.id],
     });
-  }
+  };
 
   if (!props.frame.previewImage && props.frame.index !== null) {
     const previewImage = getFramePreviewUrl(props.frame);
-    updateProjectFrame(props.frame.index, { previewImage })
+    updateProjectFrame(props.frame.index, { previewImage });
   }
 
   return (
@@ -45,6 +45,6 @@ const FramePreview = (props: IFramePreviewProps) => {
       />
     </div>
   );
-}
+};
 
 export default FramePreview;

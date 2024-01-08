@@ -29,7 +29,7 @@ const ObjectThumbnail = (props: IObjectThumbnailProps) => {
       if (parent) parent.appendChild(node);
       if (!parent) newRoot = node;
       serialNode.children.forEach(sn => hydrateNode(node, sn));
-    }
+    };
     hydrateNode(null, props.prefab.object.root);
     if (!newRoot) throw new Error("The root is missing.");
     hydratedObject.setRoot(newRoot);
@@ -70,7 +70,7 @@ const ObjectThumbnail = (props: IObjectThumbnailProps) => {
     // Update scene and retrigger rerender
     currentFrame().objects.push(hydratedObject);
     setCurrentFrameIndex(i => i);
-  }
+  };
 
   return (
     <div
@@ -81,6 +81,6 @@ const ObjectThumbnail = (props: IObjectThumbnailProps) => {
       <span class={styles.name}>{props.prefab.name}</span>
     </div>
   );
-}
+};
 
 export default ObjectThumbnail;

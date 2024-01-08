@@ -44,6 +44,6 @@ const SwivelAnimator = () => {
       </div>
     </div>
   );
-}
+};
 
 export default SwivelAnimator;

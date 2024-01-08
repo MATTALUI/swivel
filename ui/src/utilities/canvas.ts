@@ -1,5 +1,5 @@
 import Color from "color";
-import Frame from "../models/Frame"
+import Frame from "../models/Frame";
 import ObjectNode from "../models/ObjectNode";
 import { SelectionType, isPlaying, selectedObjects } from "../state/app";
 import { projectBackgroundColor, projectFrames, projectHeight, projectWidth } from "../state/project";
@@ -15,7 +15,7 @@ export const drawFrameToCanvas = (
   frame: Frame,
   options: IDrawFrameToCanvasOptions = {},
 ) => {
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
   if (!ctx) {
     throw new Error("Context unavailable");
   }
@@ -48,7 +48,7 @@ export const drawFrameToCanvas = (
       ctx.stroke();
 
     });
-  }
+  };
   // Draw the onion skins
   if (shouldDrawHelpers && frame.index) {
     const allFrames = projectFrames();
@@ -88,7 +88,7 @@ export const drawFrameToCanvas = (
           : Color(NODE_COLOR).negate().hex();
         ctx.fill();
         node.children.forEach(n => drawNodes(n));
-      }
+      };
 
       selection.objectIds.forEach((id) => {
         const object = frame.objects.find(o => o.id === id);
@@ -97,10 +97,10 @@ export const drawFrameToCanvas = (
     }
 
   }
-}
+};
 
 export const getFramePreviewUrl = (frame: Frame) => {
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.width = projectWidth();
   canvas.height = projectHeight();
   drawFrameToCanvas(canvas, frame, {
@@ -108,14 +108,14 @@ export const getFramePreviewUrl = (frame: Frame) => {
   });
 
   return canvas.toDataURL();
-}
+};
 
 export const getMainCanvas = () => {
-  const canvas = document.querySelector<HTMLCanvasElement>('#canvas');
+  const canvas = document.querySelector<HTMLCanvasElement>("#canvas");
   if (!canvas) throw new Error("Can't find the main canvas!");
 
   return canvas;
-}
+};
 
 export const drawAnimationObjectToCanvas = (
   object: AnimationObject,
@@ -144,12 +144,12 @@ export const drawAnimationObjectToCanvas = (
       ctx.stroke();
 
     });
-  }
+  };
   const { root } = object;
-    connectNodeToChildren(root);
-    // We're adding the roots to this list, but I suspect there might come a
-    // time when we might want these to be separate
-    allControlNodes.push(root); // Root nodes
+  connectNodeToChildren(root);
+  // We're adding the roots to this list, but I suspect there might come a
+  // time when we might want these to be separate
+  allControlNodes.push(root); // Root nodes
   allControlNodes.forEach(({ position, isRoot }) => {
     if (!ctx) {
       throw new Error("Context unavailable");
@@ -160,4 +160,4 @@ export const drawAnimationObjectToCanvas = (
     ctx.fillStyle = isRoot ? ROOT_NODE_COLOR : NODE_COLOR;
     ctx.fill();
   });
-}
+};

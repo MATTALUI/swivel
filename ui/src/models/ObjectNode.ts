@@ -31,7 +31,7 @@ export default class ObjectNode {
   }
 
   get objectRootNode() {
-    // if (this.object) return this.object.root;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let root: ObjectNode = this;
     while (root.parent) {
       root = root.parent;
@@ -55,7 +55,7 @@ export default class ObjectNode {
       position: this.position.toSerializableObject(),
       size: this.size,
       children: this.children.map(c => c.toSerializableObject()),
-    }
+    };
   }
 
   clone() {
@@ -67,6 +67,6 @@ export default class ObjectNode {
     clone.setPosition(this.position.clone());
     this.children.forEach(c => clone.appendChild(c.clone()));
 
-    return clone
+    return clone;
   }
 }

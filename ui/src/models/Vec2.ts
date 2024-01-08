@@ -29,7 +29,7 @@ export default class Vec2 {
     return {
       x: this.x,
       y: this.y,
-    }
+    };
   }
 
   clone() {

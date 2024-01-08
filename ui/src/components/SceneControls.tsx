@@ -8,15 +8,15 @@ const SceneControls = () => {
     event.preventDefault();
     setIsPlaying(!isPlaying());
     setSelectedObjects(null);
-  }
+  };
 
   const addFrame = (event: Event) => {
     event.stopPropagation();
     event.preventDefault();
     addProjectFrame();
     const previewFrames = document.querySelectorAll(".preview-frame");
-    previewFrames[previewFrames.length - 1].scrollIntoView({ behavior: 'smooth' });
-  }
+    previewFrames[previewFrames.length - 1].scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <div class={styles.container}>
@@ -27,7 +27,7 @@ const SceneControls = () => {
         <button onClick={addFrame}>Add Frame</button>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default SceneControls;
