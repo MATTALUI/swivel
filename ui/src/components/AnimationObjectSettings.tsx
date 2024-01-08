@@ -1,5 +1,5 @@
+import globalState from "../state";
 import { SelectionType, currentFrame, currentFrameIndex, selectedObjects, setSelectedObjects } from "../state/app";
-import { updateProjectFrame } from "../state/project";
 import { drawFrameToCanvas, getMainCanvas } from "../utilities/canvas";
 import styles from "./Settings.module.scss";
 
@@ -11,7 +11,7 @@ const AnimationObjectSettings = () => {
     const { objectIds } = selection;
     const cf = currentFrame();
     cf.objects = cf.objects.filter(o => !objectIds.includes(o.id));
-    updateProjectFrame(currentFrameIndex());
+    globalState.project.updateFrame(currentFrameIndex());
     drawFrameToCanvas(getMainCanvas(), currentFrame(), {});
     setSelectedObjects(null); // You've just deleted everything selected
   };

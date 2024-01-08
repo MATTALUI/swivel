@@ -1,5 +1,4 @@
 import { createEffect, createMemo, onCleanup, onMount } from "solid-js";
-import { projectAspectRatio, projectFPS, projectFrames, updateProjectFrame } from "../state/project";
 import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
@@ -9,6 +8,7 @@ import ObjectNode from "../models/ObjectNode";
 import { MouseDownValues, mouseDownInitialValues, selectedNode, setCanvasCursor, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
 import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utils";
 import Vec2 from "../models/Vec2";
+import globalState from "../state";
 
 const SwivelScene = () => {
   let canvasContainerRef: HTMLDivElement | undefined;
@@ -52,12 +52,12 @@ const SwivelScene = () => {
 
     let width = 10;
     let height = 10;
-    if (projectAspectRatio() > 1) {
+    if (globalState.project.aspectRatio > 1) {
       width = maxContainerWidth;
-      height = maxContainerWidth / projectAspectRatio();
+      height = maxContainerWidth / globalState.project.aspectRatio;
     } else {
       height = maxContainerHeight;
-      width = maxContainerHeight * projectAspectRatio();
+      width = maxContainerHeight * globalState.project.aspectRatio;
     }
     canvasRef.width = width;
     canvasRef.height = height;
@@ -70,20 +70,20 @@ const SwivelScene = () => {
     const currentTime = new Date();
     if (lastFrameTime()) {
       const msInSecond = 1000;
-      const frameDifferential = msInSecond / projectFPS();
+      const frameDifferential = msInSecond / globalState.project.fps;
       const timeSinceLastFrame = Number(currentTime) - frameDifferential;
       if (timeSinceLastFrame < Number(lastFrameTime()))
         return;
     }
     let nextIndex = currentFrameIndex() + 1;
-    if (nextIndex === projectFrames().length) nextIndex = 0;
+    if (nextIndex === globalState.project.frames.length) nextIndex = 0;
 
     setLastFrameTime(currentTime);
     setCurrentFrameIndex(nextIndex);
   };
 
   const updateCurrentFramePreview = debounce(() => {
-    updateProjectFrame(currentFrameIndex());
+    globalState.project.updateFrame(currentFrameIndex());
   }, 500);
 
   const handleMouseMove = (event: MouseEvent) =>  {

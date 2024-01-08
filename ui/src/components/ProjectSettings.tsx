@@ -1,43 +1,31 @@
 import type { JSX } from "solid-js";
 import styles from "./Settings.module.scss";
-import {
-  projectBackgroundColor,
-  projectFPS,
-  projectHeight,
-  projectName,
-  projectWidth,
-  setProjectBackgroundColor,
-  setProjectFPS,
-  setProjectHeight,
-  setProjectName,
-  setProjectWidth,
-  updateFramePreviews,
-} from "../state/project";
+import globalState from "../state";
 
 type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
 
 const ProjectSettings = () => {
   const updateProjectName: InputHandler = (event) => {
-    setProjectName(event.target.value);
+    globalState.project.name = event.target.value;
   };
 
   const updateProjectWidth: InputHandler = (event) => {
-    setProjectWidth(+event.target.value);
-    updateFramePreviews();
+    globalState.project.width = +event.target.value;
+    globalState.project.updateFramePreviews();
   };
 
   const updateProjectHeight: InputHandler = (event) => {
-    setProjectHeight(+event.target.value);
-    updateFramePreviews();
+    globalState.project.height = +event.target.value;
+    globalState.project.updateFramePreviews();
   };
 
   const updateProjectBackgroundColor: InputHandler = (event) => {
-    setProjectBackgroundColor(event.target.value);
-    updateFramePreviews();
+    globalState.project.backgroundColor = event.target.value;
+    globalState.project.updateFramePreviews();
   };
 
-  const updateProjectFPS:InputHandler = (event) => {
-    setProjectFPS(+event.target.value);
+  const updateProjectFPS: InputHandler = (event) => {
+    globalState.project.fps = +event.target.value;
   };
 
   return (
@@ -47,7 +35,7 @@ const ProjectSettings = () => {
         <label>Name</label>
         <input
           type="text"
-          value={projectName()}
+          value={globalState.project.name}
           onChange={updateProjectName}
         />
       </div>
@@ -58,7 +46,7 @@ const ProjectSettings = () => {
             <label>Width</label>
             <input
               type="text"
-              value={projectWidth()}
+              value={globalState.project.width}
               onChange={updateProjectWidth}
             />
           </div>
@@ -66,7 +54,7 @@ const ProjectSettings = () => {
             <label>Height</label>
             <input
               type="text"
-              value={projectHeight()}
+              value={globalState.project.height}
               onchange={updateProjectHeight}
             />
           </div>
@@ -76,7 +64,7 @@ const ProjectSettings = () => {
         <label>Background Color</label>
         <input
           type="color"
-          value={projectBackgroundColor()}
+          value={globalState.project.backgroundColor}
           onChange={updateProjectBackgroundColor}
         />
       </div>
@@ -87,7 +75,7 @@ const ProjectSettings = () => {
           min={1}
           max={30}
           step={1}
-          value={projectFPS()}
+          value={globalState.project.fps}
           onChange={updateProjectFPS}
         />
       </div>

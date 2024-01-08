@@ -1,5 +1,5 @@
+import globalState from "../state";
 import { isPlaying, setIsPlaying, setSelectedObjects } from "../state/app";
-import { addProjectFrame } from "../state/project";
 import styles from "./SceneControls.module.scss";
 
 const SceneControls = () => {
@@ -13,7 +13,7 @@ const SceneControls = () => {
   const addFrame = (event: Event) => {
     event.stopPropagation();
     event.preventDefault();
-    addProjectFrame();
+    globalState.project.addFrame();
     const previewFrames = document.querySelectorAll(".preview-frame");
     previewFrames[previewFrames.length - 1].scrollIntoView({ behavior: "smooth" });
   };

@@ -1,7 +1,8 @@
 import Tauri from "../Tauri";
 import PrefabAnimationObject, { SerializablePrefabAnimationObject } from "../models/PrefabAnimationObject";
+import globalState from "../state";
+import { resetAppState } from "../state/app";
 import { startFullscreenLoading, stopFullscreenLoading } from "../state/loader";
-import { getCurrentStateProject, resetProject } from "../state/project";
 
 enum TauriClientEvents {
   SWITCH_TOOLS = "SWIVEL::SWITCH_TOOLS",
@@ -60,7 +61,7 @@ const swivelSave = async () => {
   }
   startFullscreenLoading({ message: "Saving" });
   await new Promise(res => setTimeout(res, 1000));
-  const project = getCurrentStateProject();
+  const project = globalState.project.swivelProject;
   const projectData = project.serialize();
   const { invoke } = Tauri.tauri;
   await invoke(TauriServerFunctions.SAVE, { projectData });
@@ -74,7 +75,7 @@ const swivelExport = async () => {
   }
   startFullscreenLoading({ message: "Exporting" });
   await new Promise(res => setTimeout(res, 1000));
-  const project = getCurrentStateProject();
+  const project = globalState.project.swivelProject;
   const projectData = project.serialize();
   const { invoke } = Tauri.tauri;
   await invoke(TauriServerFunctions.EXPORT, { projectData });
@@ -88,7 +89,8 @@ const swivelNew = async () => {
   }
   startFullscreenLoading({ message: "Setting Up New Project" });
   await new Promise(res => setTimeout(res, 1000));
-  resetProject();
+  globalState.project.reset();
+  resetAppState();
   stopFullscreenLoading();
 };
 

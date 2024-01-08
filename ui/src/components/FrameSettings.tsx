@@ -1,14 +1,14 @@
 import { currentFrame, currentFrameIndex } from "../state/app";
-import { projectBackgroundColor, updateProjectFrame } from "../state/project";
 import type { JSX } from "solid-js";
 import styles from "./Settings.module.scss";
 import { drawFrameToCanvas, getMainCanvas } from "../utilities/canvas";
+import globalState from "../state";
 
 type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
 
 const FrameSettings = () => {
   const updateFrameBackgroundColor: InputHandler = (event) => {
-    updateProjectFrame(currentFrameIndex(), { backgroundColor: event.target.value });
+    globalState.project.updateFrame(currentFrameIndex(), { backgroundColor: event.target.value });
     drawFrameToCanvas(getMainCanvas(), currentFrame(), {});
   };
 
@@ -19,7 +19,7 @@ const FrameSettings = () => {
         <label>Background Color</label>
         <input
           type="color"
-          value={currentFrame().backgroundColor || projectBackgroundColor()}
+          value={currentFrame().backgroundColor || globalState.project.backgroundColor}
           onChange={updateFrameBackgroundColor}
         />
       </div>

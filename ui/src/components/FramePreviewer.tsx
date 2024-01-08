@@ -1,7 +1,7 @@
-import { onMount } from "solid-js";
+import { For, onMount } from "solid-js";
 import styles from "./FramePreviewer.module.scss";
-import { projectFrames } from "../state/project";
 import FramePreview from "./FramePreview";
+import globalState from "../state";
 
 const FramePreviewer = () => {
   let containerRef: HTMLDivElement | undefined;
@@ -29,12 +29,14 @@ const FramePreviewer = () => {
         class={styles.framesContainer}
       >
         <div class={styles.scroller}>
-          {projectFrames().map((frame, index) => (
-            <FramePreview
-              frame={frame}
-              frameIndex={index}
-            />
-          ))}
+          <For each={globalState.project.frames}>
+            {(frame, index) => (
+              <FramePreview
+                frame={frame}
+                frameIndex={index()}
+              />
+            )}
+          </For>
         </div>
 
       </div>

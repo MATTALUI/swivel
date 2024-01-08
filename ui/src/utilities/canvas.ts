@@ -2,8 +2,9 @@ import Color from "color";
 import Frame from "../models/Frame";
 import ObjectNode from "../models/ObjectNode";
 import { SelectionType, isPlaying, selectedObjects } from "../state/app";
-import { projectBackgroundColor, projectFrames, projectHeight, projectWidth } from "../state/project";
+// import { projectBackgroundColor, projectFrames, projectHeight, projectWidth } from "../state/project";
 import AnimationObject from "../models/AnimationObject";
+import globalState from "../state";
 
 const ROOT_NODE_COLOR = "#ff8000";
 const NODE_COLOR = "#bf0404";
@@ -20,13 +21,13 @@ export const drawFrameToCanvas = (
     throw new Error("Context unavailable");
   }
   const shouldDrawHelpers = !isPlaying() && !options.preview;
-  // These checks simply help subscribe to these changes
-  projectWidth();
-  projectHeight();
+  // These checks simply will mark these pieces of state as dependencies
+  globalState.project.width;
+  globalState.project.height;
   // Clear it out
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   // Draw in the background color
-  ctx.fillStyle = frame.backgroundColor || projectBackgroundColor();
+  ctx.fillStyle = frame.backgroundColor || globalState.project.backgroundColor;
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   // Create a registry of just the points that we can build as we go so that
   // we can draw the control points on top of all the lines at the end without having to recurse again
@@ -51,7 +52,7 @@ export const drawFrameToCanvas = (
   };
   // Draw the onion skins
   if (shouldDrawHelpers && frame.index) {
-    const allFrames = projectFrames();
+    const allFrames = globalState.project.frames;
     const prevFrame = allFrames[frame.index - 1];
     prevFrame.objects.forEach((object) => {
       const { root } = object;
@@ -101,8 +102,8 @@ export const drawFrameToCanvas = (
 
 export const getFramePreviewUrl = (frame: Frame) => {
   const canvas = document.createElement("canvas");
-  canvas.width = projectWidth();
-  canvas.height = projectHeight();
+  canvas.width = globalState.project.width;
+  canvas.height = globalState.project.height;
   drawFrameToCanvas(canvas, frame, {
     preview: true,
   });
@@ -125,7 +126,7 @@ export const drawAnimationObjectToCanvas = (
   if (!ctx) throw new Error("Context unavailable");
   // Clear it out
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+
   const allControlNodes: ObjectNode[] = [];
   const connectNodeToChildren = (node: ObjectNode, controllable = true) => {
     node.children.forEach((child) => {

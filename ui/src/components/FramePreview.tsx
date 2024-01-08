@@ -1,6 +1,6 @@
 import Frame from "../models/Frame";
+import globalState from "../state";
 import { SelectionType, currentFrameIndex, setCurrentFrameIndex, setSelectedObjects } from "../state/app";
-import { updateProjectFrame } from "../state/project";
 import { getFramePreviewUrl } from "../utilities/canvas";
 import styles from "./FramePreview.module.scss";
 import cx from "classnames";
@@ -22,7 +22,7 @@ const FramePreview = (props: IFramePreviewProps) => {
 
   if (!props.frame.previewImage && props.frame.index !== null) {
     const previewImage = getFramePreviewUrl(props.frame);
-    updateProjectFrame(props.frame.index, { previewImage });
+    globalState.project.updateFrame(props.frame.index, { previewImage });
   }
 
   return (
