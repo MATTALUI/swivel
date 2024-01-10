@@ -1,7 +1,8 @@
 import Frame from "../models/Frame";
 import globalState from "../state";
-import { SelectionType, currentFrameIndex, setCurrentFrameIndex, setSelectedObjects } from "../state/app";
+import { SelectionType } from "../state/animator.state";
 import { getFramePreviewUrl } from "../utilities/canvas";
+import { updateFrame } from "../utilities/project.util";
 import styles from "./FramePreview.module.scss";
 import cx from "classnames";
 
@@ -13,16 +14,16 @@ interface IFramePreviewProps {
 const FramePreview = (props: IFramePreviewProps) => {
   const changeFrame = (e: Event) => {
     e.stopPropagation();
-    setCurrentFrameIndex(props.frameIndex);
-    setSelectedObjects({
+    globalState.animator.currentFrameIndex = props.frameIndex;
+    globalState.animator.selectedObjects = {
       type: SelectionType.FRAME,
       objectIds: [props.frame.id],
-    });
+    };
   };
 
   if (!props.frame.previewImage && props.frame.index !== null) {
     const previewImage = getFramePreviewUrl(props.frame);
-    globalState.project.updateFrame(props.frame.index, { previewImage });
+    updateFrame(props.frame.index, { previewImage });
   }
 
   return (
@@ -38,7 +39,7 @@ const FramePreview = (props: IFramePreviewProps) => {
         class={cx(
           styles.frameImage,
           {
-            [styles.selected]: currentFrameIndex() === props.frameIndex,
+            [styles.selected]: globalState.animator.currentFrameIndex === props.frameIndex,
           },
         )}
         src={props.frame.previewImage || "/original.png"}

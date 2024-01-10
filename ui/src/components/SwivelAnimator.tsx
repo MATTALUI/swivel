@@ -6,8 +6,9 @@ import SwivelScene from "./SwivelScene";
 import SwivelSidebar from "./SwivelSidebar";
 import { canvasCursor } from "../state/canvas";
 import { mountSwivelTauriListeners } from "../utilities/tauri";
-import { CanvasMode, canvasMode } from "../state/app";
+import { CanvasMode } from "../state/animator.state";
 import ObjectCreatorCanvas from "./ObjectCreatorCanvas";
+import globalState from "../state";
 
 type GlobalStyleSet = {
   cursor?: string;
@@ -33,10 +34,10 @@ const SwivelAnimator = () => {
       <div class={styles.main}>
         <SwivelSidebar />
         <Switch>
-          <Match when={canvasMode() === CanvasMode.ANIMATOR}>
+          <Match when={globalState.animator.canvasMode === CanvasMode.ANIMATOR}>
             <SwivelScene />
           </Match>
-          <Match when={canvasMode() === CanvasMode.OBJECT_CREATOR}>
+          <Match when={globalState.animator.canvasMode === CanvasMode.OBJECT_CREATOR}>
             <ObjectCreatorCanvas />
           </Match>
         </Switch>

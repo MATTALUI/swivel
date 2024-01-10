@@ -1,6 +1,7 @@
 import ObjectNode from "./ObjectNode";
 import Vec2 from "./Vec2";
-import AnimationObject, { SerializableAnimationObject } from "./AnimationObject";
+import AnimationObject from "./AnimationObject";
+import type { SerializableAnimationObject } from "../types";
 
 // This is only used when initializing the first empty frame for a
 // blank object.

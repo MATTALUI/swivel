@@ -1,23 +1,8 @@
 import Tauri from "../Tauri";
-import PrefabAnimationObject, { SerializablePrefabAnimationObject } from "../models/PrefabAnimationObject";
+import PrefabAnimationObject from "../models/PrefabAnimationObject";
 import globalState from "../state";
-import { resetAppState } from "../state/app";
 import { startFullscreenLoading, stopFullscreenLoading } from "../state/loader";
-
-enum TauriClientEvents {
-  SWITCH_TOOLS = "SWIVEL::SWITCH_TOOLS",
-  SAVE = "SWIVEL::INIT_SAVE",
-  NEW = "SWIVEL::INIT_NEW",
-  EXPORT = "SWIVEL::INIT_EXPORT",
-}
-
-enum TauriServerFunctions {
-  SAVE = "save_project",
-  SAVE_PREFAB = "save_prefab_object",
-  LOAD_PREFABS = "load_prefab_objects",
-  EXPORT = "export_project",
-  SAVEMAPPAINTER = "save_painted_map",
-}
+import { TauriClientEvents, TauriServerFunctions } from "../types";
 
 export const mountSwivelTauriListeners = () => {
   if (!Tauri) {
@@ -90,7 +75,7 @@ const swivelNew = async () => {
   startFullscreenLoading({ message: "Setting Up New Project" });
   await new Promise(res => setTimeout(res, 1000));
   globalState.project.reset();
-  resetAppState();
+  globalState.animator.reset();
   stopFullscreenLoading();
 };
 
@@ -128,15 +113,4 @@ export const saveSwivelObject = async (prefab: PrefabAnimationObject): Promise<b
   await invoke(TauriServerFunctions.SAVE_PREFAB, { saveData });
 
   return true;
-};
-
-export const loadSwivelObjects = async (): Promise<SerializablePrefabAnimationObject[]> => {
-  if (!Tauri) {
-    // Add a web service call here
-    return [];
-  }
-  const { invoke } = Tauri.tauri;
-  const prefabs = await invoke<SerializablePrefabAnimationObject[]>(TauriServerFunctions.LOAD_PREFABS);
-
-  return prefabs;
 };

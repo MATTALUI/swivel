@@ -1,7 +1,5 @@
-export type SerializableVec2 = {
-  x: number;
-  y: number;
-}
+import type { SerializableVec2 } from "../types";
+
 
 export default class Vec2 {
   x: number;

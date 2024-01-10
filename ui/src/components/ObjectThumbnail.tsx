@@ -1,8 +1,9 @@
 import AnimationObject from "../models/AnimationObject";
-import ObjectNode, { SerializableObjectNode } from "../models/ObjectNode";
-import { SerializablePrefabAnimationObject } from "../models/PrefabAnimationObject";
+import ObjectNode from "../models/ObjectNode";
 import Vec2 from "../models/Vec2";
-import { currentFrame, setCurrentFrameIndex } from "../state/app";
+import globalState from "../state";
+import type { SerializableObjectNode, SerializablePrefabAnimationObject } from "../types";
+import { getCurrentFrame } from "../utilities/animator.utils";
 import styles from "./ObjectThumbnail.module.scss";
 
 interface IObjectThumbnailProps {
@@ -68,8 +69,11 @@ const ObjectThumbnail = (props: IObjectThumbnailProps) => {
     };
     repositionNode(hydratedObject.root);
     // Update scene and retrigger rerender
-    currentFrame().objects.push(hydratedObject);
-    setCurrentFrameIndex(i => i);
+    getCurrentFrame().objects.push(hydratedObject);
+    // This is a little hack to trigger rerender explicitly. I'll investigate a
+    // better way to do this later
+    const cfi = globalState.animator.currentFrameIndex;
+    globalState.animator.currentFrameIndex = cfi;
   };
 
   return (

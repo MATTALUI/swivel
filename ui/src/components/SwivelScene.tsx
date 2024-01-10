@@ -3,12 +3,15 @@ import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
 import { drawFrameToCanvas } from "../utilities/canvas";
-import { SelectionType, currentFrame, currentFrameIndex, deselectObjects, isPlaying, lastFrameTime, selectedObjects, setCurrentFrameIndex, setLastFrameTime, setSelectedObjects } from "../state/app";
+import { SelectionType, deselectObjects } from "../state/animator.state";
 import ObjectNode from "../models/ObjectNode";
-import { MouseDownValues, mouseDownInitialValues, selectedNode, setCanvasCursor, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
+import { mouseDownInitialValues, selectedNode, setCanvasCursor, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
 import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utils";
 import Vec2 from "../models/Vec2";
 import globalState from "../state";
+import { getCurrentFrame } from "../utilities/animator.utils";
+import { updateFrame } from "../utilities/project.util";
+import type { MouseDownValues } from "../types";
 
 const SwivelScene = () => {
   let canvasContainerRef: HTMLDivElement | undefined;
@@ -21,7 +24,7 @@ const SwivelScene = () => {
   };
 
   const controllableNodes = createMemo(() => {
-    const frame = currentFrame();
+    const frame = getCurrentFrame();
     const nodes: ObjectNode[] = [];
     const addNodeControls = (node: ObjectNode) => {
       nodes.push(node);
@@ -37,7 +40,7 @@ const SwivelScene = () => {
 
   const repaintCanvas = () => {
     if (!canvasRef) return;
-    drawFrameToCanvas(canvasRef, currentFrame(), {});
+    drawFrameToCanvas(canvasRef, getCurrentFrame(), {});
   };
 
   const setCanvasSize = () => {
@@ -65,25 +68,25 @@ const SwivelScene = () => {
   };
 
   const playAnimationFrame = () => {
-    if (!isPlaying()) return;
+    if (!globalState.animator.isPlaying) return;
     window.requestAnimationFrame(playAnimationFrame);
     const currentTime = new Date();
-    if (lastFrameTime()) {
+    if (globalState.animator.lastFrameTime) {
       const msInSecond = 1000;
       const frameDifferential = msInSecond / globalState.project.fps;
       const timeSinceLastFrame = Number(currentTime) - frameDifferential;
-      if (timeSinceLastFrame < Number(lastFrameTime()))
+      if (timeSinceLastFrame < Number(globalState.animator.lastFrameTime))
         return;
     }
-    let nextIndex = currentFrameIndex() + 1;
+    let nextIndex = globalState.animator.currentFrameIndex + 1;
     if (nextIndex === globalState.project.frames.length) nextIndex = 0;
 
-    setLastFrameTime(currentTime);
-    setCurrentFrameIndex(nextIndex);
+    globalState.animator.lastFrameTime = currentTime;
+    globalState.animator.currentFrameIndex = nextIndex;
   };
 
   const updateCurrentFramePreview = debounce(() => {
-    globalState.project.updateFrame(currentFrameIndex());
+    updateFrame(globalState.animator.currentFrameIndex);
   }, 500);
 
   const handleMouseMove = (event: MouseEvent) =>  {
@@ -219,7 +222,7 @@ const SwivelScene = () => {
     setSelectedNode(node);
     setMouseDownInitialValues(mouseDownValues);
     if (clickedObject) {
-      const selection = selectedObjects();
+      const selection = globalState.animator.selectedObjects;
       let selectedIds: string[] =
         selection?.type === SelectionType.ANIMATION_OBJECT && event.shiftKey
           ? [...selection.objectIds]
@@ -230,10 +233,10 @@ const SwivelScene = () => {
         selectedIds.push(clickedObject.id);
       }
 
-      setSelectedObjects({
+      globalState.animator.selectedObjects = {
         type: SelectionType.ANIMATION_OBJECT,
         objectIds: selectedIds,
-      });
+      };
     }
   };
 

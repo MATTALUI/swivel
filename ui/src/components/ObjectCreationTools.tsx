@@ -3,8 +3,9 @@ import styles from "./ObjectCreationTools.module.scss";
 import { AiOutlinePlus } from "solid-icons/ai";
 import { TbHandGrab } from "solid-icons/tb";
 import cx from "classnames";
+import { currentCreatorTool, setCurrentCreatorTool } from "../state/objectCreator";
+import { CreatorToolNames } from "../types";
 // import { BiRegularBorderOuter } from "solid-icons/bi";
-import { CreatorToolNames, currentCreatorTool, setCurrentCreatorTool } from "../state/objectCreator";
 
 const ObjectCreationTools = () => {
   const tools = [

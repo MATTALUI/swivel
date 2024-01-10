@@ -1,19 +1,19 @@
 import globalState from "../state";
-import { isPlaying, setIsPlaying, setSelectedObjects } from "../state/app";
+import { addFrame } from "../utilities/project.util";
 import styles from "./SceneControls.module.scss";
 
 const SceneControls = () => {
   const togglePlayback = (event: Event) => {
     event.stopPropagation();
     event.preventDefault();
-    setIsPlaying(!isPlaying());
-    setSelectedObjects(null);
+    globalState.animator.isPlaying = !globalState.animator.isPlaying;
+    globalState.animator.selectedObjects = null;
   };
 
-  const addFrame = (event: Event) => {
+  const addAndSelectFrame = (event: Event) => {
     event.stopPropagation();
     event.preventDefault();
-    globalState.project.addFrame();
+    addFrame();
     const previewFrames = document.querySelectorAll(".preview-frame");
     previewFrames[previewFrames.length - 1].scrollIntoView({ behavior: "smooth" });
   };
@@ -21,10 +21,10 @@ const SceneControls = () => {
   return (
     <div class={styles.container}>
       <div>
-        <button onClick={togglePlayback}>{isPlaying() ? "Stop" : "Start"}</button>
+        <button onClick={togglePlayback}>{globalState.animator.isPlaying ? "Stop" : "Start"}</button>
       </div>
       <div>
-        <button onClick={addFrame}>Add Frame</button>
+        <button onClick={addAndSelectFrame}>Add Frame</button>
       </div>
     </div>
   );

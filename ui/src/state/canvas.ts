@@ -1,21 +1,6 @@
 import { createSignal } from "solid-js";
 import ObjectNode from "../models/ObjectNode";
-
-// These can be anything from the CSS options for cursor, but you'll ahve to opt-in
-// https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
-export type CursorOption =
-  "grab" |
-  "grabbing" |
-  "crosshair" |
-  null;
-
-export type MouseDownValues = {
-  x: number;
-  y: number;
-  originalParentNode: ObjectNode | null;
-  originalNodeRoot: ObjectNode;
-  originalNode: ObjectNode;
-}
+import type { CursorOption, MouseDownValues } from "../types";
 
 export const [canvasCursor, setCanvasCursor] =
   createSignal<CursorOption>(null);

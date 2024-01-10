@@ -1,10 +1,5 @@
+import type { SerializableAnimationObject } from "../types";
 import ObjectNode from "./ObjectNode";
-import type { SerializableObjectNode } from "./ObjectNode";
-
-export type SerializableAnimationObject = {
-  id: string;
-  root: SerializableObjectNode;
-};
 
 export default class AnimationObject {
   id: string;

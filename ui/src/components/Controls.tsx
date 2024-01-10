@@ -1,25 +1,26 @@
-import { CanvasMode, canvasMode, selectedObjects } from "../state/app";
+import { CanvasMode } from "../state/animator.state";
 import { Match, Switch } from "solid-js";
 import styles from "./Controls.module.scss";
 import ProjectSettings from "./ProjectSettings";
 import FrameSettings from "./FrameSettings";
 import AnimationObjectSettings from "./AnimationObjectSettings";
 import ObjectCreatorSettings from "./ObjectCreatorSettings.component";
+import globalState from "../state";
 
 const Controls = () => {
   return (
     <div class={styles.container}>
       <Switch>
-        <Match when={!selectedObjects() && canvasMode() === CanvasMode.ANIMATOR}>
+        <Match when={!globalState.animator.selectedObjects && globalState.animator.canvasMode === CanvasMode.ANIMATOR}>
           <ProjectSettings />
         </Match>
-        <Match when={!selectedObjects() && canvasMode() === CanvasMode.OBJECT_CREATOR}>
+        <Match when={!globalState.animator.selectedObjects && globalState.animator.canvasMode === CanvasMode.OBJECT_CREATOR}>
           <ObjectCreatorSettings />
         </Match>
-        <Match when={selectedObjects()?.type === "frame"}>
+        <Match when={globalState.animator.selectedObjects?.type === "frame"}>
           <FrameSettings />
         </Match>
-        <Match when={selectedObjects()?.type === "animationObject"}>
+        <Match when={globalState.animator.selectedObjects?.type === "animationObject"}>
           <AnimationObjectSettings />
         </Match>
       </Switch>

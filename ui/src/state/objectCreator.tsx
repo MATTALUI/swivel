@@ -1,12 +1,8 @@
 import { createSignal } from "solid-js";
 import AnimationObject from "../models/AnimationObject";
 import ObjectNode from "../models/ObjectNode";
+import { CreatorToolNames } from "../types";
 
-export enum CreatorToolNames {
-  SELECT = "SELECT",
-  ADD = "ADD",
-  GROUP = "GROUP",
-}
 export const [creationObject, setCreationObject] =
   createSignal<AnimationObject | null>(null);
 export const [creatorControllableNodes, setCreatorControllableNodes] =

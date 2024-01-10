@@ -2,16 +2,17 @@ import { For, onMount } from "solid-js";
 import styles from "./FrameObjectsManager.module.scss";
 import controlStyles from "./Settings.module.scss";
 import ObjectThumbnail from "./ObjectThumbnail";
-import { CanvasMode, savedObjects, setCanvasMode } from "../state/app";
+import { CanvasMode } from "../state/animator.state";
 import AnimationObject from "../models/AnimationObject";
 import { setCreationObject, setCreatorControllableNodes } from "../state/objectCreator";
+import globalState from "../state";
 
 const FrameObjectsManager = () => {
   let container: HTMLDivElement | undefined;
   let scroller: HTMLDivElement | undefined;
 
   const startCreateCanvas = () => {
-    setCanvasMode(CanvasMode.OBJECT_CREATOR);
+    globalState.animator.canvasMode = CanvasMode.OBJECT_CREATOR;
     const newObject = new AnimationObject();
     setCreationObject(newObject);
     setCreatorControllableNodes([newObject.root]);
@@ -25,6 +26,7 @@ const FrameObjectsManager = () => {
   };
   onMount(setScrollerHeight);
   window.addEventListener("resize", setScrollerHeight);
+  console.log(globalState.animator.savedObjects);
 
   return (
     <>
@@ -39,7 +41,7 @@ const FrameObjectsManager = () => {
       </div>
       <div ref={container} class={styles.objectsListContainer}>
         <div ref={scroller} class={styles.scroller}>
-          <For each={savedObjects()}>
+          <For each={globalState.animator.savedObjects}>
             {(prefab) => (<ObjectThumbnail prefab={prefab}/>)}
           </For>
         </div>

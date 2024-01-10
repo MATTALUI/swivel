@@ -1,8 +1,7 @@
 import Color from "color";
 import Frame from "../models/Frame";
 import ObjectNode from "../models/ObjectNode";
-import { SelectionType, isPlaying, selectedObjects } from "../state/app";
-// import { projectBackgroundColor, projectFrames, projectHeight, projectWidth } from "../state/project";
+import { SelectionType } from "../state/animator.state";
 import AnimationObject from "../models/AnimationObject";
 import globalState from "../state";
 
@@ -20,7 +19,7 @@ export const drawFrameToCanvas = (
   if (!ctx) {
     throw new Error("Context unavailable");
   }
-  const shouldDrawHelpers = !isPlaying() && !options.preview;
+  const shouldDrawHelpers = !globalState.animator.isPlaying && !options.preview;
   // These checks simply will mark these pieces of state as dependencies
   globalState.project.width;
   globalState.project.height;
@@ -78,7 +77,7 @@ export const drawFrameToCanvas = (
       ctx.fillStyle = isRoot ? ROOT_NODE_COLOR : NODE_COLOR;
       ctx.fill();
     });
-    const selection = selectedObjects();
+    const selection = globalState.animator.selectedObjects;
     if (selection?.type === SelectionType.ANIMATION_OBJECT) {
       const drawNodes = (node: ObjectNode) => {
         const { x, y } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);

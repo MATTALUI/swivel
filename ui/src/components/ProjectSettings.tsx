@@ -1,6 +1,7 @@
 import type { JSX } from "solid-js";
 import styles from "./Settings.module.scss";
 import globalState from "../state";
+import { updateFramePreviews } from "../utilities/project.util";
 
 type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
 
@@ -11,17 +12,17 @@ const ProjectSettings = () => {
 
   const updateProjectWidth: InputHandler = (event) => {
     globalState.project.width = +event.target.value;
-    globalState.project.updateFramePreviews();
+    updateFramePreviews();
   };
 
   const updateProjectHeight: InputHandler = (event) => {
     globalState.project.height = +event.target.value;
-    globalState.project.updateFramePreviews();
+    updateFramePreviews();
   };
 
   const updateProjectBackgroundColor: InputHandler = (event) => {
     globalState.project.backgroundColor = event.target.value;
-    globalState.project.updateFramePreviews();
+    updateFramePreviews();
   };
 
   const updateProjectFPS: InputHandler = (event) => {

@@ -1,13 +1,6 @@
+import type { SerializableObjectNode } from "../types";
 import AnimationObject from "./AnimationObject";
 import Vec2 from "./Vec2";
-import type { SerializableVec2 } from "./Vec2";
-
-export type SerializableObjectNode = {
-  id: string;
-  position: SerializableVec2;
-  size: number;
-  children: SerializableObjectNode[];
-};
 
 export default class ObjectNode {
   id: string;

@@ -1,17 +1,18 @@
 import { Match, Switch } from "solid-js";
 import FrameObjectsManager from "./FrameObjectsManager";
 import styles from "./SwivelSidebar.module.scss";
-import { CanvasMode, canvasMode } from "../state/app";
+import { CanvasMode } from "../state/animator.state";
 import ObjectCreationTools from "./ObjectCreationTools";
+import globalState from "../state";
 
 const SwivelSidebar = () => {
   return (
     <div class={styles.container}>
       <Switch>
-        <Match when={canvasMode() === CanvasMode.ANIMATOR}>
+        <Match when={globalState.animator.canvasMode === CanvasMode.ANIMATOR}>
           <FrameObjectsManager />
         </Match>
-        <Match when={canvasMode() === CanvasMode.OBJECT_CREATOR}>
+        <Match when={globalState.animator.canvasMode === CanvasMode.OBJECT_CREATOR}>
           <ObjectCreationTools />
         </Match>
       </Switch>

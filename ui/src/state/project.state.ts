@@ -1,8 +1,6 @@
 import { createSignal } from "solid-js";
 import SwivelProject from "../models/SwivelProject";
-import { setCurrentFrameIndex } from "./app";
-import Frame from "../models/Frame";
-import { getFramePreviewUrl } from "../utilities/canvas";
+import type Frame from "../models/Frame";
 
 const defaultProject = new SwivelProject();
 
@@ -49,31 +47,6 @@ const projectState = {
     project.backgroundColor = backgroundColor();
 
     return project;
-  },
-  addFrame: () => {
-    const existingFrames = frames();
-    const newFrame = existingFrames[existingFrames.length - 1].clone();
-    newFrame.index = existingFrames.length;
-    setFrames([...existingFrames, newFrame]);
-    setCurrentFrameIndex(frames().length - 1);
-  },
-  updateFrame: (index: number, updates: Partial<Frame> = {}) => {
-    const frame = frames()[index];
-    Object.assign(frame, updates);
-    if ("previewImage" in updates) return;
-    const previewImage = updates.previewImage ?? getFramePreviewUrl(frame);
-    frame.previewImage = previewImage;
-    const imgEle = document.querySelector<HTMLImageElement>(`[data-frame-preview="${index}"]`);
-    if (imgEle) imgEle.src = previewImage;
-  },
-  updateFramePreviews: async () => {
-    const existingFrames = frames();
-    const newFrames = await Promise.all([...existingFrames].map(async (frame) => {
-      frame.previewImage = getFramePreviewUrl(frame);
-
-      return frame;
-    }));
-    setFrames(newFrames);
   },
   reset: () => {
     const project = new SwivelProject();

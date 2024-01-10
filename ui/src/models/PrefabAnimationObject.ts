@@ -1,12 +1,5 @@
-import AnimationObject, { SerializableAnimationObject } from "./AnimationObject";
-
-export type SerializablePrefabAnimationObject = {
-  id: string;
-  name: string;
-  previewImage: string;
-  object: SerializableAnimationObject;
-  createdAt: string;
-}
+import type { SerializableAnimationObject, SerializablePrefabAnimationObject } from "../types";
+import AnimationObject from "./AnimationObject";
 
 export default class PrefabAnimationObject {
   id: string;

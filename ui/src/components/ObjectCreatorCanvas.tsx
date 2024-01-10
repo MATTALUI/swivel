@@ -1,11 +1,13 @@
 import { createEffect, onCleanup, onMount } from "solid-js";
 import styles from "./ObjectCreatorCanvas.module.scss";
-import { CreatorToolNames, creationObject, creatorControllableNodes, currentCreatorTool, setCreatorControllableNodes } from "../state/objectCreator";
+import { creationObject, creatorControllableNodes, currentCreatorTool, setCreatorControllableNodes } from "../state/objectCreator";
 import { drawAnimationObjectToCanvas } from "../utilities/canvas";
-import { CursorOption, selectedNode, setCanvasCursor, setTargetNode, targetNode, MouseDownValues, setSelectedNode, setMouseDownInitialValues, mouseDownInitialValues } from "../state/canvas";
+import { selectedNode, setCanvasCursor, setTargetNode, targetNode, setSelectedNode, setMouseDownInitialValues, mouseDownInitialValues } from "../state/canvas";
 import { clamp } from "../utils";
 import Vec2 from "../models/Vec2";
 import ObjectNode from "../models/ObjectNode";
+import { CreatorToolNames } from "../types";
+import type { MouseDownValues, CursorOption } from "../types";
 
 const ObjectCreatorCanvas = () => {
   let containerRef: HTMLDivElement | undefined;
