@@ -1,6 +1,5 @@
 import { createEffect, onCleanup, onMount } from "solid-js";
 import styles from "./ObjectCreatorCanvas.module.scss";
-import { creationObject, creatorControllableNodes, currentCreatorTool, setCreatorControllableNodes } from "../state/objectCreator";
 import { drawAnimationObjectToCanvas } from "../utilities/canvas";
 import { selectedNode, setCanvasCursor, setTargetNode, targetNode, setSelectedNode, setMouseDownInitialValues, mouseDownInitialValues } from "../state/canvas";
 import { clamp } from "../utils";
@@ -8,6 +7,7 @@ import Vec2 from "../models/Vec2";
 import ObjectNode from "../models/ObjectNode";
 import { CreatorToolNames } from "../types";
 import type { MouseDownValues, CursorOption } from "../types";
+import globalState from "../state";
 
 const ObjectCreatorCanvas = () => {
   let containerRef: HTMLDivElement | undefined;
@@ -15,7 +15,7 @@ const ObjectCreatorCanvas = () => {
   let newNode: ObjectNode | null = null;
 
   const redrawCanvas = () => {
-    const obj = creationObject();
+    const obj = globalState.creator.object;
     if (!canvasRef || !obj) return;
     drawAnimationObjectToCanvas(obj, canvasRef);
   };
@@ -38,18 +38,19 @@ const ObjectCreatorCanvas = () => {
   };
 
   const handleMouseDown = (event: MouseEvent) => {
-    const isGroupTool = currentCreatorTool() === CreatorToolNames.GROUP;
+    const isGroupTool = globalState.creator.currentTool === CreatorToolNames.GROUP;
     if (isGroupTool) {
       console.log("were doing something else here");
       return;
     }
-    if (currentCreatorTool() === CreatorToolNames.ADD) {
+    if (globalState.creator.currentTool === CreatorToolNames.ADD) {
       const parent = targetNode();
       if (!parent) return;
       newNode = new ObjectNode();
       newNode.setPosition(parent?.position.clone());
       parent.appendChild(newNode);
-      setCreatorControllableNodes([...creatorControllableNodes(), newNode]);
+      globalState.creator.controllableNodes =
+        [...globalState.creator.controllableNodes, newNode];
       setTargetNode(newNode);
       setSelectedNode(newNode);
       redrawCanvas();
@@ -65,7 +66,7 @@ const ObjectCreatorCanvas = () => {
       originalNodeRoot: node.objectRootNode.clone(),
       originalNode: node.clone(),
     };
-    if (currentCreatorTool() === CreatorToolNames.SELECT)
+    if (globalState.creator.currentTool === CreatorToolNames.SELECT)
       setCanvasCursor("grabbing");
     setSelectedNode(node);
     setMouseDownInitialValues(mouseDownValues);
@@ -78,9 +79,9 @@ const ObjectCreatorCanvas = () => {
     // going to be hovering over the same point that they were initially on.
     const stillOnTarget = event.target === canvasRef;
     let cursor: CursorOption = null;
-    if (stillOnTarget && currentCreatorTool() === CreatorToolNames.SELECT)
+    if (stillOnTarget && globalState.creator.currentTool === CreatorToolNames.SELECT)
       cursor = "grab";
-    if (stillOnTarget && currentCreatorTool() === CreatorToolNames.ADD)
+    if (stillOnTarget && globalState.creator.currentTool === CreatorToolNames.ADD)
       cursor = "crosshair";
     setSelectedNode(null);
     setMouseDownInitialValues(null);
@@ -91,7 +92,7 @@ const ObjectCreatorCanvas = () => {
   const handleMouseMove = (event: MouseEvent) => {
     if (!canvasRef) return;
     const currentSelectedNode = selectedNode();
-    const isGroupTool = currentCreatorTool() === CreatorToolNames.GROUP;
+    const isGroupTool = globalState.creator.currentTool === CreatorToolNames.GROUP;
     if (isGroupTool && event.target === canvasRef) {
       setCanvasCursor("crosshair");
       return;
@@ -105,7 +106,7 @@ const ObjectCreatorCanvas = () => {
       // checking interactables and setting the hover states.
       const { offsetX, offsetY } = event;
       const { width, height } = canvasRef;
-      const allControlNodes = creatorControllableNodes();
+      const allControlNodes = globalState.creator.controllableNodes;
       let nextTargetNode = null;
       let clickable = false;
       for (let i = 0; i < allControlNodes.length; i++) {
@@ -127,14 +128,14 @@ const ObjectCreatorCanvas = () => {
           [CreatorToolNames.ADD]: "crosshair",
           [CreatorToolNames.GROUP]: "crosshair",
         };
-        const cursor = cursorMap[currentCreatorTool()];
+        const cursor = cursorMap[globalState.creator.currentTool];
         setTargetNode(nextTargetNode);
         setCanvasCursor(cursor);
       } else {
         setTargetNode(null);
         setCanvasCursor(null);
       }
-    } else if (currentCreatorTool() === CreatorToolNames.SELECT) {
+    } else if (globalState.creator.currentTool === CreatorToolNames.SELECT) {
       if (event.target !== canvasRef) return;
       const { offsetX, offsetY } = event;
       const { width, height } = canvasRef;
@@ -158,7 +159,7 @@ const ObjectCreatorCanvas = () => {
       ));
 
       redrawCanvas();
-    } else if (currentCreatorTool() === CreatorToolNames.ADD) {
+    } else if (globalState.creator.currentTool === CreatorToolNames.ADD) {
       if (event.target !== canvasRef) return;
       const { offsetX, offsetY } = event;
       const { width, height } = canvasRef;

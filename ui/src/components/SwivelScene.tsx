@@ -3,15 +3,17 @@ import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
 import { drawFrameToCanvas } from "../utilities/canvas";
-import { SelectionType, deselectObjects } from "../state/animator.state";
 import ObjectNode from "../models/ObjectNode";
 import { mouseDownInitialValues, selectedNode, setCanvasCursor, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
 import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utils";
 import Vec2 from "../models/Vec2";
 import globalState from "../state";
-import { getCurrentFrame } from "../utilities/animator.utils";
+import { deselectObjects, getCurrentFrame } from "../utilities/animator.utils";
 import { updateFrame } from "../utilities/project.util";
-import type { MouseDownValues } from "../types";
+import {
+  type MouseDownValues,
+  SelectionType,
+} from "../types";
 
 const SwivelScene = () => {
   let canvasContainerRef: HTMLDivElement | undefined;

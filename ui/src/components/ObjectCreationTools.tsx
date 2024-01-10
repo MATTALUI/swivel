@@ -3,8 +3,8 @@ import styles from "./ObjectCreationTools.module.scss";
 import { AiOutlinePlus } from "solid-icons/ai";
 import { TbHandGrab } from "solid-icons/tb";
 import cx from "classnames";
-import { currentCreatorTool, setCurrentCreatorTool } from "../state/objectCreator";
 import { CreatorToolNames } from "../types";
+import globalState from "../state";
 // import { BiRegularBorderOuter } from "solid-icons/bi";
 
 const ObjectCreationTools = () => {
@@ -20,9 +20,9 @@ const ObjectCreationTools = () => {
         <For each={tools}>
           {(tool) => (
             <button
-              onClick={() => setCurrentCreatorTool(tool.name)}
+              onClick={() => globalState.creator.currentTool = tool.name}
               class={cx(styles.toolButton, {
-                [styles.active]: tool.name === currentCreatorTool()
+                [styles.active]: tool.name === globalState.creator.currentTool
               })}
             >
               <tool.Icon />

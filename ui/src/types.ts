@@ -61,3 +61,16 @@ export enum TauriServerFunctions {
   EXPORT = "export_project",
   SAVEMAPPAINTER = "save_painted_map",
 }
+
+export enum CanvasMode {
+  ANIMATOR = "ANIMATOR",
+  OBJECT_CREATOR = "OBJECT_CREATOR",
+}
+export enum SelectionType {
+  FRAME = "frame",
+  ANIMATION_OBJECT = "animationObject",
+}
+
+export type Selectable =
+  { type: SelectionType.FRAME, objectIds: string[] } |
+  { type: SelectionType.ANIMATION_OBJECT, objectIds: string[] };

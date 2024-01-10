@@ -2,20 +2,19 @@ import { For, onMount } from "solid-js";
 import styles from "./FrameObjectsManager.module.scss";
 import controlStyles from "./Settings.module.scss";
 import ObjectThumbnail from "./ObjectThumbnail";
-import { CanvasMode } from "../state/animator.state";
 import AnimationObject from "../models/AnimationObject";
-import { setCreationObject, setCreatorControllableNodes } from "../state/objectCreator";
 import globalState from "../state";
+import { CanvasMode } from "../types";
 
 const FrameObjectsManager = () => {
   let container: HTMLDivElement | undefined;
   let scroller: HTMLDivElement | undefined;
 
   const startCreateCanvas = () => {
-    globalState.animator.canvasMode = CanvasMode.OBJECT_CREATOR;
+    globalState.canvasMode = CanvasMode.OBJECT_CREATOR;
     const newObject = new AnimationObject();
-    setCreationObject(newObject);
-    setCreatorControllableNodes([newObject.root]);
+    globalState.creator.object = newObject;
+    globalState.creator.controllableNodes = [newObject.root];
   };
 
   const setScrollerHeight = () => {

@@ -1,7 +1,7 @@
 import Color from "color";
 import Frame from "../models/Frame";
 import ObjectNode from "../models/ObjectNode";
-import { SelectionType } from "../state/animator.state";
+import { SelectionType } from "../types";
 import AnimationObject from "../models/AnimationObject";
 import globalState from "../state";
 

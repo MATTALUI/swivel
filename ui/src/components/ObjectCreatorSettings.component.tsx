@@ -1,8 +1,7 @@
 import { JSX } from "solid-js";
 import controlStyles from "./Settings.module.scss";
-import { creationObject, newObjectName, setCreationObject, setNewObjectName } from "../state/objectCreator";
 import { saveSwivelObject } from "../utilities/tauri";
-import { CanvasMode } from "../state/animator.state";
+import { CanvasMode } from "../types";
 import PrefabAnimationObject from "../models/PrefabAnimationObject";
 import globalState from "../state";
 
@@ -10,19 +9,19 @@ type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
 
 const ObjectCreatorSettings = () => {
   const updateNewObjectName:InputHandler = (event) => {
-    setNewObjectName(event.target.value);
+    globalState.creator.name = event.target.value;
   };
 
   const saveObject = async () => {
-    const object = creationObject();
+    const object = globalState.creator.object;
     if (!object) throw new Error("Trying to save nonexistant object?");
     const prefab = new PrefabAnimationObject(object);
-    prefab.name = newObjectName();
+    prefab.name = globalState.creator.name;
     prefab.previewImage = document.querySelector("canvas")?.toDataURL() || "";
     await saveSwivelObject(prefab);
     await globalState.animator.refetchSavedObjects();
-    setCreationObject(null);
-    globalState.animator.canvasMode = CanvasMode.ANIMATOR;
+    globalState.creator.object = null;
+    globalState.canvasMode = CanvasMode.ANIMATOR;
   };
 
   return (
@@ -32,7 +31,7 @@ const ObjectCreatorSettings = () => {
         <label>Object Name</label>
         <input
           type="text"
-          value={newObjectName()}
+          value={globalState.creator.name}
           onChange={updateNewObjectName}
         />
       </div>

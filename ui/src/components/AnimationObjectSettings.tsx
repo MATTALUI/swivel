@@ -1,5 +1,5 @@
 import globalState from "../state";
-import { SelectionType } from "../state/animator.state";
+import { SelectionType } from "../types";
 import { getCurrentFrame } from "../utilities/animator.utils";
 import { drawFrameToCanvas, getMainCanvas } from "../utilities/canvas";
 import { updateFrame } from "../utilities/project.util";
