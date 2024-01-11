@@ -1,7 +1,7 @@
 import Tauri from "../Tauri";
 import PrefabAnimationObject from "../models/PrefabAnimationObject";
 import globalState from "../state";
-import { startFullscreenLoading, stopFullscreenLoading } from "../state/loader";
+import { startFullscreenLoading, stopFullscreenLoading } from "../utilities/ui.util";
 import { TauriClientEvents, TauriServerFunctions } from "../types";
 
 export const mountSwivelTauriListeners = () => {

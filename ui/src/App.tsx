@@ -2,7 +2,7 @@ import { onMount } from "solid-js";
 import { Router, Route } from "@solidjs/router";
 import FullscreenLoader from "./components/FullscreenLoader";
 import SwivelAnimator from "./components/SwivelAnimator";
-import { stopFullscreenLoading } from "./state/loader";
+import { stopFullscreenLoading } from "./utilities/ui.util";
 import MapPainter from "./components/MapPainter";
 
 export const App = () => {

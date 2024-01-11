@@ -1,7 +1,7 @@
 import { createEffect, onCleanup, onMount } from "solid-js";
 import styles from "./ObjectCreatorCanvas.module.scss";
 import { drawAnimationObjectToCanvas } from "../utilities/canvas";
-import { selectedNode, setCanvasCursor, setTargetNode, targetNode, setSelectedNode, setMouseDownInitialValues, mouseDownInitialValues } from "../state/canvas";
+import { selectedNode, setTargetNode, targetNode, setSelectedNode, setMouseDownInitialValues, mouseDownInitialValues } from "../state/canvas";
 import { clamp } from "../utils";
 import Vec2 from "../models/Vec2";
 import ObjectNode from "../models/ObjectNode";
@@ -67,7 +67,7 @@ const ObjectCreatorCanvas = () => {
       originalNode: node.clone(),
     };
     if (globalState.creator.currentTool === CreatorToolNames.SELECT)
-      setCanvasCursor("grabbing");
+      globalState.ui.cursor = "grabbing";
     setSelectedNode(node);
     setMouseDownInitialValues(mouseDownValues);
   };
@@ -85,7 +85,7 @@ const ObjectCreatorCanvas = () => {
       cursor = "crosshair";
     setSelectedNode(null);
     setMouseDownInitialValues(null);
-    setCanvasCursor(cursor);
+    globalState.ui.cursor = cursor;
     if (!stillOnTarget) setTargetNode(null);
   };
 
@@ -94,10 +94,10 @@ const ObjectCreatorCanvas = () => {
     const currentSelectedNode = selectedNode();
     const isGroupTool = globalState.creator.currentTool === CreatorToolNames.GROUP;
     if (isGroupTool && event.target === canvasRef) {
-      setCanvasCursor("crosshair");
+      globalState.ui.cursor = "crosshair";
       return;
     } else if (isGroupTool) {
-      setCanvasCursor(null);
+      globalState.ui.cursor = null;
       return;
     }
 
@@ -130,10 +130,10 @@ const ObjectCreatorCanvas = () => {
         };
         const cursor = cursorMap[globalState.creator.currentTool];
         setTargetNode(nextTargetNode);
-        setCanvasCursor(cursor);
+        globalState.ui.cursor = cursor;
       } else {
         setTargetNode(null);
-        setCanvasCursor(null);
+        globalState.ui.cursor = null;
       }
     } else if (globalState.creator.currentTool === CreatorToolNames.SELECT) {
       if (event.target !== canvasRef) return;

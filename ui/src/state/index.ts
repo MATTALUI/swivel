@@ -1,7 +1,10 @@
 import { createSignal } from "solid-js";
+
 import projectState from "./project.state";
 import animatorState from "./animator.state";
 import creatorState from "./creator.state";
+import uiState from "./ui.state";
+
 import { CanvasMode } from "../types";
 
 const [canvasMode, setCanvasMode] = createSignal(CanvasMode.ANIMATOR);
@@ -12,6 +15,7 @@ const globalState = {
   project: projectState,
   animator: animatorState,
   creator: creatorState,
+  ui: uiState,
 };
 
 const STATE_KEY = "state";

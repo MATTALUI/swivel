@@ -1,21 +1,21 @@
 import { Show } from "solid-js";
-import { fullscreenLoadingMessage, isFullscreenLoading, isFullscreenLoadingOpaque } from "../state/loader";
 import styles from "./FullscreenLoader.module.scss";
 import cx from "classnames";
+import globalState from "../state";
 
 export const FullscreenLoader = () => (
-  <Show when={isFullscreenLoading()}>
+  <Show when={globalState.ui.loader.isRendered}>
     <div
       class={cx(
         styles.container,
         {
-          [styles.on]: isFullscreenLoadingOpaque(),
-          [styles.off]: !isFullscreenLoadingOpaque(),
+          [styles.on]: globalState.ui.loader.isOpaque,
+          [styles.off]: !globalState.ui.loader.isOpaque,
         }
       )}
     >
       <div class={styles.loader}></div>
-      <div class={styles.loadingMessage}>{fullscreenLoadingMessage()}</div>
+      <div class={styles.loadingMessage}>{globalState.ui.loader.message}</div>
     </div>
   </Show>
 );

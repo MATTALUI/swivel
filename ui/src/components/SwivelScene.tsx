@@ -4,11 +4,11 @@ import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
 import { drawFrameToCanvas } from "../utilities/canvas";
 import ObjectNode from "../models/ObjectNode";
-import { mouseDownInitialValues, selectedNode, setCanvasCursor, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
+import { mouseDownInitialValues, selectedNode, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
 import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utils";
 import Vec2 from "../models/Vec2";
 import globalState from "../state";
-import { deselectObjects, getCurrentFrame } from "../utilities/animator.utils";
+import { deselectObjects, getCurrentFrame } from "../utilities/animator.util";
 import { updateFrame } from "../utilities/project.util";
 import {
   type MouseDownValues,
@@ -117,10 +117,10 @@ const SwivelScene = () => {
 
       if (clickable) {
         setTargetNode(nextTargetNode);
-        setCanvasCursor("grab");
+        globalState.ui.cursor = "grab";
       } else {
         setTargetNode(null);
-        setCanvasCursor(null);
+        globalState.ui.cursor = null;
       }
     } else if (currentSelectedNode.isRoot) {
       const { offsetX, offsetY } = event;
@@ -220,7 +220,7 @@ const SwivelScene = () => {
     };
     if (node.parent)
       mouseDownValues.originalParentNode = node.parent.clone();
-    setCanvasCursor("grabbing");
+    globalState.ui.cursor = "grabbing";
     setSelectedNode(node);
     setMouseDownInitialValues(mouseDownValues);
     if (clickedObject) {
@@ -253,7 +253,7 @@ const SwivelScene = () => {
     const cursor = stillOnTarget ? "grab" : null;
     setSelectedNode(null);
     setMouseDownInitialValues(null);
-    setCanvasCursor(cursor);
+    globalState.ui.cursor = cursor;
     if (!stillOnTarget) setTargetNode(null);
   };
 

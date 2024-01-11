@@ -3,7 +3,7 @@ import styles from "./Settings.module.scss";
 import { drawFrameToCanvas, getMainCanvas } from "../utilities/canvas";
 import globalState from "../state";
 import { updateFrame } from "../utilities/project.util";
-import { getCurrentFrame } from "../utilities/animator.utils";
+import { getCurrentFrame } from "../utilities/animator.util";
 
 type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
 

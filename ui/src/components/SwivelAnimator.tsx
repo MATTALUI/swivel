@@ -4,7 +4,6 @@ import FileHeader from "./FileHeader";
 import styles from "./SwivelAnimator.module.scss";
 import SwivelScene from "./SwivelScene";
 import SwivelSidebar from "./SwivelSidebar";
-import { canvasCursor } from "../state/canvas";
 import { mountSwivelTauriListeners } from "../utilities/tauri";
 import { CanvasMode } from "../types";
 import ObjectCreatorCanvas from "./ObjectCreatorCanvas";
@@ -19,7 +18,7 @@ const SwivelAnimator = () => {
 
   const globalStyle = createMemo(() => {
     const style: GlobalStyleSet = {};
-    const cursor = canvasCursor();
+    const cursor = globalState.ui.cursor;
     if (cursor) style.cursor = cursor;
 
     return style;
