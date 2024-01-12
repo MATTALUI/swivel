@@ -1,8 +1,9 @@
 import { createResource, createSignal } from "solid-js";
 import Tauri from "../Tauri";
-import type {
-  SerializablePrefabAnimationObject,
-  Selectable,
+import {
+  type SerializablePrefabAnimationObject,
+  type Selectable,
+  TauriServerFunctions,
 } from "../types";
 
 const [currentFrameIndex, setCurrentFrameIndex] = createSignal(0, { equals: false });
@@ -16,9 +17,9 @@ const [savedObjects, { refetch: refetchSavedObjects }] = createResource(
       return [];
     }
     const { invoke } = Tauri.tauri;
-    const prefabs = await invoke<SerializablePrefabAnimationObject[]>("load_prefab_objects");//TauriServerFunctions.LOAD_PREFABS);
+    const prefabs = await invoke<SerializablePrefabAnimationObject[]>(TauriServerFunctions.LOAD_PREFABS);
 
-    return prefabs;
+    return prefabs.sort((a,b) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt)));
   }
 );
 
