@@ -7,21 +7,32 @@ import ObjectCreatorSettings from "./ObjectCreatorSettings.component";
 import globalState from "../state";
 import { CanvasMode } from "../types";
 
+const AnimatorControls = () => (
+  <Switch fallback={<ProjectSettings />}>
+    <Match when={globalState.animator.selectedObjects?.type === "frame"}>
+      <FrameSettings />
+    </Match>
+    <Match when={globalState.animator.selectedObjects?.type === "animationObject"}>
+      <AnimationObjectSettings />
+    </Match>
+  </Switch>
+);
+
+const CreatorControls = () => (
+  <Switch fallback={<ObjectCreatorSettings />}>
+    <></>
+  </Switch>
+);
+
 const Controls = () => {
   return (
     <div class={styles.container}>
       <Switch>
-        <Match when={!globalState.animator.selectedObjects && globalState.canvasMode === CanvasMode.ANIMATOR}>
-          <ProjectSettings />
+        <Match when={globalState.canvasMode === CanvasMode.ANIMATOR}>
+          <AnimatorControls />
         </Match>
-        <Match when={!globalState.animator.selectedObjects && globalState.canvasMode === CanvasMode.OBJECT_CREATOR}>
-          <ObjectCreatorSettings />
-        </Match>
-        <Match when={globalState.animator.selectedObjects?.type === "frame"}>
-          <FrameSettings />
-        </Match>
-        <Match when={globalState.animator.selectedObjects?.type === "animationObject"}>
-          <AnimationObjectSettings />
+        <Match when={globalState.canvasMode === CanvasMode.OBJECT_CREATOR}>
+          <CreatorControls />
         </Match>
       </Switch>
     </div>
