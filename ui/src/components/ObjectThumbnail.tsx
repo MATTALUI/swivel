@@ -4,6 +4,7 @@ import Vec2 from "../models/Vec2";
 import globalState from "../state";
 import type { SerializableObjectNode, SerializablePrefabAnimationObject } from "../types";
 import { getCurrentFrame } from "../utilities/animator.util";
+import { getMainCanvas } from "../utilities/canvas";
 import styles from "./ObjectThumbnail.module.scss";
 
 interface IObjectThumbnailProps {
@@ -38,8 +39,7 @@ const ObjectThumbnail = (props: IObjectThumbnailProps) => {
     // When a prefab is created, the creator uses a 1:1 canvas so we'l need to 
     // find an inner "crop" position within the current canvas that is 1:1 so
     // that we can recalculate the positions for each of the nodes
-    const canvas = document.querySelector<HTMLCanvasElement>("canvas");
-    if (!canvas) throw new Error("Could not find the canvas");
+    const canvas = getMainCanvas();
     const cropPadding = 20; // Give some padding so nodes don't touch the edge
     const {
       width: canvasWidth,

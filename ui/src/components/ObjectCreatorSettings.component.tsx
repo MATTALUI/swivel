@@ -4,6 +4,7 @@ import { saveSwivelObject } from "../utilities/tauri";
 import { CanvasMode } from "../types";
 import PrefabAnimationObject from "../models/PrefabAnimationObject";
 import globalState from "../state";
+import { getMainCanvas } from "../utilities/canvas";
 
 type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
 
@@ -17,7 +18,7 @@ const ObjectCreatorSettings = () => {
     if (!object) throw new Error("Trying to save nonexistant object?");
     const prefab = new PrefabAnimationObject(object);
     prefab.name = globalState.creator.name;
-    prefab.previewImage = document.querySelector("canvas")?.toDataURL() || "";
+    prefab.previewImage = getMainCanvas().toDataURL() || "";
     await saveSwivelObject(prefab);
     await globalState.animator.refetchSavedObjects();
     globalState.creator.object = null;
