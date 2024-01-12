@@ -1,5 +1,6 @@
 import { createSignal } from "solid-js";
-import type { CursorOption } from "../types";
+import ObjectNode from "../models/ObjectNode";
+import type { CursorOption, MouseDownValues } from "../types";
 
 export const [canvasCursor, setCanvasCursor] =
   createSignal<CursorOption>(null);
@@ -14,9 +15,24 @@ const [isFullscreenLoaderOpaque, setIsFullscreenLoaderOpaque] = createSignal(tru
 const [fullscreenLoadingMessage, setFullscreenLoadingMessage] =
   createSignal("Initializing");
 
+const [selectedNode, setSelectedNode] =
+  createSignal<ObjectNode | null>(null);
+const [targetNode, setTargetNode] =
+  createSignal<ObjectNode | null>(null);
+const [mouseDownInitialValues, setMouseDownInitialValues] =
+  createSignal<MouseDownValues | null>(null);
+
 const uiState = {
   get cursor() { return canvasCursor(); },
   set cursor(c) { setCanvasCursor(c); },
+  canvas: {
+    get selectedNode() { return selectedNode(); },
+    set selectedNode(n) { setSelectedNode(n); },
+    get targetNode() { return targetNode(); },
+    set targetNode(n) { setTargetNode(n); },
+    get mouseDownInitialValues() { return mouseDownInitialValues(); },
+    set mouseDownInitialValues(v) { setMouseDownInitialValues(v); },
+  },
   loader: {
     get isRendered() { return isFullscreenLoaderRendered(); },
     set isRendered(r) { setIsFullscreenLoaderRendered(r); },

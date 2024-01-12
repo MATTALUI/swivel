@@ -4,8 +4,7 @@ import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
 import { drawFrameToCanvas } from "../utilities/canvas";
 import ObjectNode from "../models/ObjectNode";
-import { mouseDownInitialValues, selectedNode, setMouseDownInitialValues, setSelectedNode, setTargetNode, targetNode } from "../state/canvas";
-import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utils";
+import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utilities/calculations.util";
 import Vec2 from "../models/Vec2";
 import globalState from "../state";
 import { deselectObjects, getCurrentFrame } from "../utilities/animator.util";
@@ -93,7 +92,7 @@ const SwivelScene = () => {
 
   const handleMouseMove = (event: MouseEvent) =>  {
     if (event.target !== canvasRef || !canvasRef) return;
-    const currentSelectedNode = selectedNode();
+    const currentSelectedNode = globalState.ui.canvas.selectedNode;
     if (!currentSelectedNode) {
       // No interaction has been initiated by selecting a node so we're just
       // checking interactables and setting the hover states.
@@ -116,10 +115,10 @@ const SwivelScene = () => {
       }
 
       if (clickable) {
-        setTargetNode(nextTargetNode);
+        globalState.ui.canvas.targetNode = nextTargetNode;
         globalState.ui.cursor = "grab";
       } else {
-        setTargetNode(null);
+        globalState.ui.canvas.targetNode = null;
         globalState.ui.cursor = null;
       }
     } else if (currentSelectedNode.isRoot) {
@@ -129,7 +128,7 @@ const SwivelScene = () => {
       // out-of-bounds canvas positions
       const mouseX = clamp(offsetX, 0, width);
       const mouseY = clamp(offsetY, 0, height);
-      const initialValues = mouseDownInitialValues();
+      const initialValues = globalState.ui.canvas.mouseDownInitialValues;
       if (!initialValues) throw new Error("No initial values for the mouse");
       const { x: originalX, y: originalY, originalNodeRoot } = initialValues;
       const deltaX = mouseX - originalX;
@@ -204,7 +203,7 @@ const SwivelScene = () => {
   };
 
   const handleMouseDown = (event: MouseEvent) => {
-    const node = targetNode();
+    const node = globalState.ui.canvas.targetNode;
     if (
       event.target !== canvasRef ||
       !node
@@ -221,8 +220,8 @@ const SwivelScene = () => {
     if (node.parent)
       mouseDownValues.originalParentNode = node.parent.clone();
     globalState.ui.cursor = "grabbing";
-    setSelectedNode(node);
-    setMouseDownInitialValues(mouseDownValues);
+    globalState.ui.canvas.selectedNode = node;
+    globalState.ui.canvas.mouseDownInitialValues = mouseDownValues;
     if (clickedObject) {
       const selection = globalState.animator.selectedObjects;
       let selectedIds: string[] =
@@ -244,17 +243,17 @@ const SwivelScene = () => {
 
   const handleMouseUp = (event: MouseEvent) => {
     if (
-      !selectedNode()
+      !globalState.ui.canvas.selectedNode
     ) return;
 
     // For now we can assume that if the user is still on the canvas they're
     // going to be hovering over the same point that they were initially on.
     const stillOnTarget = event.target === canvasRef;
     const cursor = stillOnTarget ? "grab" : null;
-    setSelectedNode(null);
-    setMouseDownInitialValues(null);
+    globalState.ui.canvas.selectedNode = null;
+    globalState.ui.canvas.mouseDownInitialValues = null;
     globalState.ui.cursor = cursor;
-    if (!stillOnTarget) setTargetNode(null);
+    if (!stillOnTarget) globalState.ui.canvas.targetNode = null;
   };
 
   createEffect(setCanvasSize);

@@ -1,8 +1,7 @@
 import { createEffect, onCleanup, onMount } from "solid-js";
 import styles from "./ObjectCreatorCanvas.module.scss";
 import { drawAnimationObjectToCanvas } from "../utilities/canvas";
-import { selectedNode, setTargetNode, targetNode, setSelectedNode, setMouseDownInitialValues, mouseDownInitialValues } from "../state/canvas";
-import { clamp } from "../utils";
+import { clamp } from "../utilities/calculations.util";
 import Vec2 from "../models/Vec2";
 import ObjectNode from "../models/ObjectNode";
 import { CreatorToolNames } from "../types";
@@ -44,19 +43,19 @@ const ObjectCreatorCanvas = () => {
       return;
     }
     if (globalState.creator.currentTool === CreatorToolNames.ADD) {
-      const parent = targetNode();
+      const parent = globalState.ui.canvas.targetNode;
       if (!parent) return;
       newNode = new ObjectNode();
       newNode.setPosition(parent?.position.clone());
       parent.appendChild(newNode);
       globalState.creator.controllableNodes =
         [...globalState.creator.controllableNodes, newNode];
-      setTargetNode(newNode);
-      setSelectedNode(newNode);
+      globalState.ui.canvas.targetNode = newNode;
+      globalState.ui.canvas.selectedNode = newNode;
       redrawCanvas();
       return;
     }
-    const node = targetNode();
+    const node = globalState.ui.canvas.targetNode;
     if (event.target !== canvasRef || !node) return;
 
     const mouseDownValues: MouseDownValues = {
@@ -68,12 +67,12 @@ const ObjectCreatorCanvas = () => {
     };
     if (globalState.creator.currentTool === CreatorToolNames.SELECT)
       globalState.ui.cursor = "grabbing";
-    setSelectedNode(node);
-    setMouseDownInitialValues(mouseDownValues);
+    globalState.ui.canvas.selectedNode = node;
+    globalState.ui.canvas.mouseDownInitialValues = mouseDownValues;
   };
 
   const handleMouseUp = (event: MouseEvent) => {
-    if (!selectedNode()) return;
+    if (!globalState.ui.canvas.selectedNode) return;
 
     // For now we can assume that if the user is still on the canvas they're
     // going to be hovering over the same point that they were initially on.
@@ -83,15 +82,15 @@ const ObjectCreatorCanvas = () => {
       cursor = "grab";
     if (stillOnTarget && globalState.creator.currentTool === CreatorToolNames.ADD)
       cursor = "crosshair";
-    setSelectedNode(null);
-    setMouseDownInitialValues(null);
+    globalState.ui.canvas.selectedNode = null;
+    globalState.ui.canvas.mouseDownInitialValues = null;
     globalState.ui.cursor = cursor;
-    if (!stillOnTarget) setTargetNode(null);
+    if (!stillOnTarget) globalState.ui.canvas.targetNode = null;
   };
 
   const handleMouseMove = (event: MouseEvent) => {
     if (!canvasRef) return;
-    const currentSelectedNode = selectedNode();
+    const currentSelectedNode = globalState.ui.canvas.selectedNode;
     const isGroupTool = globalState.creator.currentTool === CreatorToolNames.GROUP;
     if (isGroupTool && event.target === canvasRef) {
       globalState.ui.cursor = "crosshair";
@@ -129,10 +128,10 @@ const ObjectCreatorCanvas = () => {
           [CreatorToolNames.GROUP]: "crosshair",
         };
         const cursor = cursorMap[globalState.creator.currentTool];
-        setTargetNode(nextTargetNode);
+        globalState.ui.canvas.targetNode = nextTargetNode;
         globalState.ui.cursor = cursor;
       } else {
-        setTargetNode(null);
+        globalState.ui.canvas.targetNode = null;
         globalState.ui.cursor = null;
       }
     } else if (globalState.creator.currentTool === CreatorToolNames.SELECT) {
@@ -143,7 +142,7 @@ const ObjectCreatorCanvas = () => {
       // out-of-bounds canvas positions
       const mouseX = clamp(offsetX, 0, width);
       const mouseY = clamp(offsetY, 0, height);
-      const initialValues = mouseDownInitialValues();
+      const initialValues = globalState.ui.canvas.mouseDownInitialValues;
       if (!initialValues) throw new Error("No initial values for the mouse");
       const { x: originalX, y: originalY, originalNode } = initialValues;
       const deltaX = mouseX - originalX;

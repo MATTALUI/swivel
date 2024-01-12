@@ -1,5 +1,5 @@
 import { mountMappainterTauriListeners } from "../utilities/tauri";
-import { calculateAdjacentIndices } from "../utils";
+import { calculateAdjacentIndices } from "../utilities/calculations.util";
 import FileHeader from "./FileHeader";
 import styles from "./MapPainter.module.scss";
 
