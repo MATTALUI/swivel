@@ -22,10 +22,13 @@ const STATE_KEY = "state";
 
 declare global {
   interface Window {
-    [STATE_KEY]: typeof globalState,
+    [STATE_KEY]: typeof globalState | undefined,
   }
 }
 
-window[STATE_KEY] = globalState;
+if (import.meta.env.DEV) {
+  window[STATE_KEY] = globalState;
+}
+
 
 export default globalState;

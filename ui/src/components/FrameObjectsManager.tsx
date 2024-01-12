@@ -25,7 +25,6 @@ const FrameObjectsManager = () => {
   };
   onMount(setScrollerHeight);
   window.addEventListener("resize", setScrollerHeight);
-  console.log(globalState.animator.savedObjects);
 
   return (
     <>
