@@ -38,6 +38,10 @@ export default class ObjectNode {
     this.children.push(child);
   }
 
+  detach(child: ObjectNode) {
+    this.children = this.children.filter(c => c.id !== child.id);
+  }
+
   setPosition(pos: Vec2) {
     this.position = pos;
   }

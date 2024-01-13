@@ -55,6 +55,14 @@ const ObjectCreatorCanvas = () => {
       redrawCanvas();
       return;
     }
+    if (globalState.creator.currentTool === CreatorToolNames.ERASE) {
+      const node = globalState.ui.canvas.targetNode;
+      if (!node || node?.isRoot || !node.parent) return;
+      globalState.ui.canvas.targetNode = null;
+      node.parent.detach(node);
+      redrawCanvas();
+      return;
+    }
     const node = globalState.ui.canvas.targetNode;
     if (event.target !== canvasRef || !node) return;
 
@@ -126,8 +134,13 @@ const ObjectCreatorCanvas = () => {
           [CreatorToolNames.SELECT]: "grab",
           [CreatorToolNames.ADD]: "crosshair",
           [CreatorToolNames.GROUP]: "crosshair",
+          [CreatorToolNames.ERASE]: "cell",
         };
-        const cursor = cursorMap[globalState.creator.currentTool];
+        let cursor = cursorMap[globalState.creator.currentTool];
+        if (
+          globalState.creator.currentTool === CreatorToolNames.ERASE &&
+          nextTargetNode?.isRoot
+        ) cursor = "not-allowed";
         globalState.ui.canvas.targetNode = nextTargetNode;
         globalState.ui.cursor = cursor;
       } else {

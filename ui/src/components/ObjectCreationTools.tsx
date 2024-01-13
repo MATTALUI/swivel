@@ -5,6 +5,7 @@ import { TbHandGrab } from "solid-icons/tb";
 import cx from "classnames";
 import { CanvasMode, CreatorToolNames } from "../types";
 import globalState from "../state";
+import { FaSolidEraser } from "solid-icons/fa";
 // import { BiRegularBorderOuter } from "solid-icons/bi";
 
 const ObjectCreationTools = () => {
@@ -12,12 +13,13 @@ const ObjectCreationTools = () => {
     { Icon: TbHandGrab, name: CreatorToolNames.SELECT },
     { Icon: AiOutlinePlus, name: CreatorToolNames.ADD },
     // { Icon: BiRegularBorderOuter, name: CreatorToolNames.GROUP },
+    { Icon: FaSolidEraser, name: CreatorToolNames.ERASE },
   ];
 
   const cancelObjectCreation = () => {
     globalState.canvasMode = CanvasMode.ANIMATOR;
     globalState.creator.reset();
-  }
+  };
 
   return (
     <>

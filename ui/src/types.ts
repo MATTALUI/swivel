@@ -6,6 +6,10 @@ export type CursorOption =
   "grab" |
   "grabbing" |
   "crosshair" |
+  "none" |
+  "auto" |
+  "cell" |
+  "not-allowed" |
   null;
 
 export type MouseDownValues = {
@@ -45,6 +49,7 @@ export enum CreatorToolNames {
   SELECT = "SELECT",
   ADD = "ADD",
   GROUP = "GROUP",
+  ERASE = "ERASE",
 }
 
 export enum TauriClientEvents {
