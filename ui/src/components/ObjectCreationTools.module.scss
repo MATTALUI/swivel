@@ -9,6 +9,7 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 0.25rem;
+  margin-bottom: 0.75rem;
 }
 
 .toolButton {
@@ -27,5 +28,16 @@
 
   &:active {
     background-color: $primary-active;
+  }
+}
+
+button.cancelButton {
+  width: 100%;
+  background-color: $danger;
+  color: $light;
+  font-weight: bold;
+
+  &:active {
+    background-color: rgba($danger, 0.75);
   }
 }

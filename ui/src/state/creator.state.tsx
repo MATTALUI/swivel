@@ -20,6 +20,12 @@ const creatorState = {
   set currentTool(t) { setCurrentTool(t); },
   get name() { return name(); },
   set name(n) { setName(n); },
+  reset() {
+    setObject(null);
+    setControllableNodes([]);
+    setCurrentTool(CreatorToolNames.SELECT);
+    setName("New Object");
+  },
 };
 
 export default creatorState;
