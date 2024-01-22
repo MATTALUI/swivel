@@ -4,7 +4,7 @@ import { drawAnimationObjectToCanvas } from "../utilities/canvas";
 import { clamp } from "../utilities/calculations.util";
 import Vec2 from "../models/Vec2";
 import ObjectNode from "../models/ObjectNode";
-import { CreatorToolNames } from "../types";
+import { CreatorToolNames, ErasorCursor } from "../types";
 import type { MouseDownValues, CursorOption } from "../types";
 import globalState from "../state";
 
@@ -134,7 +134,7 @@ const ObjectCreatorCanvas = () => {
           [CreatorToolNames.SELECT]: "grab",
           [CreatorToolNames.ADD]: "crosshair",
           [CreatorToolNames.GROUP]: "crosshair",
-          [CreatorToolNames.ERASE]: "cell",
+          [CreatorToolNames.ERASE]: ErasorCursor,
         };
         let cursor = cursorMap[globalState.creator.currentTool];
         if (

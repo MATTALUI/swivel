@@ -2,6 +2,7 @@ import ObjectNode from "./models/ObjectNode";
 
 // These can be anything from the CSS options for cursor, but you'll ahve to opt-in
 // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
+export const ErasorCursor = "url('erasor.svg'), auto";
 export type CursorOption =
   "grab" |
   "grabbing" |
@@ -10,6 +11,7 @@ export type CursorOption =
   "auto" |
   "cell" |
   "not-allowed" |
+  "url('erasor.svg'), auto" |
   null;
 
 export type MouseDownValues = {
