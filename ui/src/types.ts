@@ -69,6 +69,19 @@ export enum TauriServerFunctions {
   SAVEMAPPAINTER = "save_painted_map",
 }
 
+export enum ObjectNodeTypes {
+  DEFAULT = "ROTATE",
+  ROOT = "TRANSLATE",
+  // eslint-disable-next-line  @typescript-eslint/no-duplicate-enum-values
+  ROTATE = "ROTATE",
+  // eslint-disable-next-line  @typescript-eslint/no-duplicate-enum-values
+  TRANSLATE = "TRANSLATE",
+  SCALE = "SCALE",
+  CIRCLE = "CIRCLE",
+  CIRCLE_FILLED = "CIRCLE_FILLED",
+  IMAGE = "IMAGE",
+}
+
 export enum CanvasMode {
   ANIMATOR = "ANIMATOR",
   OBJECT_CREATOR = "OBJECT_CREATOR",

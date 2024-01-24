@@ -1,7 +1,7 @@
 import globalState from "../state";
 import { SelectionType } from "../types";
 import { getCurrentFrame } from "../utilities/animator.util";
-import { drawFrameToCanvas, getMainCanvas } from "../utilities/canvas";
+import { drawFrameToCanvas, getMainCanvas } from "../utilities/canvas.util";
 import { updateFrame } from "../utilities/project.util";
 import styles from "./Settings.module.scss";
 

@@ -4,7 +4,7 @@ import Vec2 from "../models/Vec2";
 import globalState from "../state";
 import type { SerializableObjectNode, SerializablePrefabAnimationObject } from "../types";
 import { getCurrentFrame } from "../utilities/animator.util";
-import { getMainCanvas } from "../utilities/canvas";
+import { getMainCanvas } from "../utilities/canvas.util";
 import styles from "./ObjectThumbnail.module.scss";
 
 interface IObjectThumbnailProps {

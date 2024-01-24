@@ -1,4 +1,4 @@
-import type { SerializableAnimationObject } from "../types";
+import { ObjectNodeTypes, type SerializableAnimationObject } from "../types";
 import ObjectNode from "./ObjectNode";
 
 export default class AnimationObject {
@@ -7,13 +7,14 @@ export default class AnimationObject {
 
   constructor() {
     this.id = crypto.randomUUID();
-    this. root = new ObjectNode();
+    this.root = new ObjectNode();
     this.setRoot(this.root);
   }
 
   setRoot(node: ObjectNode) {
     this.root = node;
     this.root.object = this;
+    this.root.type = ObjectNodeTypes.ROOT;
   }
 
   toSerializableObject(): SerializableAnimationObject {

@@ -1,7 +1,7 @@
 import ObjectNode from "./ObjectNode";
 import Vec2 from "./Vec2";
 import AnimationObject from "./AnimationObject";
-import type { SerializableAnimationObject } from "../types";
+import { ObjectNodeTypes, type SerializableAnimationObject } from "../types";
 
 // This is only used when initializing the first empty frame for a
 // blank object.
@@ -113,8 +113,18 @@ const buildDefaultObjects = (): AnimationObject[] => {
   child.appendChild(newestChild);
   child = newestChild;
 
+  const imageObject = new AnimationObject();
+  child = imageObject.root;
+  child.setPosition(new Vec2(0.1, 0.1));
+  newestChild = new ObjectNode();
+  child.appendChild(newestChild);
+  child = newestChild;
+  child.type = ObjectNodeTypes.IMAGE;
+  child.image = "/dino.png";
+  child.setPosition(new Vec2(0.4, 0.4));
+  new Image().src = "/dino.png";
 
-  return [dino, box];
+  return [imageObject, dino, box,];
 };
 
 type SerializableFrame = {

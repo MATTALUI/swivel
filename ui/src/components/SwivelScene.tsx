@@ -2,7 +2,7 @@ import { createEffect, createMemo, onCleanup, onMount } from "solid-js";
 import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
-import { drawFrameToCanvas } from "../utilities/canvas";
+import { drawFrameToCanvas } from "../utilities/canvas.util";
 import ObjectNode from "../models/ObjectNode";
 import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utilities/calculations.util";
 import Vec2 from "../models/Vec2";

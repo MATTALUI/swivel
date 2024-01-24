@@ -1,6 +1,6 @@
 import type Frame from "../models/Frame";
 import globalState from "../state";
-import { getFramePreviewUrl } from "./canvas";
+import { getFramePreviewUrl } from "./canvas.util";
 
 export const addFrame = () => {
   const existingFrames = globalState.project.frames;

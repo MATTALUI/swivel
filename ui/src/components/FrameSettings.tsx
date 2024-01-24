@@ -1,6 +1,6 @@
 import type { JSX } from "solid-js";
 import styles from "./Settings.module.scss";
-import { drawFrameToCanvas, getMainCanvas } from "../utilities/canvas";
+import { drawFrameToCanvas, getMainCanvas } from "../utilities/canvas.util";
 import globalState from "../state";
 import { updateFrame } from "../utilities/project.util";
 import { getCurrentFrame } from "../utilities/animator.util";

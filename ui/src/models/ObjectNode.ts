@@ -1,4 +1,4 @@
-import type { SerializableObjectNode } from "../types";
+import { ObjectNodeTypes, SerializableObjectNode } from "../types";
 import AnimationObject from "./AnimationObject";
 import Vec2 from "./Vec2";
 
@@ -9,6 +9,8 @@ export default class ObjectNode {
   position: Vec2;
   children: ObjectNode[];
   size: number;
+  type: ObjectNodeTypes;
+  private _image?: string;
 
   constructor() {
     this.id = crypto.randomUUID();
@@ -17,6 +19,7 @@ export default class ObjectNode {
     this.position = new Vec2();
     this.children = [];
     this.size = 5;
+    this.type = ObjectNodeTypes.DEFAULT;
   }
 
   get isRoot() {
@@ -30,6 +33,16 @@ export default class ObjectNode {
       root = root.parent;
     }
     return root;
+  }
+
+  get image(): string | null {
+    return this._image || null;
+  }
+
+  set image(newImage: string) {
+    if (this.type !== ObjectNodeTypes.IMAGE)
+      throw new Error("Can not set image of non-image type nodes");
+    this._image = newImage;
   }
 
   appendChild(child: ObjectNode) {
@@ -61,6 +74,8 @@ export default class ObjectNode {
     clone.parent = this.parent;
     clone.size = this.size;
     clone.object = this.object;
+    clone.type = this.type;
+    clone._image = this._image;
     clone.setPosition(this.position.clone());
     this.children.forEach(c => clone.appendChild(c.clone()));
 

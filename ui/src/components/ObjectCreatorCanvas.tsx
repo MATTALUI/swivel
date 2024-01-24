@@ -1,6 +1,6 @@
 import { createEffect, onCleanup, onMount } from "solid-js";
 import styles from "./ObjectCreatorCanvas.module.scss";
-import { drawAnimationObjectToCanvas } from "../utilities/canvas";
+import { drawAnimationObjectToCanvas } from "../utilities/canvas.util";
 import { clamp } from "../utilities/calculations.util";
 import Vec2 from "../models/Vec2";
 import ObjectNode from "../models/ObjectNode";

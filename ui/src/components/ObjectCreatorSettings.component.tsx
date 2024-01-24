@@ -4,7 +4,7 @@ import { saveSwivelObject } from "../utilities/tauri";
 import { CanvasMode } from "../types";
 import PrefabAnimationObject from "../models/PrefabAnimationObject";
 import globalState from "../state";
-import { getMainCanvas } from "../utilities/canvas";
+import { getMainCanvas } from "../utilities/canvas.util";
 
 type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
 
