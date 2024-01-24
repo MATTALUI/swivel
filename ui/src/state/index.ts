@@ -4,6 +4,7 @@ import projectState from "./project.state";
 import animatorState from "./animator.state";
 import creatorState from "./creator.state";
 import uiState from "./ui.state";
+import mediaResourceState from "./mediaResources.state";
 
 import { CanvasMode } from "../types";
 
@@ -16,6 +17,7 @@ const globalState = {
   animator: animatorState,
   creator: creatorState,
   ui: uiState,
+  mediaResources: mediaResourceState,
 };
 
 const STATE_KEY = "state";

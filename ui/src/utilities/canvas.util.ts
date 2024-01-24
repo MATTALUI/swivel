@@ -6,9 +6,6 @@ import AnimationObject from "../models/AnimationObject";
 import globalState from "../state";
 import { degToRad, getAngleOfChange, getPositionDistance, radToDeg } from "./calculations.util";
 
-const testImage = new Image();
-testImage.src = "/dino.png";
-
 const ROOT_NODE_COLOR = "#ff8000";
 const NODE_COLOR = "#bf0404";
 interface IDrawFrameToCanvasOptions {
@@ -23,6 +20,7 @@ export const drawFrameToCanvas = (
   if (!ctx) {
     throw new Error("Context unavailable");
   }
+  const resourcesById = globalState.mediaResources.byId;
   const shouldDrawHelpers = !globalState.animator.isPlaying && !options.preview;
   // These checks simply will mark these pieces of state as dependencies
   globalState.project.width;
@@ -41,12 +39,17 @@ export const drawFrameToCanvas = (
       if (controllable) allControlNodes.push(child); // Children nodes
       switch (child.type) {
       case ObjectNodeTypes.IMAGE: {
+        if (!resourcesById) return; // Still waiting on resources
         const { x: parentX, y: parentY } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
         const { x: controllerX, y: controllerY } = child.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+        const imageResource = resourcesById[child.image || ""];
+        if (!imageResource || !imageResource.element) {
+          console.error("Image resource is missing or unloaded: ", child.image);
+          return;
+        }
 
-
-        const imageWidth = 672;
-        const imageHeight = 384;
+        const imageWidth = imageResource.width;
+        const imageHeight = imageResource.height;
         const imageDiagonal = getPositionDistance(0, 0, imageWidth, imageHeight);
         const renderedDiagonal = getPositionDistance(parentX, parentY, controllerX, controllerY);
         const renderedWidth = imageWidth * renderedDiagonal / imageDiagonal;
@@ -59,7 +62,7 @@ export const drawFrameToCanvas = (
         // Move to the parent node for easier drawing
         ctx.translate(parentX, parentY);
         ctx.rotate(degToRad(angleDifferential));
-        ctx.drawImage(testImage, 0, 0, renderedWidth, renderedHeight);
+        ctx.drawImage(imageResource.element, 0, 0, renderedWidth, renderedHeight);
         // Move back to origin
         ctx.rotate(-degToRad(angleDifferential));
         ctx.translate(-parentX, -parentY);

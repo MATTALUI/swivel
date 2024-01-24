@@ -1,10 +1,10 @@
 import globalState from "../state";
 
 interface IFullscreenLoadingOptions {
-    message?: string;
-    skipAnimation?: boolean;
-    delayMs?: number;
-  }
+  message?: string;
+  skipAnimation?: boolean;
+  delayMs?: number;
+}
 const ANIMATION_LENGTH = 250;
 export const startFullscreenLoading = async (
   options: IFullscreenLoadingOptions = {}
@@ -38,4 +38,15 @@ export const stopFullscreenLoading = async (
   globalState.ui.loader.isOpaque = false;
   await new Promise(res => setTimeout(res, ANIMATION_LENGTH));
   globalState.ui.loader.isRendered = false;
+};
+
+export const shortPollUntil = (fn: () => boolean, intervalMS = 250): Promise<void> => {
+  return new Promise((resolve) => {
+    const interval = setInterval(() => {
+      if (fn()) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, intervalMS);
+  });
 };

@@ -47,6 +47,10 @@ export type SerializablePrefabAnimationObject = {
   createdAt: string;
 }
 
+export type SerializableMediaResource = {
+  type: MediaResourceType;
+}
+
 export enum CreatorToolNames {
   SELECT = "SELECT",
   ADD = "ADD",
@@ -79,6 +83,10 @@ export enum ObjectNodeTypes {
   SCALE = "SCALE",
   CIRCLE = "CIRCLE",
   CIRCLE_FILLED = "CIRCLE_FILLED",
+  IMAGE = "IMAGE",
+}
+
+export enum MediaResourceType {
   IMAGE = "IMAGE",
 }
 

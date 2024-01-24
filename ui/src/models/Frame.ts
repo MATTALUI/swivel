@@ -120,9 +120,8 @@ const buildDefaultObjects = (): AnimationObject[] => {
   child.appendChild(newestChild);
   child = newestChild;
   child.type = ObjectNodeTypes.IMAGE;
-  child.image = "/dino.png";
+  child.image = "ae31a31d-b26d-4ba1-90be-3f49b9f2334f";
   child.setPosition(new Vec2(0.4, 0.4));
-  new Image().src = "/dino.png";
 
   return [imageObject, dino, box,];
 };
