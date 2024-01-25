@@ -13,7 +13,6 @@ interface IObjectThumbnailProps {
 
 const ObjectThumbnail = (props: IObjectThumbnailProps) => {
   const addObjectToFrame = () => {
-    console.log("addObjectToFrame");
     // REHYDRATE THE PREFAB
     // The prefab in props is just going to be a raw object so it'll need to be
     // instantiated in the proper classes and ids shifted
@@ -24,6 +23,8 @@ const ObjectThumbnail = (props: IObjectThumbnailProps) => {
       const node = new ObjectNode();
       node.object = hydratedObject;
       node.size = serialNode.size;
+      node.type = serialNode.type;
+      if (serialNode.image) node.image = serialNode.image;
       node.setPosition(new Vec2(
         serialNode.position.x,
         serialNode.position.y,

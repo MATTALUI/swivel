@@ -11,6 +11,7 @@ export const App = () => {
   onMount(async () => {
     await Promise.all([
       shortPollUntil(() => !!globalState.mediaResources.byId),
+      shortPollUntil(() => !!globalState.animator.savedObjects),
       new Promise(res => setTimeout(res, 1000)), // Min 1s
     ]);
     stopFullscreenLoading();

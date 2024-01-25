@@ -32,6 +32,8 @@ export type SerializableObjectNode = {
   position: SerializableVec2;
   size: number;
   children: SerializableObjectNode[];
+  type: ObjectNodeTypes;
+  image?: string | null;
 };
 
 export type SerializableAnimationObject = {

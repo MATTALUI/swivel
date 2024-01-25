@@ -65,6 +65,8 @@ export default class ObjectNode {
       position: this.position.toSerializableObject(),
       size: this.size,
       children: this.children.map(c => c.toSerializableObject()),
+      type: this.type,
+      image: this.image,
     };
   }
 

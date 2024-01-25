@@ -120,10 +120,14 @@ const buildDefaultObjects = (): AnimationObject[] => {
   child.appendChild(newestChild);
   child = newestChild;
   child.type = ObjectNodeTypes.IMAGE;
-  child.image = "ae31a31d-b26d-4ba1-90be-3f49b9f2334f";
+  child.image = "default-dino";
   child.setPosition(new Vec2(0.4, 0.4));
 
-  return [imageObject, dino, box,];
+  return [
+    // imageObject,
+    dino,
+    box,
+  ];
 };
 
 type SerializableFrame = {

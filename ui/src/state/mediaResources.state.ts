@@ -4,11 +4,18 @@ import { MediaResourceType } from "../types";
 
 const builtinResources = [
   {
-    id: "ae31a31d-b26d-4ba1-90be-3f49b9f2334f",
+    id: "default-dino",
     type: MediaResourceType.IMAGE,
     url: "/dino.png",
     width: 672,
     height: 384,
+  },
+  {
+    id: "default-logo",
+    type: MediaResourceType.IMAGE,
+    url: "/original.png",
+    width: 2048,
+    height: 2048,
   },
 ];
 
