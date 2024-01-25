@@ -4,15 +4,16 @@ import ProjectSettings from "./ProjectSettings";
 import FrameSettings from "./FrameSettings";
 import AnimationObjectSettings from "./AnimationObjectSettings";
 import ObjectCreatorSettings from "./ObjectCreatorSettings.component";
+import ObjectNodeSettings from "./ObjectNodeSettings.component";
 import globalState from "../state";
-import { CanvasMode } from "../types";
+import { CanvasMode, SelectionType } from "../types";
 
 const AnimatorControls = () => (
   <Switch fallback={<ProjectSettings />}>
-    <Match when={globalState.animator.selectedObjects?.type === "frame"}>
+    <Match when={globalState.animator.selectedObjects?.type === SelectionType.FRAME}>
       <FrameSettings />
     </Match>
-    <Match when={globalState.animator.selectedObjects?.type === "animationObject"}>
+    <Match when={globalState.animator.selectedObjects?.type === SelectionType.ANIMATION_OBJECT}>
       <AnimationObjectSettings />
     </Match>
   </Switch>
@@ -20,7 +21,9 @@ const AnimatorControls = () => (
 
 const CreatorControls = () => (
   <Switch fallback={<ObjectCreatorSettings />}>
-    <></>
+    <Match when={globalState.animator.selectedObjects?.type === SelectionType.NODE}>
+      <ObjectNodeSettings />
+    </Match>
   </Switch>
 );
 

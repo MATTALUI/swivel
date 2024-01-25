@@ -4,7 +4,7 @@ import { drawAnimationObjectToCanvas } from "../utilities/canvas.util";
 import { clamp } from "../utilities/calculations.util";
 import Vec2 from "../models/Vec2";
 import ObjectNode from "../models/ObjectNode";
-import { CreatorToolNames, ErasorCursor } from "../types";
+import { CreatorToolNames, ErasorCursor, SelectionType } from "../types";
 import type { MouseDownValues, CursorOption } from "../types";
 import globalState from "../state";
 
@@ -64,7 +64,10 @@ const ObjectCreatorCanvas = () => {
       return;
     }
     const node = globalState.ui.canvas.targetNode;
-    if (event.target !== canvasRef || !node) return;
+    if (event.target !== canvasRef || !node){
+      globalState.animator.selectedObjects = null;
+      return;
+    }
 
     const mouseDownValues: MouseDownValues = {
       x: event.offsetX,
@@ -77,6 +80,10 @@ const ObjectCreatorCanvas = () => {
       globalState.ui.cursor = "grabbing";
     globalState.ui.canvas.selectedNode = node;
     globalState.ui.canvas.mouseDownInitialValues = mouseDownValues;
+    globalState.animator.selectedObjects = {
+      type: SelectionType.NODE,
+      objectIds: [node.id],
+    };
   };
 
   const handleMouseUp = (event: MouseEvent) => {

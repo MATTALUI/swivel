@@ -99,8 +99,10 @@ export enum CanvasMode {
 export enum SelectionType {
   FRAME = "frame",
   ANIMATION_OBJECT = "animationObject",
+  NODE = "node",
 }
 
 export type Selectable =
   { type: SelectionType.FRAME, objectIds: string[] } |
+  { type: SelectionType.NODE, objectIds: string[] } |
   { type: SelectionType.ANIMATION_OBJECT, objectIds: string[] };

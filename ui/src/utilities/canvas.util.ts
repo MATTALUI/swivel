@@ -186,14 +186,29 @@ export const drawAnimationObjectToCanvas = (
   // We're adding the roots to this list, but I suspect there might come a
   // time when we might want these to be separate
   allControlNodes.push(root); // Root nodes
-  allControlNodes.forEach(({ position, isRoot }) => {
+  allControlNodes.forEach((node) => {
     if (!ctx) {
       throw new Error("Context unavailable");
     }
+    const { position, isRoot, id } = node;
     const { x, y } = position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
     ctx.beginPath();
     ctx.arc(x, y, 6.9, 0, 2 * Math.PI);
     ctx.fillStyle = isRoot ? ROOT_NODE_COLOR : NODE_COLOR;
     ctx.fill();
+
+    if (
+      globalState.animator.selectedObjects &&
+      globalState.animator.selectedObjects.type === SelectionType.NODE &&
+      globalState.animator.selectedObjects.objectIds.includes(id)
+    ) {
+      console.log("this node is selected");
+      ctx.beginPath();
+      ctx.arc(x, y, 2.9, 0, 2 * Math.PI);
+      ctx.fillStyle = isRoot
+        ? Color(ROOT_NODE_COLOR).negate().hex()
+        : Color(NODE_COLOR).negate().hex();
+      ctx.fill();
+    }
   });
 };
