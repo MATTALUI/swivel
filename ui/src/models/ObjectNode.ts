@@ -9,6 +9,8 @@ export default class ObjectNode {
   position: Vec2;
   children: ObjectNode[];
   size: number;
+  width: number | null;
+  height: number | null;
   type: ObjectNodeTypes;
   private _image?: string;
 
@@ -19,6 +21,8 @@ export default class ObjectNode {
     this.position = new Vec2();
     this.children = [];
     this.size = 5;
+    this.width = null;
+    this.height = null;
     this.type = ObjectNodeTypes.DEFAULT;
   }
 

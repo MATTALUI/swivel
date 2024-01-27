@@ -20,6 +20,10 @@
     }
   }
 
+  &>select{
+    width: 100%;
+  }
+
   &>label {
     display: block;
     font-weight: 600;

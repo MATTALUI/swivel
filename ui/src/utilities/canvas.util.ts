@@ -42,14 +42,17 @@ export const drawFrameToCanvas = (
         if (!resourcesById) return; // Still waiting on resources
         const { x: parentX, y: parentY } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
         const { x: controllerX, y: controllerY } = child.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
-        const imageResource = resourcesById[child.image || ""];
+        const imageResource = resourcesById[child.image || "🦖"];
         if (!imageResource || !imageResource.element) {
           console.error("Image resource is missing or unloaded: ", child.image);
-          return;
+          if (!child.width || !child.height) {
+            console.error("Missing a dimension; child can not be drawn");
+            return;
+          }
         }
 
-        const imageWidth = imageResource.width;
-        const imageHeight = imageResource.height;
+        const imageWidth = imageResource?.width || child.width || 1;
+        const imageHeight = imageResource?.height || child.height || 1;
         const imageDiagonal = getPositionDistance(0, 0, imageWidth, imageHeight);
         const renderedDiagonal = getPositionDistance(parentX, parentY, controllerX, controllerY);
         const renderedWidth = imageWidth * renderedDiagonal / imageDiagonal;
@@ -62,7 +65,11 @@ export const drawFrameToCanvas = (
         // Move to the parent node for easier drawing
         ctx.translate(parentX, parentY);
         ctx.rotate(degToRad(angleDifferential));
-        ctx.drawImage(imageResource.element, 0, 0, renderedWidth, renderedHeight);
+        ctx.fillStyle = "#3E2F5B33";
+        ctx.rect(0, 0, renderedWidth, renderedHeight);
+        if (imageResource?.element)
+          ctx.drawImage(imageResource.element, 0, 0, renderedWidth, renderedHeight);
+        ctx.fill();
         // Move back to origin
         ctx.rotate(-degToRad(angleDifferential));
         ctx.translate(-parentX, -parentY);
@@ -202,7 +209,6 @@ export const drawAnimationObjectToCanvas = (
       globalState.animator.selectedObjects.type === SelectionType.NODE &&
       globalState.animator.selectedObjects.objectIds.includes(id)
     ) {
-      console.log("this node is selected");
       ctx.beginPath();
       ctx.arc(x, y, 2.9, 0, 2 * Math.PI);
       ctx.fillStyle = isRoot

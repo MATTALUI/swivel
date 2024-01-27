@@ -6,6 +6,7 @@ const builtinResources = [
   {
     id: "default-dino",
     type: MediaResourceType.IMAGE,
+    name: "Dino Party",
     url: "/dino.png",
     width: 672,
     height: 384,
@@ -13,13 +14,14 @@ const builtinResources = [
   {
     id: "default-logo",
     type: MediaResourceType.IMAGE,
+    name: "Swivel Logo",
     url: "/original.png",
     width: 2048,
     height: 2048,
   },
 ];
 
-const [signal] = createResource(async () => {
+const [signal, { mutate }] = createResource<Record<string, MediaResource>>(async () => {
   const hydratedBuiltingResources = Promise.all(
     builtinResources.map(r => new MediaResource(r).hydrate())
   );
@@ -32,6 +34,12 @@ const [signal] = createResource(async () => {
 
 const mediaResourceState = {
   get byId() { return signal(); },
+  set new(mr:MediaResource) {
+    mutate({
+      ...signal(),
+      [mr.id]: mr,
+    });
+  }
 };
 
 export default mediaResourceState;

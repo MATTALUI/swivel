@@ -1,0 +1,66 @@
+@import "../variables.module.scss";
+
+.imagePreview {
+  padding-top: 2rem;
+
+  & img {
+    max-width: 100%;
+    border-radius: 3px;
+  }
+
+  & span {
+    display: block;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+
+    &.error {
+      color: $danger;
+    }
+  }
+}
+
+.fileSelector {
+  & input {
+    display: none;
+  }
+
+  & label {
+    margin-top: 0.5rem;
+    font-weight: bold;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    cursor: pointer;
+    width: 100%;
+    background-color: $primary;
+    color: $light;
+    outline: none;
+    border: none;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.loader {
+  width: 14px;
+  height: 14px;
+  border: 3px solid #FFF;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  margin-right: 0.25rem;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

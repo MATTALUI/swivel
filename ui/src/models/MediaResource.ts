@@ -4,6 +4,7 @@ type MediaResourceConstructorArgs = {
   id?: string;
   type: MediaResourceType;
   url: string;
+  name?: string;
   width?: number;
   height?: number;
   element?: HTMLImageElement | HTMLVideoElement | null;
@@ -12,6 +13,7 @@ type MediaResourceConstructorArgs = {
 export default class MediaResource {
   id: string;
   type: MediaResourceType;
+  name: string;
   width: number;
   height: number;
   url: string;
@@ -21,6 +23,7 @@ export default class MediaResource {
     this.id = properties.id || crypto.randomUUID();
     this.type = properties.type;
     this.url = properties.url;
+    this.name = properties.name || "Unnamed Resource";
     this.width = properties.width ?? 0;
     this.height = properties.height ?? 0;
     this.element = properties.element ?? null;
@@ -35,6 +38,8 @@ export default class MediaResource {
         this.element.src = this.url;
         const onload = () => {
           this.element?.removeEventListener("load", onload);
+          if (!this.height) this.height = this.element?.height || 0;
+          if (!this.width) this.width = this.element?.width || 0;
           resolve(this);
         };
         this.element.addEventListener("load", onload);
