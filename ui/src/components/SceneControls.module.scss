@@ -5,4 +5,30 @@
   padding: 0.5rem 0.75rem;
   display: flex;
   justify-content: space-between;
+
+  &>div {
+    display: flex;
+
+    &:first-of-type {
+      &>.mediaButton {
+        margin-right: 0.25rem;
+      }
+    }
+
+    &:last-of-type {
+      &>.mediaButton {
+        margin-left: 0.25rem;
+      }
+    }
+  }
+}
+
+.mediaButton {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $light;
+  color: $primary;
 }
