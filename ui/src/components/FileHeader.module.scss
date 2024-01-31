@@ -7,7 +7,7 @@
   align-items: center;
   justify-items: flex-start;
 
-  a {
+  .navItem {
     text-decoration: none;
     font-size: 2rem;
     color: $light;
@@ -15,6 +15,30 @@
     padding: 0.25rem 1rem;
     display: flex;
     align-items: center;
+    position: relative;
+
+    & > .dropdown {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 100%;
+      width: 10rem;
+      background-color: $light;
+      color: $dark;
+      flex-direction: column;
+      border: 1px solid $primary;
+      border-radius: 0 0 3px 3px;
+      font-size: 1.25rem;
+
+      & > a {
+        padding: 0.25rem;
+        transition: background-color 0.25s;
+
+        &:hover {
+          background-color: $primary-trans;
+        }
+      }
+    }
 
     & img {
       width: 2.5rem;
@@ -22,15 +46,11 @@
       border-radius: 15px;
     }
 
-    &:first-child {
-      font-size: 3rem;
-      &:hover {
-        background-color: $primary;
-      }
-    }
-
     &:hover {
       background-color: $primary-hover;
+      &>.dropdown {
+        display: flex;
+      }
     }
   }
 }

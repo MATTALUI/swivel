@@ -43,8 +43,8 @@ export const saveProject = async () => {
 export const restartProject = async () => {
   startFullscreenLoading({ message: "Setting Up New Project" });
   await new Promise(res => setTimeout(res, 1000));
-  globalState.project.reset();
   globalState.animator.reset();
+  globalState.project.reset();
   stopFullscreenLoading();
 };
 

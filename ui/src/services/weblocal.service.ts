@@ -44,10 +44,12 @@ const getSavedObjects = async () => {
 };
 
 const saveProject = async (_project: SwivelProject) => {
+  console.log(SERVICE_NAME, "saveProject", _project);
   return buildServiceError("Not implemented");
 };
 
 const exportProject = async (_project: SwivelProject) => {
+  console.log(SERVICE_NAME, "exportProject", _project);
   return buildServiceError("Not implemented");
 };
 

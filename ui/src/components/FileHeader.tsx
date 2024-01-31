@@ -1,19 +1,31 @@
 import Tauri from "../Tauri";
+import { gotoAnimator, gotoMapPainter } from "../utilities/navigation.util";
+import { exportProject, restartProject, saveProject } from "../utilities/project.util";
 import styles from "./FileHeader.module.scss";
 
 const FileHeader = () => {
   if (Tauri) return null;
   return (
     <header class={styles.container}>
-      <a href="/">
+      <a href="/" class={styles.navItem}>
         <img src="/original.png" />
       </a>
-      <a>
+      <div class={styles.navItem}>
         File
-      </a>
-      <a>
+        <div class={styles.dropdown}>
+          <a onClick={restartProject}>New</a>
+          <a onClick={saveProject}>Save</a>
+          <a onClick={() => console.log("Open")}>Open</a>
+          <a onClick={exportProject}>Export</a>
+        </div>
+      </div>
+      <div class={styles.navItem}>
         Tools
-      </a>
+        <div class={styles.dropdown}>
+          <a onClick={gotoAnimator}>Animator</a>
+          <a onClick={gotoMapPainter}>Map Painter</a>
+        </div>
+      </div>
     </header>
   );
 };
