@@ -38,9 +38,11 @@ const ObjectNodeSettings = () => {
     return Array.from(new Set(selectedNodes().map(n => n.type)));
   };
 
+  const firstType = () => nodeTypes()[0];
+
   const uniformTypes = () => nodeTypes().length === 1;
 
-  const unavailable = () => {
+  const containsRoot = () => {
     return selectedNodes().some(n => n.isRoot);
   };
 
@@ -66,22 +68,27 @@ const ObjectNodeSettings = () => {
         <div class={styles.settingContainer}>
           <select
             onChange={changeNodeTypes}
-            disabled={unavailable() || nodeTypes().length > 1}
+            disabled={containsRoot() || nodeTypes().length > 1}
           >
+            <Show when={containsRoot()}>
+              <option selected value={ObjectNodeTypes.IMAGE}>
+                Root
+              </option>
+            </Show>
             <option
-              selected={nodeTypes()[0] === ObjectNodeTypes.ROTATE}
+              selected={firstType() === ObjectNodeTypes.ROTATE}
               value={ObjectNodeTypes.ROTATE}
             >
               Rotator
             </option>
             <option
-              selected={nodeTypes()[0] === ObjectNodeTypes.TRANSLATE}
+              selected={firstType() === ObjectNodeTypes.TRANSLATE  && !containsRoot()}
               value={ObjectNodeTypes.TRANSLATE}
             >
               Translator
             </option>
             <option
-              selected={nodeTypes()[0] === ObjectNodeTypes.IMAGE}
+              selected={firstType() === ObjectNodeTypes.IMAGE}
               value={ObjectNodeTypes.IMAGE}
             >
               Image
@@ -89,9 +96,9 @@ const ObjectNodeSettings = () => {
           </select>
         </div>
         <Switch>
-          <Match when={nodeTypes()[0] === ObjectNodeTypes.IMAGE}>
+          <Match when={firstType() === ObjectNodeTypes.IMAGE}>
             <For each={selectedNodes()}>
-              {(node) => <ImageNodeSettings node={node}/>}
+              {(node) => <ImageNodeSettings node={node} />}
             </For>
           </Match>
         </Switch>
