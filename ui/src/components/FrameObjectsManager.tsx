@@ -31,6 +31,7 @@ const FrameObjectsManager = () => {
       <h2 class={controlStyles.title}>Objects</h2>
       <div>
         <button
+          data-testid="frame-objects-manager__create-new"
           onClick={startCreateCanvas}
           class={styles.newButton}
         >

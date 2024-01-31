@@ -6,6 +6,7 @@ import globalState from "../state";
 export const FullscreenLoader = () => (
   <Show when={globalState.ui.loader.isRendered}>
     <div
+      data-testid="fullscreen-loader"
       class={cx(
         styles.container,
         {
