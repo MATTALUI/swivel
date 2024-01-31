@@ -1,4 +1,5 @@
-import ObjectNode from "./models/ObjectNode";
+import type ObjectNode from "./models/ObjectNode";
+import type PrefabAnimationObject from "./models/PrefabAnimationObject";
 
 // These can be anything from the CSS options for cursor, but you'll ahve to opt-in
 // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
@@ -106,3 +107,41 @@ export type Selectable =
   { type: SelectionType.FRAME, objectIds: string[] } |
   { type: SelectionType.NODE, objectIds: string[] } |
   { type: SelectionType.ANIMATION_OBJECT, objectIds: string[] };
+
+export type APIServiceBase = {
+  service: string;
+}
+
+export type APIServiceSuccess<T> = APIServiceBase & {
+  success: true;
+  error: null;
+  data: T;
+}
+export type APIServiceFailure = APIServiceBase & {
+  success: false;
+  error: string;
+  data: null;
+}
+export type APIServiceMeta<T> = APIServiceSuccess<T> | APIServiceFailure;
+
+export type APIServiceResponse<T> = Promise<APIServiceMeta<T>>;
+
+export interface IAPIService {
+  /** Returns the name of the service */
+  getServiceName: () => string;
+  /**
+   * A utility function that will display a brief description of a service
+   * mostly used for debugging which services are being applied in which
+   * environments
+   * */
+  displayServiceInformation: () => boolean;
+  /**
+   * Uploads a base64 encoded image to a publicly accessible location, returning
+   * the src-able url for that image
+  */
+  uploadImage: (b64: string) => APIServiceResponse<string>;
+  /** Gets a list of prefabricated animation objects that the user has saved */
+  getSavedObjects: () => APIServiceResponse<SerializablePrefabAnimationObject[]>;
+  /** Saves a new prefabricated animation object */
+  saveSwivelObject: (p: PrefabAnimationObject) => APIServiceResponse<PrefabAnimationObject>;
+}

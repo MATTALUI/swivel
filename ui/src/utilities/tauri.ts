@@ -1,14 +1,10 @@
 import Tauri from "../Tauri";
-import PrefabAnimationObject from "../models/PrefabAnimationObject";
 import globalState from "../state";
 import { startFullscreenLoading, stopFullscreenLoading } from "../utilities/ui.util";
 import { TauriClientEvents, TauriServerFunctions } from "../types";
 
 export const mountSwivelTauriListeners = () => {
-  if (!Tauri) {
-    console.log("Non-Tauri instance. Running in webmode.");
-    return;
-  }
+  if (!Tauri) return;
   const { listen } = Tauri.event;
 
   listen(TauriClientEvents.SWITCH_TOOLS, switchTools);
@@ -18,10 +14,7 @@ export const mountSwivelTauriListeners = () => {
 };
 
 export const mountMappainterTauriListeners = () => {
-  if (!Tauri) {
-    console.log("Non-Tauri instance. Running in webmode.");
-    return;
-  }
+  if (!Tauri) return;
   const { listen } = Tauri.event;
   listen(TauriClientEvents.SWITCH_TOOLS, switchTools);
   listen(TauriClientEvents.SAVE, mappainterSave);
@@ -100,17 +93,4 @@ const mappainterSave = async () => {
 
 const mappainterNew = () => {
   console.log("Create new map painter!");
-};
-
-export const saveSwivelObject = async (prefab: PrefabAnimationObject): Promise<boolean> => {
-  if (!Tauri) {
-    // Add a web service call here
-    return false;
-  }
-  const { invoke } = Tauri.tauri;
-  // await new Promise(res => setTimeout(res, 1000));
-  const saveData = JSON.stringify(prefab.toSerializableObject());
-  await invoke(TauriServerFunctions.SAVE_PREFAB, { saveData });
-
-  return true;
 };

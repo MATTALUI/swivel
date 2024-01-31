@@ -2,9 +2,9 @@ import { JSX, Match, Show, Switch, createSignal } from "solid-js";
 import ObjectNode from "../models/ObjectNode";
 import globalState from "../state";
 import styles from "./ImageNodeSettings.module.scss";
-import Tauri from "../Tauri";
 import MediaResource from "../models/MediaResource";
 import { MediaResourceType } from "../types";
+import APIService from "../services";
 
 interface IImageNodeSettingsProps {
   node: ObjectNode;
@@ -34,16 +34,18 @@ const ImageNodeSettings = (props: IImageNodeSettingsProps) => {
       if (!file)
         throw new Error("There is no file available in this file upload.");
       await new Promise<void>((res) => setTimeout(res, 1000));
-      await new Promise<void>((res) => {
+      await new Promise<void>((res, rej) => {
         const reader = new FileReader();
         reader.onload = () => {
           const base64Image = reader.result as string;
-          if (Tauri) {
-            // Upload to some kind of static directory
-          } else {
+          APIService.uploadImage(base64Image).then(({
+            success,
+            data: publicURL,
+          }) => {
+            if (!success) return rej();
             const resource = new MediaResource({
               type: MediaResourceType.IMAGE,
-              url: base64Image,
+              url: publicURL,
               name: file.name,
             });
             resource.hydrate().then(() => {
@@ -53,7 +55,7 @@ const ImageNodeSettings = (props: IImageNodeSettingsProps) => {
               globalState.mediaResources.new = resource;
               res();
             });
-          }
+          });
         };
         reader.readAsDataURL(file);
       });

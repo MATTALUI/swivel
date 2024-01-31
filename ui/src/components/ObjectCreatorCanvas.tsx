@@ -39,7 +39,7 @@ const ObjectCreatorCanvas = () => {
   const handleMouseDown = (event: MouseEvent) => {
     const isGroupTool = globalState.creator.currentTool === CreatorToolNames.GROUP;
     if (isGroupTool) {
-      console.log("were doing something else here");
+      // were doing something else here
       return;
     }
     if (globalState.creator.currentTool === CreatorToolNames.ADD) {

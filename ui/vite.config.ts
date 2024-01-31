@@ -7,6 +7,6 @@ export default defineConfig({
     port: 6969,
   },
   build: {
-    minify: false, // Enable to make Tauri debugging easier
+    // minify: false, // Enable to make Tauri debugging easier
   },
 });

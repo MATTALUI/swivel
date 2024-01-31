@@ -8,12 +8,14 @@ import { mountSwivelTauriListeners } from "../utilities/tauri";
 import { CanvasMode } from "../types";
 import ObjectCreatorCanvas from "./ObjectCreatorCanvas";
 import globalState from "../state";
+import APIService from "../services";
 
 type GlobalStyleSet = {
   cursor?: string;
 }
 
 const SwivelAnimator = () => {
+  APIService.displayServiceInformation();
   mountSwivelTauriListeners();
 
   const globalStyle = createMemo(() => {

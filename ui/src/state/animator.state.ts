@@ -1,11 +1,10 @@
 import { createResource, createSignal } from "solid-js";
-import Tauri from "../Tauri";
 import {
   type SerializablePrefabAnimationObject,
   type Selectable,
-  TauriServerFunctions,
   ObjectNodeTypes,
 } from "../types";
+import APIService from "../services";
 
 const builtinPrefabs: SerializablePrefabAnimationObject[] = [
   {
@@ -63,12 +62,8 @@ const [selectedObjects, setSelectedObjects] = createSignal<Selectable | null>(nu
 const [savedObjects, { refetch: refetchSavedObjects }] = createResource(
   async (): Promise<SerializablePrefabAnimationObject[]> => {
     let prefabs: SerializablePrefabAnimationObject[] = [];
-    if (!Tauri) {
-      // Add a web service call here
-    } else {
-      const { invoke } = Tauri.tauri;
-      prefabs = await invoke<SerializablePrefabAnimationObject[]>(TauriServerFunctions.LOAD_PREFABS);
-    }
+    const { data: savedPrefabs } = await APIService.getSavedObjects();
+    if (savedPrefabs) prefabs = prefabs.concat(savedPrefabs);
     prefabs = prefabs.concat(builtinPrefabs);
 
     return prefabs.sort((a, b) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt)));
