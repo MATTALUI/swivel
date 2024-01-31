@@ -70,14 +70,17 @@ const ProjectSettings = () => {
         />
       </div>
       <div class={styles.settingContainer}>
-        <label>Frame Rate</label>
+        <div class={styles.splitHeader}>
+          <label>Frame Rate</label>
+          <span>{globalState.project.fps} FPS</span>
+        </div>
         <input
           type="range"
           min={1}
           max={30}
           step={1}
           value={globalState.project.fps}
-          onChange={updateProjectFPS}
+          onInput={updateProjectFPS}
         />
       </div>
     </>
