@@ -1,4 +1,5 @@
 import type PrefabAnimationObject from "../models/PrefabAnimationObject";
+import SwivelProject from "../models/SwivelProject";
 import type {
   APIServiceFailure,
   APIServiceSuccess,
@@ -42,12 +43,22 @@ const getSavedObjects = async () => {
   return buildServiceError("Not implemented");
 };
 
+const saveProject = async (_project: SwivelProject) => {
+  return buildServiceError("Not implemented");
+};
+
+const exportProject = async (_project: SwivelProject) => {
+  return buildServiceError("Not implemented");
+};
+
 const webLocalService: IAPIService = {
   getServiceName,
   displayServiceInformation,
   uploadImage,
   saveSwivelObject,
   getSavedObjects,
+  saveProject,
+  exportProject,
 };
 
 export default webLocalService;

@@ -27,6 +27,8 @@ const displayServiceInformation = () => {
 const uploadImage = async () => serviceError();
 const getSavedObjects = async () => serviceError();
 const saveSwivelObject = async () => serviceError();
+const saveProject = async () => serviceError();
+const exportProject = async () => serviceError();
 
 const unsupportedService: IAPIService = {
   getServiceName,
@@ -34,6 +36,8 @@ const unsupportedService: IAPIService = {
   uploadImage,
   getSavedObjects,
   saveSwivelObject,
+  saveProject,
+  exportProject,
 };
 
 export default unsupportedService;

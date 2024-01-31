@@ -1,5 +1,6 @@
 import type ObjectNode from "./models/ObjectNode";
 import type PrefabAnimationObject from "./models/PrefabAnimationObject";
+import type SwivelProject from "./models/SwivelProject";
 
 // These can be anything from the CSS options for cursor, but you'll ahve to opt-in
 // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
@@ -108,6 +109,10 @@ export type Selectable =
   { type: SelectionType.NODE, objectIds: string[] } |
   { type: SelectionType.ANIMATION_OBJECT, objectIds: string[] };
 
+export type PayloadEvent<T> = {
+  payload: T;
+};
+
 export type APIServiceBase = {
   service: string;
 }
@@ -144,4 +149,8 @@ export interface IAPIService {
   getSavedObjects: () => APIServiceResponse<SerializablePrefabAnimationObject[]>;
   /** Saves a new prefabricated animation object */
   saveSwivelObject: (p: PrefabAnimationObject) => APIServiceResponse<PrefabAnimationObject>;
+  /* Saves an animation project */
+  saveProject: (p: SwivelProject) => APIServiceResponse<boolean>;
+  /** Exports an animation project to a new file */
+  exportProject: (p: SwivelProject) => APIServiceResponse<boolean>;
 }

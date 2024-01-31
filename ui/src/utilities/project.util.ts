@@ -1,6 +1,8 @@
 import type Frame from "../models/Frame";
+import APIService from "../services";
 import globalState from "../state";
 import { getFramePreviewUrl } from "./canvas.util";
+import { startFullscreenLoading, stopFullscreenLoading } from "./ui.util";
 
 export const addFrame = () => {
   const existingFrames = globalState.project.frames;
@@ -28,4 +30,28 @@ export const updateFramePreviews = async () => {
     return frame;
   }));
   globalState.project.frames = newFrames;
+};
+
+export const saveProject = async () => {
+  startFullscreenLoading({ message: "Saving" });
+  await new Promise(res => setTimeout(res, 1000));
+  const project = globalState.project.swivelProject;
+  await APIService.saveProject(project);
+  stopFullscreenLoading();
+};
+
+export const restartProject = async () => {
+  startFullscreenLoading({ message: "Setting Up New Project" });
+  await new Promise(res => setTimeout(res, 1000));
+  globalState.project.reset();
+  globalState.animator.reset();
+  stopFullscreenLoading();
+};
+
+export const exportProject = async () => {
+  startFullscreenLoading({ message: "Exporting" });
+  await new Promise(res => setTimeout(res, 1000));
+  const project = globalState.project.swivelProject;
+  await APIService.exportProject(project);
+  stopFullscreenLoading();
 };

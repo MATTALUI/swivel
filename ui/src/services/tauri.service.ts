@@ -1,5 +1,6 @@
 import OptionalTauri from "../Tauri";
 import type PrefabAnimationObject from "../models/PrefabAnimationObject";
+import SwivelProject from "../models/SwivelProject";
 import {
   type APIServiceFailure,
   type APIServiceSuccess,
@@ -10,7 +11,6 @@ import {
 
 // If we're using the service without a tauri instance then we deserve the errors
 const Tauri = OptionalTauri!;
-const { invoke } = Tauri.tauri;
 const SERVICE_NAME = "Tauri Service";
 
 const buildServiceSuccess = <T>(data: T): APIServiceSuccess<T> => ({
@@ -40,6 +40,7 @@ const uploadImage = async (_b64: string) => {
 
 const saveSwivelObject = async (prefab: PrefabAnimationObject) => {
   try {
+    const { invoke } = Tauri.tauri;
     // await new Promise(res => setTimeout(res, 1000));
     const saveData = JSON.stringify(prefab.toSerializableObject());
     await invoke(TauriServerFunctions.SAVE_PREFAB, { saveData });
@@ -52,8 +53,25 @@ const saveSwivelObject = async (prefab: PrefabAnimationObject) => {
 };
 
 const getSavedObjects = async () => {
+  const { invoke } = Tauri.tauri;
   const prefabs = await invoke<SerializablePrefabAnimationObject[]>(TauriServerFunctions.LOAD_PREFABS);
   return buildServiceSuccess(prefabs);
+};
+
+const saveProject = async (project: SwivelProject) => {
+  const projectData = project.serialize();
+  const { invoke } = Tauri.tauri;
+  await invoke(TauriServerFunctions.SAVE, { projectData });
+
+  return buildServiceSuccess(true);
+};
+
+const exportProject = async (project: SwivelProject) => {
+  const projectData = project.serialize();
+  const { invoke } = Tauri.tauri;
+  await invoke(TauriServerFunctions.EXPORT, { projectData });
+
+  return buildServiceSuccess(true);
 };
 
 const tauriService: IAPIService = {
@@ -62,6 +80,8 @@ const tauriService: IAPIService = {
   uploadImage,
   saveSwivelObject,
   getSavedObjects,
+  saveProject,
+  exportProject,
 };
 
 export default tauriService;
