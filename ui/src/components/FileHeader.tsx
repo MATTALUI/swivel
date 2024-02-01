@@ -1,6 +1,6 @@
 import Tauri from "../Tauri";
 import { gotoAnimator, gotoMapPainter } from "../utilities/navigation.util";
-import { exportProject, restartProject, saveProject } from "../utilities/project.util";
+import { restartProject, saveProject } from "../utilities/project.util";
 import styles from "./FileHeader.module.scss";
 
 const FileHeader = () => {
@@ -16,7 +16,6 @@ const FileHeader = () => {
           <a onClick={restartProject}>New</a>
           <a onClick={saveProject}>Save</a>
           <a onClick={() => console.log("Open")}>Open</a>
-          <a onClick={exportProject}>Export</a>
         </div>
       </div>
       <div class={styles.navItem}>

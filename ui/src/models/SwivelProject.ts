@@ -26,14 +26,18 @@ export default class SwivelProject {
     return this.width / this.height;
   }
 
-  serialize() {
-    return JSON.stringify({
+  toSerializableObject() {
+    return {
       id: this.id,
       name: this.name,
       width: this.width,
       height: this.height,
       fps: this.fps,
       frames: this.frames.map(f => f.toSerializableObject()),
-    });
+    };
+  }
+
+  serialize() {
+    return JSON.stringify(this.toSerializableObject());
   }
 }
