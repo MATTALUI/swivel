@@ -52,8 +52,10 @@ const ImageNodeSettings = (props: IImageNodeSettingsProps) => {
               props.node.image = resource.id;
               props.node.width = resource.width;
               props.node.height = resource.height;
-              globalState.mediaResources.new = resource;
-              res();
+              APIService.createMediaResource(resource).then(() => {
+                globalState.mediaResources.new = resource;
+                res();
+              });
             });
           });
         };

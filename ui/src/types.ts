@@ -1,3 +1,4 @@
+import type MediaResource from "./models/MediaResource";
 import type ObjectNode from "./models/ObjectNode";
 import type PrefabAnimationObject from "./models/PrefabAnimationObject";
 import type SwivelProject from "./models/SwivelProject";
@@ -149,8 +150,12 @@ export interface IAPIService {
   getSavedObjects: () => APIServiceResponse<SerializablePrefabAnimationObject[]>;
   /** Saves a new prefabricated animation object */
   saveSwivelObject: (p: PrefabAnimationObject) => APIServiceResponse<PrefabAnimationObject>;
-  /* Saves an animation project */
+  /** Saves an animation project */
   saveProject: (p: SwivelProject) => APIServiceResponse<boolean>;
   /** Exports an animation project to a new file */
   exportProject: (p: SwivelProject) => APIServiceResponse<boolean>;
+  /** Gets a list of all of the media resources that have been saved to the service */
+  getMediaResources: () => APIServiceResponse<MediaResource[]>;
+  /** Creates a media resource record on the service */
+  createMediaResource: (r: MediaResource) => APIServiceResponse<MediaResource>;
 }

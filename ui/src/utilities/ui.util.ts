@@ -40,12 +40,25 @@ export const stopFullscreenLoading = async (
   globalState.ui.loader.isRendered = false;
 };
 
-export const shortPollUntil = (fn: () => boolean, intervalMS = 250): Promise<void> => {
-  return new Promise((resolve) => {
+export const shortPollUntil = (fn: () => boolean, intervalMS = 250, attempts = 20): Promise<void> => {
+  let attempt = 0;
+  return new Promise((resolve, reject) => {
     const interval = setInterval(() => {
-      if (fn()) {
+      let success = false;
+      try {
+        success = fn();
+      } catch (e) {
+        console.error(e);
+      }
+      if (success) {
         clearInterval(interval);
         resolve();
+      } else {
+        attempt++;
+        if (attempt > attempts) {
+          clearInterval(interval);
+          reject("shortPollUntil hit max attempts");
+        }
       }
     }, intervalMS);
   });

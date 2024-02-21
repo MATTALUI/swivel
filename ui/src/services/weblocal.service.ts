@@ -10,23 +10,31 @@ import type {
   IAPIService,
   SerializablePrefabAnimationObject,
 } from "../types";
+import MediaResource, { MediaResourceConstructorArgs } from "../models/MediaResource";
 
 const SERVICE_NAME = "Web Local Service";
 const DB_NAME = "SWIVEL::DATABASE";
 const PROJECTS_STORE = "SWIVEL::PROJECTS";
 const PREFABS_STORE = "SWIVEL::PREFABS";
+const IMAGES_STORE = "SWIVEL::IMAGES";
+const RESOURCES_STORE = "SWIVEL::RESOURCES";
 
 // Do not touch once committed!
-const DB_MIGRATIONS = [
+const IDB_MIGRATIONS = [
   (db: IDBPDatabase) => {
     const projects = db.createObjectStore(PROJECTS_STORE, { keyPath: "id" });
     projects.createIndex("name", "name", { unique: false });
     const prefabs = db.createObjectStore(PREFABS_STORE, { keyPath: "id" });
     prefabs.createIndex("name", "name", { unique: false });
   },
+  (db: IDBPDatabase) => {
+    db.createObjectStore(IMAGES_STORE, { autoIncrement: true });
+    const resources = db.createObjectStore(RESOURCES_STORE, { keyPath: "id" });
+    resources.createIndex("name", "name", { unique: false });
+  },
 ];
 
-const DBVersion = DB_MIGRATIONS.length;
+const DBVersion = IDB_MIGRATIONS.length;
 
 const useDb = async () => {
   const db = await openDB(DB_NAME, DBVersion, {
@@ -38,7 +46,7 @@ const useDb = async () => {
     ) => {
       const finishVersion = newVersion || DBVersion;
       for (let i = oldVersion; i < finishVersion; i++) {
-        const migration = DB_MIGRATIONS[i];
+        const migration = IDB_MIGRATIONS[i];
         migration(db);
       }
     }
@@ -69,15 +77,28 @@ const displayServiceInformation = () => {
 };
 
 const uploadImage = async (b64: string) => {
-  // Right now we just use the b64 image as the public image, might investigate
-  // putting into indexdb in the future
+
+  // This code is a way that we can store the image in IDB and use a URL instead.
+  // However, it creates an issue in that these URLs aren't permanant, so saving
+  // them causes errors in the media resources. Will need to investigate a more
+  // sturdy flow for this.
+
+  // const res = await fetch(b64);
+  // const blob = await res.blob();
+  // const db = await useDb();
+  // const transaction = db.transaction([IMAGES_STORE], "readwrite");
+  // await db.add(IMAGES_STORE, blob); // This will return the inserted key
+  // await transaction.done;
+  // const src = URL.createObjectURL(blob);
+  
+  // return buildServiceSuccess(src);
   return buildServiceSuccess(b64);
 };
 
 const saveSwivelObject = async (prefab: PrefabAnimationObject) => {
   const db = await useDb();
   const transaction = db.transaction([PREFABS_STORE], "readwrite");
-  db.add(PREFABS_STORE, prefab);
+  await db.add(PREFABS_STORE, prefab);
   await transaction.done;
 
   return buildServiceSuccess(prefab);
@@ -95,7 +116,7 @@ const getSavedObjects = async () => {
 const saveProject = async (project: SwivelProject) => {
   const db = await useDb();
   const transaction = db.transaction([PROJECTS_STORE], "readwrite");
-  db.add(PROJECTS_STORE, project.toSerializableObject());
+  await db.add(PROJECTS_STORE, project.toSerializableObject());
   await transaction.done;
 
   return buildServiceSuccess(true);
@@ -103,6 +124,25 @@ const saveProject = async (project: SwivelProject) => {
 
 const exportProject = async (_project: SwivelProject) => {
   return buildServiceError("Not implemented");
+};
+
+const getMediaResources = async () => {
+  const db = await useDb();
+  const transaction = db.transaction([RESOURCES_STORE], "readonly");
+  const serializedResources: MediaResourceConstructorArgs[] = await db.getAll(RESOURCES_STORE);
+  await transaction.done;
+  const resources = serializedResources.map(sr => new MediaResource(sr));
+
+  return buildServiceSuccess(resources);
+};
+
+const createMediaResource = async (resource: MediaResource) => {
+  const db = await useDb();
+  const transaction = db.transaction([RESOURCES_STORE], "readwrite");
+  await db.add(RESOURCES_STORE, resource.toSerializableObject());
+  await transaction.done;
+  
+  return buildServiceSuccess(resource);
 };
 
 const webLocalService: IAPIService = {
@@ -113,6 +153,8 @@ const webLocalService: IAPIService = {
   getSavedObjects,
   saveProject,
   exportProject,
+  getMediaResources,
+  createMediaResource,
 };
 
 export default webLocalService;

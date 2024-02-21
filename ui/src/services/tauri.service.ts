@@ -1,4 +1,5 @@
 import OptionalTauri from "../Tauri";
+import MediaResource from "../models/MediaResource";
 import type PrefabAnimationObject from "../models/PrefabAnimationObject";
 import SwivelProject from "../models/SwivelProject";
 import {
@@ -74,6 +75,14 @@ const exportProject = async (project: SwivelProject) => {
   return buildServiceSuccess(true);
 };
 
+const getMediaResources = async () => {
+  return buildServiceError("Not implemented");
+};
+
+const createMediaResource = async (_resource: MediaResource) => {
+  return buildServiceError("Not implemented");
+};
+
 const tauriService: IAPIService = {
   getServiceName,
   displayServiceInformation,
@@ -82,6 +91,8 @@ const tauriService: IAPIService = {
   getSavedObjects,
   saveProject,
   exportProject,
+  getMediaResources,
+  createMediaResource,
 };
 
 export default tauriService;

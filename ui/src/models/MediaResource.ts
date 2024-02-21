@@ -1,6 +1,6 @@
 import { MediaResourceType } from "../types";
 
-type MediaResourceConstructorArgs = {
+export type MediaResourceConstructorArgs = {
   id?: string;
   type: MediaResourceType;
   url: string;
@@ -29,7 +29,19 @@ export default class MediaResource {
     this.element = properties.element ?? null;
   }
 
-  hydrate():Promise<MediaResource> {
+  toSerializableObject() {
+    return {
+      id: this.id,
+      type: this.type,
+      url: this.url,
+      name: this.name,
+      width: this.width,
+      height: this.height,
+      element: null,
+    };
+  }
+
+  hydrate(): Promise<MediaResource> {
     if (this.element) return Promise.resolve(this);
     return new Promise((resolve) => {
       switch (this.type) {
