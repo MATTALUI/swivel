@@ -6,7 +6,8 @@ interface IFullscreenLoadingOptions {
   skipAnimation?: boolean;
   delayMs?: number;
 }
-const ANIMATION_LENGTH = 250;
+const FAST_ANIMATION_LENGTH = 100;
+const MED_ANIMATION_LENGTH = 250;
 export const startFullscreenLoading = async (
   options: IFullscreenLoadingOptions = {}
 ) => {
@@ -23,7 +24,7 @@ export const startFullscreenLoading = async (
   globalState.ui.loader.isRendered = true;
   await new Promise(res => setTimeout(res, 0));
   globalState.ui.loader.isOpaque = true;
-  await new Promise(res => setTimeout(res, ANIMATION_LENGTH));
+  await new Promise(res => setTimeout(res, MED_ANIMATION_LENGTH));
 };
 
 export const stopFullscreenLoading = async (
@@ -37,7 +38,7 @@ export const stopFullscreenLoading = async (
     return;
   }
   globalState.ui.loader.isOpaque = false;
-  await new Promise(res => setTimeout(res, ANIMATION_LENGTH));
+  await new Promise(res => setTimeout(res, MED_ANIMATION_LENGTH));
   globalState.ui.loader.isRendered = false;
 };
 
@@ -66,11 +67,11 @@ export const openGlobalDialog = async (
     return;
   }
   globalState.ui.dialog.isOpaque = false;
-  await new Promise(res => setTimeout(res, 0));
+  await new Promise(res => setTimeout(res, 10));
   globalState.ui.dialog.isRendered = true;
-  await new Promise(res => setTimeout(res, 0));
+  await new Promise(res => setTimeout(res, 10));
   globalState.ui.dialog.isOpaque = true;
-  await new Promise(res => setTimeout(res, ANIMATION_LENGTH));
+  await new Promise(res => setTimeout(res, FAST_ANIMATION_LENGTH));
 };
 
 export const closeGlobalDialog = async (
@@ -84,7 +85,7 @@ export const closeGlobalDialog = async (
     return;
   }
   globalState.ui.dialog.isOpaque = false;
-  await new Promise(res => setTimeout(res, ANIMATION_LENGTH));
+  await new Promise(res => setTimeout(res, FAST_ANIMATION_LENGTH));
   globalState.ui.dialog.isRendered = false;
   globalState.ui.dialog.title = "";
   globalState.ui.dialog.text = "";

@@ -2,7 +2,7 @@ import type Frame from "../models/Frame";
 import APIService from "../services";
 import globalState from "../state";
 import { getFramePreviewUrl } from "./canvas.util";
-import { startFullscreenLoading, stopFullscreenLoading } from "./ui.util";
+import { closeGlobalDialog, openGlobalDialog, startFullscreenLoading, stopFullscreenLoading } from "./ui.util";
 
 export const addFrame = () => {
   const existingFrames = globalState.project.frames;
@@ -41,11 +41,19 @@ export const saveProject = async () => {
 };
 
 export const restartProject = async () => {
-  startFullscreenLoading({ message: "Setting Up New Project" });
-  await new Promise(res => setTimeout(res, 1000));
-  globalState.animator.reset();
-  globalState.project.reset();
-  stopFullscreenLoading();
+  openGlobalDialog({
+    title: "Are you sure?",
+    text: "Any unsaved progress will be lost and can not be recovered.",
+    onNegative: () => closeGlobalDialog(),
+    onAffirmative: async () => {
+      closeGlobalDialog();
+      startFullscreenLoading({ message: "Setting Up New Project" });
+      await new Promise(res => setTimeout(res, 1000));
+      globalState.animator.reset();
+      globalState.project.reset();
+      stopFullscreenLoading();
+    }
+  });
 };
 
 export const exportProject = async () => {
