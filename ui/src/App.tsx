@@ -5,6 +5,7 @@ import SwivelAnimator from "./components/SwivelAnimator";
 import { shortPollUntil, stopFullscreenLoading } from "./utilities/ui.util";
 import MapPainter from "./components/MapPainter";
 import globalState from "./state";
+import GlobalDialog from "./components/GlobalDialog.component";
 
 export const App = () => {
   // For now, we're just stubbing out some loading that take time at startup
@@ -20,6 +21,7 @@ export const App = () => {
   return (
     <>
       <FullscreenLoader />
+      <GlobalDialog />
       <Router>
         <Route path="/" component={SwivelAnimator} />
         <Route path="/mappainter" component={MapPainter} />

@@ -9,3 +9,12 @@ $danger: $cardinal;
 $primary-trans: rgba($primary, 0.25);
 $primary-hover: lighten($primary-trans, 20%);
 $primary-active: rgba($primary, 0.5);
+
+@mixin button-primary {
+  background-color: $primary;
+  color: $light;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}

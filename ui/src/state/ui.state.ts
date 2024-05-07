@@ -1,6 +1,9 @@
-import { createSignal } from "solid-js";
+import { JSX, createSignal } from "solid-js";
 import ObjectNode from "../models/ObjectNode";
 import type { CursorOption, MouseDownValues } from "../types";
+
+type OptionalCallback =
+  JSX.EventHandlerUnion<HTMLButtonElement, MouseEvent> | undefined;
 
 export const [canvasCursor, setCanvasCursor] =
   createSignal<CursorOption>(null);
@@ -14,6 +17,20 @@ const [isFullscreenLoaderOpaque, setIsFullscreenLoaderOpaque] = createSignal(tru
 // An optional message to show in the fullscreen loader to display
 const [fullscreenLoadingMessage, setFullscreenLoadingMessage] =
   createSignal("Initializing");
+
+// This pattern is the same as the full screen loader, but for the dialog and
+// its infomation
+const [isDialogRendered, setIsDialogRendered] = createSignal(false);
+const [isDialogOpaque, setIsDialogOpaque] = createSignal(false);
+const [dialogTitle, setDialogTitle] = createSignal("Attention");
+const [dialogText, setDialogText] =
+  createSignal("I Hope you're having a great day");
+const [dialogAffirmativeCB, setDialogAffirmativeDB] =
+  createSignal<OptionalCallback>(undefined);
+const [dialogNegativeCB, setDialogNegativeDB] =
+  createSignal<OptionalCallback>(undefined);
+const [dialogNeutralCB, setDialogNeutralDB] =
+  createSignal<OptionalCallback>(undefined);
 
 const [selectedNode, setSelectedNode] =
   createSignal<ObjectNode | null>(null);
@@ -40,6 +57,27 @@ const uiState = {
     set isOpaque(o) { setIsFullscreenLoaderOpaque(o); },
     get message() { return fullscreenLoadingMessage(); },
     set message(m) { setFullscreenLoadingMessage(m); },
-  }
+  },
+  dialog: {
+    get isRendered() { return isDialogRendered(); },
+    set isRendered(r) { setIsDialogRendered(r); },
+    get isOpaque() { return isDialogOpaque(); },
+    set isOpaque(o) { setIsDialogOpaque(o); },
+    get title() { return dialogTitle(); },
+    set title(t) { setDialogTitle(t); },
+    get text() { return dialogText(); },
+    set text(t) { setDialogText(t); },
+    get affirmativeCB() { return dialogAffirmativeCB(); },
+    set affirmativeCB(cb) { setDialogAffirmativeDB(() => cb); },
+    get negativeCB() { return dialogNegativeCB(); },
+    set negativeCB(cb) { setDialogNegativeDB(() => cb); },
+    get neutralCB() { return dialogNeutralCB(); },
+    set neutralCB(cb) { setDialogNeutralDB(() => cb); },
+    get hasCBRegistered() {
+      return !!dialogAffirmativeCB() ||
+        !!dialogNegativeCB() ||
+        !!dialogNeutralCB();
+    },
+  },
 };
 export default uiState;
