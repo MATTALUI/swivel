@@ -46,8 +46,18 @@ export const drawFrameToCanvas = (
       switch (child.type) {
       case ObjectNodeTypes.IMAGE: {
         if (!resourcesById) return; // Still waiting on resources
-        const { x: parentX, y: parentY } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
-        const { x: controllerX, y: controllerY } = child.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+        const { x: _parentX, y: _parentY } = node.position.getRenderedPosition(
+          options.canvasDimensions?.width ?? ctx.canvas.width,
+          options.canvasDimensions?.height || ctx.canvas.height
+        );
+        const { x: _controllerX, y: _controllerY } = child.position.getRenderedPosition(
+          options.canvasDimensions?.width ?? ctx.canvas.width,
+          options.canvasDimensions?.height || ctx.canvas.height
+        );
+        const parentX = _parentX + (options.pixelOffset?.x || 0);
+        const parentY = _parentY + (options.pixelOffset?.y || 0);
+        const controllerX = _controllerX + (options.pixelOffset?.x || 0);
+        const controllerY = _controllerY + (options.pixelOffset?.y || 0);
         const imageResource = resourcesById[child.image || "🦖"];
         if (!imageResource || !imageResource.element) {
           console.error("Image resource is missing or unloaded: ", child.image);
