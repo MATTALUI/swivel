@@ -9,7 +9,13 @@ import { degToRad, getAngleOfChange, getPositionDistance, radToDeg } from "./cal
 const ROOT_NODE_COLOR = "#ff8000";
 const NODE_COLOR = "#bf0404";
 interface IDrawFrameToCanvasOptions {
+  /** set to true when canvas should be drawn without controls or helpers, like
+   * nodes and guidelines */
   preview?: boolean;
+  /** the amount of pixels to adjust all nodes that get drawn to the canvas */
+  pixelOffset?: { x: number; y: number; };
+  /** The dimensions to use for canvas calculations when a shift is needed */
+  canvasDimensions?: { width: number; height: number; };
 }
 export const drawFrameToCanvas = (
   canvas: HTMLCanvasElement,
@@ -78,8 +84,19 @@ export const drawFrameToCanvas = (
       }
       default: {
         const alpha = controllable ? 1 : 0.5;
-        const { x: startX, y: startY } = child.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
-        const { x: endX, y: endY } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+        const { x: _startX, y: _startY } = child.position.getRenderedPosition(
+          options.canvasDimensions?.width ?? ctx.canvas.width,
+          options.canvasDimensions?.height ?? ctx.canvas.height
+        );
+        const { x: _endX, y: _endY } = node.position.getRenderedPosition(
+          options.canvasDimensions?.width ?? ctx.canvas.width,
+          options.canvasDimensions?.height ?? ctx.canvas.height
+        );
+
+        const startX = _startX + (options.pixelOffset?.x || 0);
+        const startY = _startY + (options.pixelOffset?.y || 0);
+        const endX = _endX + (options.pixelOffset?.x || 0);
+        const endY = _endY + (options.pixelOffset?.y || 0);
 
         ctx.beginPath();
         ctx.strokeStyle = `rgba(0,0,0,${alpha})`;
@@ -114,18 +131,36 @@ export const drawFrameToCanvas = (
       if (!ctx) {
         throw new Error("Context unavailable");
       }
-      const { x, y } = position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+      const { x, y } = position.getRenderedPosition(
+        options.canvasDimensions?.width ?? ctx.canvas.width,
+        options.canvasDimensions?.height ?? ctx.canvas.height
+      );
       ctx.beginPath();
-      ctx.arc(x, y, 6.9, 0, 2 * Math.PI);
+      ctx.arc(
+        x + (options.pixelOffset?.x || 0),
+        y + (options.pixelOffset?.y || 0),
+        6.9,
+        0,
+        2 * Math.PI
+      );
       ctx.fillStyle = isRoot ? ROOT_NODE_COLOR : NODE_COLOR;
       ctx.fill();
     });
     const selection = globalState.animator.selectedObjects;
     if (selection?.type === SelectionType.ANIMATION_OBJECT) {
       const drawNodes = (node: ObjectNode) => {
-        const { x, y } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+        const { x, y } = node.position.getRenderedPosition(
+          options.canvasDimensions?.width ?? ctx.canvas.width,
+          options.canvasDimensions?.height ?? ctx.canvas.height
+        );
         ctx.beginPath();
-        ctx.arc(x, y, 2.9, 0, 2 * Math.PI);
+        ctx.arc(
+          x + (options.pixelOffset?.x || 0),
+          y + (options.pixelOffset?.y || 0),
+          2.9,
+          0,
+          2 * Math.PI
+        );
         ctx.fillStyle = node.isRoot
           ? Color(ROOT_NODE_COLOR).negate().hex()
           : Color(NODE_COLOR).negate().hex();
@@ -209,7 +244,7 @@ export const drawAnimationObjectToCanvas = (
         ctx.fill();
         if (imageResource?.element)
           ctx.drawImage(imageResource.element, 0, 0, renderedWidth, renderedHeight);
-        // Move back to origin
+          // Move back to origin
         ctx.rotate(-degToRad(angleDifferential));
         ctx.translate(-parentX, -parentY);
         ctx.globalAlpha = 1.0;

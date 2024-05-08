@@ -17,6 +17,7 @@ import {
 const SwivelScene = () => {
   let canvasContainerRef: HTMLDivElement | undefined;
   let canvasRef: HTMLCanvasElement | undefined;
+  let shadowCanvasRef: HTMLCanvasElement | undefined;
   let skipDeselect = false;
 
   const tryDeselect = () => {
@@ -41,11 +42,31 @@ const SwivelScene = () => {
 
   const repaintCanvas = () => {
     if (!canvasRef) return;
-    drawFrameToCanvas(canvasRef, getCurrentFrame(), {});
+    drawFrameToCanvas(canvasRef, getCurrentFrame());
+
+    if (!canvasContainerRef || !shadowCanvasRef) return;
+    const {
+      x: containerX,
+      y: containerY,
+    } = canvasContainerRef.getBoundingClientRect();
+    const {
+      x: canvasX,
+      y: canvasY,
+      width,
+      height,
+    } = canvasRef.getBoundingClientRect();
+    const canvasBorderWidth = parseFloat(getComputedStyle(canvasRef).borderWidth);
+    const x = canvasX - containerX + canvasBorderWidth;
+    const y = canvasY - containerY + canvasBorderWidth;
+
+    drawFrameToCanvas(shadowCanvasRef, getCurrentFrame(), {
+      pixelOffset: { x, y },
+      canvasDimensions: { width, height },
+    });
   };
 
   const setCanvasSize = () => {
-    if (!canvasContainerRef || !canvasRef) return;
+    if (!canvasContainerRef || !canvasRef || !shadowCanvasRef) return;
     const {
       width: containerWidth,
       height: containerHeight
@@ -53,6 +74,9 @@ const SwivelScene = () => {
     const containerPadding = 20;
     const maxContainerWidth = containerWidth - (containerPadding * 2);
     const maxContainerHeight = containerHeight - (containerPadding * 2);
+
+    shadowCanvasRef.width = containerWidth;
+    shadowCanvasRef.height = containerHeight;
 
     let width = 10;
     let height = 10;
@@ -90,7 +114,7 @@ const SwivelScene = () => {
     updateFrame(globalState.animator.currentFrameIndex);
   }, 500);
 
-  const handleMouseMove = (event: MouseEvent) =>  {
+  const handleMouseMove = (event: MouseEvent) => {
     if (event.target !== canvasRef || !canvasRef) return;
     const currentSelectedNode = globalState.ui.canvas.selectedNode;
     if (!currentSelectedNode) {
@@ -284,6 +308,11 @@ const SwivelScene = () => {
         class={styles.canvasContainer}
         onClick={tryDeselect}
       >
+        <canvas
+          id="shadow-canvas"
+          ref={shadowCanvasRef}
+          class={styles.shadowCanvas}
+        />
         <canvas
           id="canvas"
           class={styles.canvas}
