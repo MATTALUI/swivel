@@ -4,7 +4,7 @@ import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
 import { drawFrameToCanvas } from "../utilities/canvas.util";
 import ObjectNode from "../models/ObjectNode";
-import { clamp, debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utilities/calculations.util";
+import { debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utilities/calculations.util";
 import Vec2 from "../models/Vec2";
 import globalState from "../state";
 import { deselectObjects, getCurrentFrame } from "../utilities/animator.util";
@@ -59,10 +59,11 @@ const SwivelScene = () => {
     const x = canvasX - containerX + canvasBorderWidth;
     const y = canvasY - containerY + canvasBorderWidth;
 
-    drawFrameToCanvas(shadowCanvasRef, getCurrentFrame(), {
-      pixelOffset: { x, y },
-      canvasDimensions: { width, height },
-    });
+    if (!globalState.animator.isPlaying)
+      drawFrameToCanvas(shadowCanvasRef, getCurrentFrame(), {
+        pixelOffset: { x, y },
+        canvasDimensions: { width, height },
+      });
   };
 
   const setCanvasSize = () => {
@@ -115,12 +116,23 @@ const SwivelScene = () => {
   }, 500);
 
   const handleMouseMove = (event: MouseEvent) => {
-    if (event.target !== canvasRef || !canvasRef) return;
+    const validTarget =
+      event.target === canvasRef ||
+      event.target === shadowCanvasRef;
+    if (
+      !validTarget ||
+      !canvasRef ||
+      !shadowCanvasRef
+    ) return;
     const currentSelectedNode = globalState.ui.canvas.selectedNode;
+    const { clientX, clientY } = event;
+    const { x: canvasX, y: canvasY } = canvasRef.getBoundingClientRect();
+    const borderWidth = parseFloat(getComputedStyle(canvasRef).borderWidth);
+    const mouseX = Math.round(clientX - canvasX - borderWidth);
+    const mouseY = Math.round(clientY - canvasY - borderWidth);
     if (!currentSelectedNode) {
       // No interaction has been initiated by selecting a node so we're just
       // checking interactables and setting the hover states.
-      const { offsetX, offsetY } = event;
       const { width, height } = canvasRef;
       const allControlNodes = controllableNodes();
       let nextTargetNode = null;
@@ -128,8 +140,8 @@ const SwivelScene = () => {
       for (let i = 0; i < allControlNodes.length; i++) {
         const node = allControlNodes[i];
         const { x, y } = node.position.getRenderedPosition(width, height);
-        const xDiff = Math.abs(x - offsetX);
-        const yDiff = Math.abs(y - offsetY);
+        const xDiff = Math.abs(x - mouseX);
+        const yDiff = Math.abs(y - mouseY);
         const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
         if (distance <= 10) {
           clickable = true;
@@ -146,12 +158,7 @@ const SwivelScene = () => {
         globalState.ui.cursor = null;
       }
     } else if (currentSelectedNode.isRoot) {
-      const { offsetX, offsetY } = event;
       const { width, height } = canvasRef;
-      // Need to clamp here because fast mouse movement can still result in
-      // out-of-bounds canvas positions
-      const mouseX = clamp(offsetX, 0, width);
-      const mouseY = clamp(offsetY, 0, height);
       const initialValues = globalState.ui.canvas.mouseDownInitialValues;
       if (!initialValues) throw new Error("No initial values for the mouse");
       const { x: originalX, y: originalY, originalNodeRoot } = initialValues;
@@ -202,7 +209,6 @@ const SwivelScene = () => {
           newY / height
         ));
       };
-      const { offsetX, offsetY } = event;
       const originalNode = currentSelectedNode?.clone();
       if (!originalNode) throw new Error("No original node");
       const [originalX, originalY] =
@@ -216,8 +222,8 @@ const SwivelScene = () => {
       const newAngle = getAngleOfChange(
         swivelX,
         swivelY,
-        offsetX,
-        offsetY
+        mouseX,
+        mouseY
       );
       const deltaAngle = newAngle - originalAngle;
       rotateWithChildren(deltaAngle, currentSelectedNode, originalNode);
@@ -228,15 +234,20 @@ const SwivelScene = () => {
 
   const handleMouseDown = (event: MouseEvent) => {
     const node = globalState.ui.canvas.targetNode;
-    if (
-      event.target !== canvasRef ||
-      !node
-    ) return;
+    const validTarget =
+      event.target === canvasRef ||
+      event.target === shadowCanvasRef;
+    if (!validTarget || !node || !canvasRef) return;
     skipDeselect = true;
     const clickedObject = node.object;
+    const { clientX, clientY } = event;
+    const { x: canvasX, y: canvasY } = canvasRef.getBoundingClientRect();
+    const borderWidth = parseFloat(getComputedStyle(canvasRef).borderWidth);
+    const mouseX = Math.round(clientX - canvasX - borderWidth);
+    const mouseY = Math.round(clientY - canvasY - borderWidth);
     const mouseDownValues: MouseDownValues = {
-      x: event.offsetX,
-      y: event.offsetY,
+      x: mouseX,
+      y: mouseY,
       originalParentNode: null,
       originalNodeRoot: node.objectRootNode.clone(),
       originalNode: node.clone(),
@@ -266,9 +277,7 @@ const SwivelScene = () => {
   };
 
   const handleMouseUp = (event: MouseEvent) => {
-    if (
-      !globalState.ui.canvas.selectedNode
-    ) return;
+    if (!globalState.ui.canvas.selectedNode) return;
 
     // For now we can assume that if the user is still on the canvas they're
     // going to be hovering over the same point that they were initially on.
@@ -307,6 +316,7 @@ const SwivelScene = () => {
         ref={canvasContainerRef}
         class={styles.canvasContainer}
         onClick={tryDeselect}
+        onMouseDown={handleMouseDown}
       >
         <canvas
           id="shadow-canvas"
@@ -317,7 +327,6 @@ const SwivelScene = () => {
           id="canvas"
           class={styles.canvas}
           ref={canvasRef}
-          onMouseDown={handleMouseDown}
         />
       </div>
     </div>
