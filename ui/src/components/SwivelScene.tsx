@@ -63,6 +63,7 @@ const SwivelScene = () => {
       drawFrameToCanvas(shadowCanvasRef, getCurrentFrame(), {
         pixelOffset: { x, y },
         canvasDimensions: { width, height },
+        bgColorOverride: "#ffffff00",
       });
   };
 
