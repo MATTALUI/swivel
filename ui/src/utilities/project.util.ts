@@ -1,6 +1,7 @@
 import type Frame from "../models/Frame";
 import APIService from "../services";
 import globalState from "../state";
+import { CanvasMode } from "../types";
 import { getFramePreviewUrl } from "./canvas.util";
 import { closeGlobalDialog, openGlobalDialog, startFullscreenLoading, stopFullscreenLoading } from "./ui.util";
 
@@ -49,6 +50,8 @@ export const restartProject = async () => {
       closeGlobalDialog();
       startFullscreenLoading({ message: "Setting Up New Project" });
       await new Promise(res => setTimeout(res, 1000));
+      globalState.canvasMode = CanvasMode.ANIMATOR;
+      globalState.creator.reset();
       globalState.animator.reset();
       globalState.project.reset();
       stopFullscreenLoading();
