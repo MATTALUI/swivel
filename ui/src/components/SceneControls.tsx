@@ -2,8 +2,10 @@ import { RiMediaPlayFill, RiMediaRewindFill, RiMediaSkipBackFill, RiMediaSkipFor
 import globalState from "../state";
 import { addFrame } from "../utilities/project.util";
 import styles from "./SceneControls.module.scss";
-import { Match, Switch } from "solid-js";
+import { Match, onCleanup, onMount, Switch } from "solid-js";
 import { FaSolidPlus } from "solid-icons/fa";
+import { registerKeyboardShortcuts, unregisterKeyboardShortcuts } from "../utilities/shortcuts.util";
+
 
 const SceneControls = () => {
   const togglePlayback = (event: Event) => {
@@ -44,6 +46,22 @@ const SceneControls = () => {
     globalState.animator.currentFrameIndex = globalState.project.frames.length - 1;
     scrollToActive();
   };
+
+  const shortcuts = {
+    "SPACE": [togglePlayback],
+    "ARROWLEFT": [goToPrevFrame],
+    "ARROWRIGHT": [goToNextFrame],
+    "META+ARROWLEFT": [goToStart],
+    "META+ARROWRIGHT": [goToLastFrame],
+  };
+
+  onMount(() => {
+    registerKeyboardShortcuts(shortcuts);
+  });
+
+  onCleanup(() => {
+    unregisterKeyboardShortcuts(shortcuts);
+  });
 
   return (
     <div class={styles.container}>
