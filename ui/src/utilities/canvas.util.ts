@@ -5,6 +5,7 @@ import { ObjectNodeTypes, SelectionType } from "../types";
 import AnimationObject from "../models/AnimationObject";
 import globalState from "../state";
 import { degToRad, getAngleOfChange, getPositionDistance, radToDeg } from "./calculations.util";
+import { getRenderedPosition } from "./vec2.util";
 
 const ROOT_NODE_COLOR = "#ff8000";
 const NODE_COLOR = "#bf0404";
@@ -30,6 +31,10 @@ export const drawFrameToCanvas = (
   if (!ctx) {
     throw new Error("Context unavailable");
   }
+  const canvasDimensions = {
+    width: options.canvasDimensions?.width ?? ctx.canvas.width,
+    height: options.canvasDimensions?.height ?? ctx.canvas.height
+  };
   const resourcesById = globalState.mediaResources.byId;
   const shouldDrawHelpers = !globalState.animator.isPlaying && !options.preview;
   // These checks simply will mark these pieces of state as dependencies
@@ -38,7 +43,7 @@ export const drawFrameToCanvas = (
   // Clear it out
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   // Draw in the background color
-  ctx.fillStyle = 
+  ctx.fillStyle =
     options.bgColorOverride ||
     frame.backgroundColor ||
     globalState.project.backgroundColor;
@@ -53,14 +58,10 @@ export const drawFrameToCanvas = (
       switch (child.type) {
       case ObjectNodeTypes.IMAGE: {
         if (!resourcesById) return; // Still waiting on resources
-        const { x: _parentX, y: _parentY } = node.position.getRenderedPosition(
-          options.canvasDimensions?.width ?? ctx.canvas.width,
-          options.canvasDimensions?.height || ctx.canvas.height
-        );
-        const { x: _controllerX, y: _controllerY } = child.position.getRenderedPosition(
-          options.canvasDimensions?.width ?? ctx.canvas.width,
-          options.canvasDimensions?.height || ctx.canvas.height
-        );
+        const { x: _parentX, y: _parentY } =
+            getRenderedPosition(node.position, canvasDimensions);
+        const { x: _controllerX, y: _controllerY } =
+            getRenderedPosition(child.position, canvasDimensions);
         const parentX = _parentX + (options.pixelOffset?.x || 0);
         const parentY = _parentY + (options.pixelOffset?.y || 0);
         const controllerX = _controllerX + (options.pixelOffset?.x || 0);
@@ -101,14 +102,10 @@ export const drawFrameToCanvas = (
       }
       default: {
         const alpha = controllable ? 1 : 0.5;
-        const { x: _startX, y: _startY } = child.position.getRenderedPosition(
-          options.canvasDimensions?.width ?? ctx.canvas.width,
-          options.canvasDimensions?.height ?? ctx.canvas.height
-        );
-        const { x: _endX, y: _endY } = node.position.getRenderedPosition(
-          options.canvasDimensions?.width ?? ctx.canvas.width,
-          options.canvasDimensions?.height ?? ctx.canvas.height
-        );
+        const { x: _startX, y: _startY } =
+            getRenderedPosition(child.position, canvasDimensions);
+        const { x: _endX, y: _endY } =
+            getRenderedPosition(node.position, canvasDimensions);
 
         const startX = _startX + (options.pixelOffset?.x || 0);
         const startY = _startY + (options.pixelOffset?.y || 0);
@@ -148,10 +145,7 @@ export const drawFrameToCanvas = (
       if (!ctx) {
         throw new Error("Context unavailable");
       }
-      const { x, y } = position.getRenderedPosition(
-        options.canvasDimensions?.width ?? ctx.canvas.width,
-        options.canvasDimensions?.height ?? ctx.canvas.height
-      );
+      const { x, y } = getRenderedPosition(position, canvasDimensions);
       ctx.beginPath();
       ctx.arc(
         x + (options.pixelOffset?.x || 0),
@@ -166,10 +160,7 @@ export const drawFrameToCanvas = (
     const selection = globalState.animator.selectedObjects;
     if (selection?.type === SelectionType.ANIMATION_OBJECT) {
       const drawNodes = (node: ObjectNode) => {
-        const { x, y } = node.position.getRenderedPosition(
-          options.canvasDimensions?.width ?? ctx.canvas.width,
-          options.canvasDimensions?.height ?? ctx.canvas.height
-        );
+        const { x, y } = getRenderedPosition(node.position, canvasDimensions);
         ctx.beginPath();
         ctx.arc(
           x + (options.pixelOffset?.x || 0),
@@ -227,8 +218,10 @@ export const drawAnimationObjectToCanvas = (
     node.children.forEach((child) => {
       if (child.children.length) connectNodeToChildren(child, controllable);
       if (controllable) allControlNodes.push(child); // Children nodes
-      const { x: parentX, y: parentY } = child.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
-      const { x: childX, y: childY } = node.position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+      const { x: parentX, y: parentY } =
+        getRenderedPosition(child.position, ctx.canvas);
+      const { x: childX, y: childY } =
+        getRenderedPosition(node.position, ctx.canvas);
       switch (child.type) {
       case ObjectNodeTypes.IMAGE: {
         if (!resourcesById) return; // Still waiting on resources
@@ -292,7 +285,7 @@ export const drawAnimationObjectToCanvas = (
       throw new Error("Context unavailable");
     }
     const { position, isRoot, id } = node;
-    const { x, y } = position.getRenderedPosition(ctx.canvas.width, ctx.canvas.height);
+    const { x, y } = getRenderedPosition(position, ctx.canvas);
     ctx.beginPath();
     ctx.arc(x, y, 6.9, 0, 2 * Math.PI);
     ctx.fillStyle = isRoot ? ROOT_NODE_COLOR : NODE_COLOR;

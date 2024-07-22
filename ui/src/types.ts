@@ -25,14 +25,21 @@ export type MouseDownValues = {
   originalNode: ObjectNode;
 }
 
-export type SerializableVec2 = {
+export type Vec2 = {
   x: number;
   y: number;
 }
 
+export type Vec2Tuple = [number, number];
+
+export interface Dimensions {
+  height: number,
+  width: number,
+}
+
 export type SerializableObjectNode = {
   id: string;
-  position: SerializableVec2;
+  position: Vec2;
   size: number;
   children: SerializableObjectNode[];
   type: ObjectNodeTypes;

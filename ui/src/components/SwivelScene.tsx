@@ -5,7 +5,6 @@ import SceneControls from "./SceneControls";
 import { drawFrameToCanvas } from "../utilities/canvas.util";
 import ObjectNode from "../models/ObjectNode";
 import { debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utilities/calculations.util";
-import Vec2 from "../models/Vec2";
 import globalState from "../state";
 import { deselectObjects, getCurrentFrame } from "../utilities/animator.util";
 import { updateFrame } from "../utilities/project.util";
@@ -13,6 +12,7 @@ import {
   type MouseDownValues,
   SelectionType,
 } from "../types";
+import { getRenderedPositionTuple, getRenderedPosition, buildVec2 } from "../utilities/vec2.util";
 
 const SwivelScene = () => {
   let canvasContainerRef: HTMLDivElement | undefined;
@@ -134,13 +134,12 @@ const SwivelScene = () => {
     if (!currentSelectedNode) {
       // No interaction has been initiated by selecting a node so we're just
       // checking interactables and setting the hover states.
-      const { width, height } = canvasRef;
       const allControlNodes = controllableNodes();
       let nextTargetNode = null;
       let clickable = false;
       for (let i = 0; i < allControlNodes.length; i++) {
         const node = allControlNodes[i];
-        const { x, y } = node.position.getRenderedPosition(width, height);
+        const { x, y } = getRenderedPosition(node.position, canvasRef);
         const xDiff = Math.abs(x - mouseX);
         const yDiff = Math.abs(y - mouseY);
         const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
@@ -169,10 +168,12 @@ const SwivelScene = () => {
         node.children.forEach((child, index) => {
           moveWithChildren(child, originalNode.children[index]);
         });
-        const { x: originalNodeX, y: originalNodeY } = originalNode.position.getRenderedPosition(width, height);
+        if (!canvasRef) throw new Error("No canvas available");
+        const { x: originalNodeX, y: originalNodeY } =
+          getRenderedPosition(originalNode.position, canvasRef);
         const newX = originalNodeX + deltaX;
         const newY = originalNodeY + deltaY;
-        node.setPosition(new Vec2(
+        node.setPosition(buildVec2(
           newX / width,
           newY / height
         ));
@@ -185,7 +186,7 @@ const SwivelScene = () => {
       const swivelPoint = currentSelectedNode?.parent || undefined;
       if (!swivelPoint) throw new Error("No valid swivel point");
       const [swivelX, swivelY] =
-        swivelPoint.position.getRenderedPositionTuple(width, height);
+        getRenderedPositionTuple(swivelPoint.position, canvasRef);
       // This logic assumes only two types of movment should come from a node.
       // If we want to have more types of movement that are differentiated by
       // more than root and not root we will have to update this here.
@@ -193,8 +194,9 @@ const SwivelScene = () => {
         node.children.forEach((child, index) => {
           rotateWithChildren(deltaDeg, child, originalNode.children[index]);
         });
+        if (!canvasRef) throw new Error("No canvas available");
         const [originalX, originalY] =
-          originalNode.position.getRenderedPositionTuple(width, height);
+          getRenderedPositionTuple(originalNode.position, canvasRef);
         const distance = getPositionDistance(swivelX, swivelY, originalX, originalY);
         const originalAngle = getAngleOfChange(
           swivelX,
@@ -205,7 +207,7 @@ const SwivelScene = () => {
         const newAngle = originalAngle + deltaDeg;
         const newX = swivelX + (Math.cos(degToRad(newAngle)) * distance);
         const newY = swivelY + (Math.sin(degToRad(newAngle)) * distance);
-        node.setPosition(new Vec2(
+        node.setPosition(buildVec2(
           newX / width,
           newY / height
         ));
@@ -213,7 +215,7 @@ const SwivelScene = () => {
       const originalNode = currentSelectedNode?.clone();
       if (!originalNode) throw new Error("No original node");
       const [originalX, originalY] =
-        originalNode.position.getRenderedPositionTuple(width, height);
+        getRenderedPositionTuple(originalNode.position, canvasRef);
       const originalAngle = getAngleOfChange(
         swivelX,
         swivelY,

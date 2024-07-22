@@ -2,11 +2,11 @@ import { createEffect, onCleanup, onMount } from "solid-js";
 import styles from "./ObjectCreatorCanvas.module.scss";
 import { drawAnimationObjectToCanvas } from "../utilities/canvas.util";
 import { clamp } from "../utilities/calculations.util";
-import Vec2 from "../models/Vec2";
 import ObjectNode from "../models/ObjectNode";
 import { CreatorToolNames, ErasorCursor, SelectionType } from "../types";
 import type { MouseDownValues, CursorOption } from "../types";
 import globalState from "../state";
+import { buildVec2, getRenderedPosition } from "../utilities/vec2.util";
 
 const ObjectCreatorCanvas = () => {
   let containerRef: HTMLDivElement | undefined;
@@ -46,7 +46,7 @@ const ObjectCreatorCanvas = () => {
       const parent = globalState.ui.canvas.targetNode;
       if (!parent) return;
       newNode = new ObjectNode();
-      newNode.setPosition(parent?.position.clone());
+      newNode.setPosition(parent?.position);
       parent.appendChild(newNode);
       globalState.creator.controllableNodes =
         [...globalState.creator.controllableNodes, newNode];
@@ -64,7 +64,7 @@ const ObjectCreatorCanvas = () => {
       return;
     }
     const node = globalState.ui.canvas.targetNode;
-    if (event.target !== canvasRef || !node){
+    if (event.target !== canvasRef || !node) {
       globalState.animator.selectedObjects = null;
       return;
     }
@@ -119,13 +119,12 @@ const ObjectCreatorCanvas = () => {
       // No interaction has been initiated by selecting a node so we're just
       // checking interactables and setting the hover states.
       const { offsetX, offsetY } = event;
-      const { width, height } = canvasRef;
       const allControlNodes = globalState.creator.controllableNodes;
       let nextTargetNode = null;
       let clickable = false;
       for (let i = 0; i < allControlNodes.length; i++) {
         const node = allControlNodes[i];
-        const { x, y } = node.position.getRenderedPosition(width, height);
+        const { x, y } = getRenderedPosition(node.position, canvasRef);
         const xDiff = Math.abs(x - offsetX);
         const yDiff = Math.abs(y - offsetY);
         const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
@@ -169,10 +168,10 @@ const ObjectCreatorCanvas = () => {
       const deltaY = mouseY - originalY;
 
       const { x: originalNodeX, y: originalNodeY } =
-        originalNode.position.getRenderedPosition(width, height);
+        getRenderedPosition(originalNode.position, canvasRef);
       const newX = originalNodeX + deltaX;
       const newY = originalNodeY + deltaY;
-      currentSelectedNode.setPosition(new Vec2(
+      currentSelectedNode.setPosition(buildVec2(
         newX / width,
         newY / height
       ));
@@ -182,7 +181,7 @@ const ObjectCreatorCanvas = () => {
       if (event.target !== canvasRef) return;
       const { offsetX, offsetY } = event;
       const { width, height } = canvasRef;
-      currentSelectedNode.setPosition(new Vec2(
+      currentSelectedNode.setPosition(buildVec2(
         offsetX / width,
         offsetY / height
       ));

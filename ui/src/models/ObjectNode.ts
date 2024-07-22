@@ -1,6 +1,11 @@
-import { ObjectNodeTypes, SerializableObjectNode } from "../types";
+import {
+  ObjectNodeTypes,
+  type SerializableObjectNode,
+  type Vec2,
+} from "../types";
+import { buildVec2 } from "../utilities/vec2.util";
 import AnimationObject from "./AnimationObject";
-import Vec2 from "./Vec2";
+
 
 export default class ObjectNode {
   id: string;
@@ -18,7 +23,7 @@ export default class ObjectNode {
     this.id = crypto.randomUUID();
     this.object = null;
     this.parent = null;
-    this.position = new Vec2();
+    this.position = buildVec2();
     this.children = [];
     this.size = 5;
     this.width = null;
@@ -66,7 +71,7 @@ export default class ObjectNode {
   toSerializableObject(): SerializableObjectNode {
     return {
       id: this.id,
-      position: this.position.toSerializableObject(),
+      position: this.position,
       size: this.size,
       children: this.children.map(c => c.toSerializableObject()),
       type: this.type,
@@ -82,7 +87,7 @@ export default class ObjectNode {
     clone.object = this.object;
     clone.type = this.type;
     clone._image = this._image;
-    clone.setPosition(this.position.clone());
+    clone.setPosition(this.position);
     this.children.forEach(c => clone.appendChild(c.clone()));
 
     return clone;

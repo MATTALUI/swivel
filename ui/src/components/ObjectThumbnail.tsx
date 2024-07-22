@@ -1,10 +1,10 @@
 import AnimationObject from "../models/AnimationObject";
 import ObjectNode from "../models/ObjectNode";
-import Vec2 from "../models/Vec2";
 import globalState from "../state";
 import type { SerializableObjectNode, SerializablePrefabAnimationObject } from "../types";
 import { getCurrentFrame } from "../utilities/animator.util";
 import { getMainCanvas } from "../utilities/canvas.util";
+import { buildVec2 } from "../utilities/vec2.util";
 import styles from "./ObjectThumbnail.module.scss";
 
 interface IObjectThumbnailProps {
@@ -25,7 +25,7 @@ const ObjectThumbnail = (props: IObjectThumbnailProps) => {
       node.size = serialNode.size;
       node.type = serialNode.type;
       if (serialNode.image) node.image = serialNode.image;
-      node.setPosition(new Vec2(
+      node.setPosition(buildVec2(
         serialNode.position.x,
         serialNode.position.y,
       ));
