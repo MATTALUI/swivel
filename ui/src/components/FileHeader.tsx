@@ -6,19 +6,43 @@ import styles from "./FileHeader.module.scss";
 const FileHeader = () => {
   if (Tauri) return null;
   return (
-    <header class={styles.container}>
+    <header
+      class={styles.container}
+      data-testid="file-header__header"
+    >
       <a href="/" class={styles.navItem}>
         <img src="/original.png" />
       </a>
-      <div class={styles.navItem}>
+      <div
+        class={styles.navItem}
+        data-testid="file-header__file"
+      >
         File
         <div class={styles.dropdown}>
-          <a onClick={restartProject}>New</a>
-          <a onClick={saveProject}>Save</a>
-          <a onClick={() => console.log("Open")}>Open</a>
+          <a
+            onClick={restartProject}
+            data-testid="file-header__new"
+          >
+            New
+          </a>
+          <a
+            onClick={saveProject}
+            data-testid="file-header__save"
+          >
+            Save
+          </a>
+          <a
+            onClick={() => console.log("Open")}
+            data-testid="file-header__open"
+          >
+            Open
+          </a>
         </div>
       </div>
-      <div class={styles.navItem}>
+      <div
+        class={styles.navItem}
+        data-testid="file-header__tools"
+      >
         Tools
         <div class={styles.dropdown}>
           <a onClick={gotoAnimator}>Animator</a>

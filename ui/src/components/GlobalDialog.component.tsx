@@ -10,7 +10,7 @@ const GlobalDialog = () => {
     <Show when={globalState.ui.dialog.isRendered}>
       <div
         onClick={() => closeGlobalDialog()}
-        data-testid="dialog-container"
+        data-testid="global-dialog__container"
         class={cx(
           styles.container,
           {
@@ -36,6 +36,7 @@ const GlobalDialog = () => {
                 <button
                   onClick={globalState.ui.dialog.affirmativeCB}
                   class={styles.affirmative}
+                  data-testid="global-dialog__affirmative"
                 >
                   Yes
                 </button>
@@ -43,6 +44,7 @@ const GlobalDialog = () => {
               <Show when={!!globalState.ui.dialog.negativeCB}>
                 <button
                   onClick={globalState.ui.dialog.negativeCB}
+                  data-testid="global-dialog__negative"
                 >
                   No
                 </button>
