@@ -3,12 +3,12 @@ import {
   type IDBPDatabase,
 } from "idb";
 import type PrefabAnimationObject from "../models/PrefabAnimationObject";
-import SwivelProject from "../models/SwivelProject";
 import type {
   APIServiceFailure,
   APIServiceSuccess,
   IAPIService,
   SerializablePrefabAnimationObject,
+  SwivelProject
 } from "../types";
 import MediaResource, { MediaResourceConstructorArgs } from "../models/MediaResource";
 
@@ -116,7 +116,7 @@ const getSavedObjects = async () => {
 const saveProject = async (project: SwivelProject) => {
   const db = await useDb();
   const transaction = db.transaction([PROJECTS_STORE], "readwrite");
-  await db.add(PROJECTS_STORE, project.toSerializableObject());
+  await db.add(PROJECTS_STORE, project);
   await transaction.done;
 
   return buildServiceSuccess(true);

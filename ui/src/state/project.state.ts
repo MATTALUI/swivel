@@ -1,8 +1,8 @@
 import { createSignal } from "solid-js";
-import SwivelProject from "../models/SwivelProject";
 import type Frame from "../models/Frame";
+import { buildSwivelProject } from "../utilities/swivelProject.util";
 
-const defaultProject = new SwivelProject();
+const defaultProject = buildSwivelProject();
 
 // Project Signals
 const [id] =
@@ -36,7 +36,7 @@ const projectState = {
   set backgroundColor(bg: string) { setBackgroundColor(bg); },
   get aspectRatio() { return width() / height(); },
   get swivelProject() {
-    const project = new SwivelProject();
+    const project = buildSwivelProject();
 
     project.id = id();
     project.name = name();
@@ -49,7 +49,7 @@ const projectState = {
     return project;
   },
   reset: () => {
-    const project = new SwivelProject();
+    const project = buildSwivelProject();
     setName(project.name);
     setWidth(project.width);
     setHeight(project.height);

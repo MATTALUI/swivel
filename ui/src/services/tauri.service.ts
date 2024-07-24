@@ -1,12 +1,12 @@
 import OptionalTauri from "../Tauri";
 import MediaResource from "../models/MediaResource";
 import type PrefabAnimationObject from "../models/PrefabAnimationObject";
-import SwivelProject from "../models/SwivelProject";
 import {
   type APIServiceFailure,
   type APIServiceSuccess,
   type IAPIService,
   type SerializablePrefabAnimationObject,
+  type SwivelProject,
   TauriServerFunctions
 } from "../types";
 
@@ -60,7 +60,7 @@ const getSavedObjects = async () => {
 };
 
 const saveProject = async (project: SwivelProject) => {
-  const projectData = project.serialize();
+  const projectData = JSON.stringify(project);
   const { invoke } = Tauri.tauri;
   await invoke(TauriServerFunctions.SAVE, { projectData });
 
@@ -68,7 +68,7 @@ const saveProject = async (project: SwivelProject) => {
 };
 
 const exportProject = async (project: SwivelProject) => {
-  const projectData = project.serialize();
+  const projectData = JSON.stringify(project);
   const { invoke } = Tauri.tauri;
   await invoke(TauriServerFunctions.EXPORT, { projectData });
 

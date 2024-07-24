@@ -1,0 +1,1 @@
+export const SWIVEL_VERSION = "0.6.9";

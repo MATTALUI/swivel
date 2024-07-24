@@ -1,9 +1,9 @@
+import type Frame from "./models/Frame";
+import type PrefabAnimationObject from "./models/PrefabAnimationObject";
 import type MediaResource from "./models/MediaResource";
 import type ObjectNode from "./models/ObjectNode";
-import type PrefabAnimationObject from "./models/PrefabAnimationObject";
-import type SwivelProject from "./models/SwivelProject";
 
-// These can be anything from the CSS options for cursor, but you'll ahve to opt-in
+// These can be anything from the CSS options for cursor, but you'll have to opt-in
 // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
 export const ErasorCursor = "url('erasor.svg'), auto";
 export type CursorOption =
@@ -31,6 +31,61 @@ export type Vec2 = {
 }
 
 export type Vec2Tuple = [number, number];
+
+// export type AnimationObject = {
+//   id: string;
+//   root: ObjectNode;
+// };
+
+// export type Frame = {
+//   id: string;
+//   index: number | null;
+//   previewImage: string | null;
+//   objects: AnimationObject[];
+//   backgroundColor: string | null;
+// }
+
+// export type MediaResource = {
+//   id: string;
+//   type: MediaResourceType;
+//   name: string;
+//   width: number;
+//   height: number;
+//   url: string;
+//   element: HTMLImageElement | HTMLVideoElement | null;
+// };
+
+// export type ObjectNode = {
+//   id: string;
+//   object: AnimationObject | null;
+//   parent: ObjectNode | null;
+//   position: Vec2;
+//   children: ObjectNode[];
+//   size: number;
+//   width: number | null;
+//   height: number | null;
+//   type: ObjectNodeTypes;
+//   image?: string;
+// }
+
+// export type PrefabAnimationObject = {
+//   id: string;
+//   name: string;
+//   previewImage: string;
+//   object: AnimationObject;
+//   createdAt: Date;
+// };
+
+export type SwivelProject = {
+  id: string;
+  version: string;
+  name: string;
+  width: number;
+  height: number;
+  frames: Frame[];
+  fps: number;
+  backgroundColor: string;
+}
 
 export interface Dimensions {
   height: number,
