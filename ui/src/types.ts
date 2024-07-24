@@ -1,5 +1,3 @@
-import type MediaResource from "./models/MediaResource";
-
 // These can be anything from the CSS options for cursor, but you'll have to opt-in
 // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
 export const ErasorCursor = "url('erasor.svg'), auto";
@@ -42,15 +40,18 @@ export type Frame = {
   backgroundColor: string | null;
 }
 
-// export type MediaResource = {
-//   id: string;
-//   type: MediaResourceType;
-//   name: string;
-//   width: number;
-//   height: number;
-//   url: string;
-//   element: HTMLImageElement | HTMLVideoElement | null;
-// };
+export type MediaResource = {
+  id: string;
+  type: MediaResourceType;
+  name: string;
+  width: number;
+  height: number;
+  url: string;
+  element: HTMLImageElement | HTMLVideoElement | null;
+};
+
+export type MediaResourceConstructorArgs =
+  Partial<MediaResource> & Pick<MediaResource, "type" | "url">;
 
 export type ObjectNode = {
   id: string;

@@ -1,12 +1,12 @@
 import { JSX, Match, Show, Switch, createSignal } from "solid-js";
 import globalState from "../state";
 import styles from "./ImageNodeSettings.module.scss";
-import MediaResource from "../models/MediaResource";
 import {
   MediaResourceType,
   type ObjectNode,
 } from "../types";
 import APIService from "../services";
+import { buildMediaResource, hydrateMediaResource } from "../utilities/mediaResource.util";
 
 interface IImageNodeSettingsProps {
   node: ObjectNode;
@@ -45,12 +45,12 @@ const ImageNodeSettings = (props: IImageNodeSettingsProps) => {
             data: publicURL,
           }) => {
             if (!success) return rej();
-            const resource = new MediaResource({
+            const resource = buildMediaResource({
               type: MediaResourceType.IMAGE,
               url: publicURL,
               name: file.name,
             });
-            resource.hydrate().then(() => {
+            hydrateMediaResource(resource).then(() => {
               props.node.image = resource.id;
               props.node.width = resource.width;
               props.node.height = resource.height;

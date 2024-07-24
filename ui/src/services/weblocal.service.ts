@@ -9,8 +9,10 @@ import type {
   SerializablePrefabAnimationObject,
   SwivelProject,
   PrefabAnimationObject,
+  MediaResource,
+  MediaResourceConstructorArgs,
 } from "../types";
-import MediaResource, { MediaResourceConstructorArgs } from "../models/MediaResource";
+import { buildMediaResource } from "../utilities/mediaResource.util";
 
 const SERVICE_NAME = "Web Local Service";
 const DB_NAME = "SWIVEL::DATABASE";
@@ -131,7 +133,7 @@ const getMediaResources = async () => {
   const transaction = db.transaction([RESOURCES_STORE], "readonly");
   const serializedResources: MediaResourceConstructorArgs[] = await db.getAll(RESOURCES_STORE);
   await transaction.done;
-  const resources = serializedResources.map(sr => new MediaResource(sr));
+  const resources = serializedResources.map(sr => buildMediaResource(sr));
 
   return buildServiceSuccess(resources);
 };
@@ -139,7 +141,7 @@ const getMediaResources = async () => {
 const createMediaResource = async (resource: MediaResource) => {
   const db = await useDb();
   const transaction = db.transaction([RESOURCES_STORE], "readwrite");
-  await db.add(RESOURCES_STORE, resource.toSerializableObject());
+  await db.add(RESOURCES_STORE, resource);
   await transaction.done;
 
   return buildServiceSuccess(resource);

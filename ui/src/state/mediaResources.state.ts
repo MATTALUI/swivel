@@ -1,7 +1,7 @@
 import { createResource } from "solid-js";
-import MediaResource from "../models/MediaResource";
-import { MediaResourceType } from "../types";
+import { MediaResourceType, MediaResource, } from "../types";
 import APIService from "../services";
+import { buildMediaResource, hydrateMediaResource } from "../utilities/mediaResource.util";
 
 const builtinResources = [
   {
@@ -25,10 +25,10 @@ const builtinResources = [
 const [signal, { mutate }] = createResource<Record<string, MediaResource>>(async () => {
   const { data: savedResources } = await APIService.getMediaResources();
   const hydratedBuiltingResources = Promise.all(
-    builtinResources.map(r => new MediaResource(r).hydrate())
+    builtinResources.map(r => hydrateMediaResource(buildMediaResource(r)))
   );
   const hydratedSavedResources = Promise.all(
-    (savedResources || []).map(r => new MediaResource(r).hydrate())
+    (savedResources || []).map(r => hydrateMediaResource(buildMediaResource(r)))
   );
   const allResourceSets: MediaResource[][] = await Promise.all([
     hydratedBuiltingResources,

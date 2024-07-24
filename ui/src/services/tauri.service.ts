@@ -1,5 +1,4 @@
 import OptionalTauri from "../Tauri";
-import MediaResource from "../models/MediaResource";
 import {
   type APIServiceFailure,
   type APIServiceSuccess,
@@ -7,6 +6,7 @@ import {
   type SerializablePrefabAnimationObject,
   type SwivelProject,
   type PrefabAnimationObject,
+  type MediaResource,
   TauriServerFunctions
 } from "../types";
 
