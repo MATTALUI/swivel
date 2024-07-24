@@ -1,6 +1,8 @@
-import Frame from "../models/Frame";
 import globalState from "../state";
-import { SelectionType } from "../types";
+import {
+  SelectionType,
+  type Frame,
+} from "../types";
 import { getFramePreviewUrl } from "../utilities/canvas.util";
 import { updateFrame } from "../utilities/project.util";
 import styles from "./FramePreview.module.scss";

@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import type Frame from "../models/Frame";
+import type { Frame } from "../types";
 import { buildSwivelProject } from "../utilities/swivelProject.util";
 
 const defaultProject = buildSwivelProject();

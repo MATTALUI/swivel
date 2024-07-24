@@ -1,4 +1,4 @@
-import type Frame from "./models/Frame";
+import type AnimationObject from "./models/AnimationObject";
 import type PrefabAnimationObject from "./models/PrefabAnimationObject";
 import type MediaResource from "./models/MediaResource";
 import type ObjectNode from "./models/ObjectNode";
@@ -37,13 +37,13 @@ export type Vec2Tuple = [number, number];
 //   root: ObjectNode;
 // };
 
-// export type Frame = {
-//   id: string;
-//   index: number | null;
-//   previewImage: string | null;
-//   objects: AnimationObject[];
-//   backgroundColor: string | null;
-// }
+export type Frame = {
+  id: string;
+  index: number | null;
+  previewImage: string | null;
+  objects: AnimationObject[];
+  backgroundColor: string | null;
+}
 
 // export type MediaResource = {
 //   id: string;

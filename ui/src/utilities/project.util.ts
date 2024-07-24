@@ -1,13 +1,15 @@
-import type Frame from "../models/Frame";
 import APIService from "../services";
 import globalState from "../state";
-import { CanvasMode } from "../types";
+import {
+  CanvasMode,
+  type Frame,
+} from "../types";
 import { getFramePreviewUrl } from "./canvas.util";
 import { closeGlobalDialog, openGlobalDialog, startFullscreenLoading, stopFullscreenLoading } from "./ui.util";
 
 export const addFrame = () => {
   const existingFrames = globalState.project.frames;
-  const newFrame = existingFrames[existingFrames.length - 1].clone();
+  const newFrame = structuredClone(existingFrames[existingFrames.length - 1]);
   newFrame.index = existingFrames.length;
   globalState.project.frames = [...existingFrames, newFrame];
   globalState.animator.currentFrameIndex = globalState.project.frames.length - 1;

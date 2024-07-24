@@ -1,7 +1,10 @@
 import Color from "color";
-import Frame from "../models/Frame";
 import ObjectNode from "../models/ObjectNode";
-import { ObjectNodeTypes, SelectionType } from "../types";
+import {
+  ObjectNodeTypes,
+  SelectionType,
+  type Frame,
+} from "../types";
 import AnimationObject from "../models/AnimationObject";
 import globalState from "../state";
 import { degToRad, getAngleOfChange, getPositionDistance, radToDeg } from "./calculations.util";

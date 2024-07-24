@@ -1,15 +1,14 @@
-import ObjectNode from "./ObjectNode";
-import AnimationObject from "./AnimationObject";
+import type { Frame } from "../types";
+import ObjectNode from "../models/ObjectNode";
+import AnimationObject from "../models/AnimationObject";
 import {
   ObjectNodeTypes,
-  type SerializableAnimationObject,
 } from "../types";
 import { buildVec2 } from "../utilities/vec2.util";
 
-
 // This is only used when initializing the first empty frame for a
 // blank object.
-const buildDefaultObjects = (): AnimationObject[] => {
+const buildDefaultFrameObjects = (): AnimationObject[] => {
   let child, newestChild;
 
   const dino = new AnimationObject();
@@ -134,46 +133,12 @@ const buildDefaultObjects = (): AnimationObject[] => {
   ];
 };
 
-type SerializableFrame = {
-  id: string;
-  index: number | null;
-  previewImage: string | null;
-  objects: SerializableAnimationObject[];
+export const buildFrame = (): Frame => {
+  return {
+    id: crypto.randomUUID(),
+    index: null,
+    previewImage: null,
+    objects: buildDefaultFrameObjects(),
+    backgroundColor: null,
+  };
 };
-
-export default class Frame {
-  id: string;
-  index: number | null;
-  previewImage: string | null;
-  objects: AnimationObject[];
-  backgroundColor: string | null;
-
-
-  constructor() {
-    this.id = crypto.randomUUID();
-    this.index = null;
-    this.previewImage = null;
-    this.objects = buildDefaultObjects();
-    this.backgroundColor = null;
-  }
-
-  toSerializableObject(): SerializableFrame {
-    return {
-      id: this.id,
-      index: this.index,
-      previewImage: this.previewImage,
-      objects: this.objects.map(o => o.toSerializableObject()),
-    };
-  }
-
-  clone() {
-    const clone = new Frame();
-    clone.id = this.id;
-    clone.index = this.index;
-    clone.previewImage = this.previewImage;
-    clone.backgroundColor = this.backgroundColor;
-    clone.objects = this.objects.map(o => o.clone());
-
-    return clone;
-  }
-}

@@ -1,9 +1,9 @@
 import { SwivelProject } from "../types";
-import Frame from "../models/Frame";
 import { SWIVEL_VERSION } from "../constants";
+import { buildFrame } from "./frame.util";
 
 export const buildSwivelProject = (): SwivelProject => {
-  const frame = new Frame();
+  const frame = buildFrame();
   frame.index = 0;
 
   return {
@@ -15,5 +15,5 @@ export const buildSwivelProject = (): SwivelProject => {
     fps: 10,
     name: "Untitled Project",
     backgroundColor: "#ffffff",
-  }
-}
+  };
+};
