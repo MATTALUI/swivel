@@ -2,13 +2,13 @@ import {
   openDB,
   type IDBPDatabase,
 } from "idb";
-import type PrefabAnimationObject from "../models/PrefabAnimationObject";
 import type {
   APIServiceFailure,
   APIServiceSuccess,
   IAPIService,
   SerializablePrefabAnimationObject,
-  SwivelProject
+  SwivelProject,
+  PrefabAnimationObject,
 } from "../types";
 import MediaResource, { MediaResourceConstructorArgs } from "../models/MediaResource";
 
@@ -90,7 +90,7 @@ const uploadImage = async (b64: string) => {
   // await db.add(IMAGES_STORE, blob); // This will return the inserted key
   // await transaction.done;
   // const src = URL.createObjectURL(blob);
-  
+
   // return buildServiceSuccess(src);
   return buildServiceSuccess(b64);
 };
@@ -141,7 +141,7 @@ const createMediaResource = async (resource: MediaResource) => {
   const transaction = db.transaction([RESOURCES_STORE], "readwrite");
   await db.add(RESOURCES_STORE, resource.toSerializableObject());
   await transaction.done;
-  
+
   return buildServiceSuccess(resource);
 };
 

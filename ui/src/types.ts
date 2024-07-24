@@ -1,4 +1,3 @@
-import type PrefabAnimationObject from "./models/PrefabAnimationObject";
 import type MediaResource from "./models/MediaResource";
 
 // These can be anything from the CSS options for cursor, but you'll have to opt-in
@@ -66,13 +65,13 @@ export type ObjectNode = {
   image?: string;
 }
 
-// export type PrefabAnimationObject = {
-//   id: string;
-//   name: string;
-//   previewImage: string;
-//   object: AnimationObject;
-//   createdAt: Date;
-// };
+export type PrefabAnimationObject = {
+  id: string;
+  name: string;
+  previewImage: string;
+  object: AnimationObject;
+  createdAt: Date;
+};
 
 export type SwivelProject = {
   id: string;

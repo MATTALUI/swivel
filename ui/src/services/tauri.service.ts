@@ -1,12 +1,12 @@
 import OptionalTauri from "../Tauri";
 import MediaResource from "../models/MediaResource";
-import type PrefabAnimationObject from "../models/PrefabAnimationObject";
 import {
   type APIServiceFailure,
   type APIServiceSuccess,
   type IAPIService,
   type SerializablePrefabAnimationObject,
   type SwivelProject,
+  type PrefabAnimationObject,
   TauriServerFunctions
 } from "../types";
 
@@ -43,7 +43,7 @@ const saveSwivelObject = async (prefab: PrefabAnimationObject) => {
   try {
     const { invoke } = Tauri.tauri;
     // await new Promise(res => setTimeout(res, 1000));
-    const saveData = JSON.stringify(prefab.toSerializableObject());
+    const saveData = JSON.stringify(prefab);
     await invoke(TauriServerFunctions.SAVE_PREFAB, { saveData });
 
     return buildServiceSuccess(prefab);
