@@ -2,9 +2,9 @@ import {
   ObjectNodeTypes,
   type SerializableObjectNode,
   type Vec2,
+  type AnimationObject,
 } from "../types";
 import { buildVec2 } from "../utilities/vec2.util";
-import AnimationObject from "./AnimationObject";
 
 
 export default class ObjectNode {

@@ -1,17 +1,18 @@
 import type { Frame } from "../types";
 import ObjectNode from "../models/ObjectNode";
-import AnimationObject from "../models/AnimationObject";
 import {
   ObjectNodeTypes,
+  type AnimationObject,
 } from "../types";
 import { buildVec2 } from "../utilities/vec2.util";
+import { buildAnimationObject } from "./animationObject.util";
 
 // This is only used when initializing the first empty frame for a
 // blank object.
 const buildDefaultFrameObjects = (): AnimationObject[] => {
   let child, newestChild;
 
-  const dino = new AnimationObject();
+  const dino = buildAnimationObject();
   const root = dino.root;
   child = root;
   child.setPosition(buildVec2(0.5, 0.5));
@@ -92,7 +93,7 @@ const buildDefaultFrameObjects = (): AnimationObject[] => {
   child.appendChild(newestChild);
   child = newestChild;
 
-  const box = new AnimationObject();
+  const box = buildAnimationObject();
   child = box.root;
   child.setPosition(buildVec2(0.7, 0.7));
 
@@ -116,7 +117,7 @@ const buildDefaultFrameObjects = (): AnimationObject[] => {
   child.appendChild(newestChild);
   child = newestChild;
 
-  const imageObject = new AnimationObject();
+  const imageObject = buildAnimationObject();
   child = imageObject.root;
   child.setPosition(buildVec2(0.1, 0.1));
   newestChild = new ObjectNode();

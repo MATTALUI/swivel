@@ -1,4 +1,3 @@
-import type AnimationObject from "./models/AnimationObject";
 import type PrefabAnimationObject from "./models/PrefabAnimationObject";
 import type MediaResource from "./models/MediaResource";
 import type ObjectNode from "./models/ObjectNode";
@@ -32,10 +31,10 @@ export type Vec2 = {
 
 export type Vec2Tuple = [number, number];
 
-// export type AnimationObject = {
-//   id: string;
-//   root: ObjectNode;
-// };
+export type AnimationObject = {
+  id: string;
+  root: ObjectNode;
+};
 
 export type Frame = {
   id: string;

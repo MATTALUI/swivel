@@ -1,5 +1,8 @@
-import type { SerializableAnimationObject, SerializablePrefabAnimationObject } from "../types";
-import AnimationObject from "./AnimationObject";
+import type {
+  SerializableAnimationObject,
+  SerializablePrefabAnimationObject,
+  AnimationObject,
+} from "../types";
 
 export default class PrefabAnimationObject {
   id: string;
@@ -12,7 +15,7 @@ export default class PrefabAnimationObject {
     this.id = crypto.randomUUID();
     this.name = "Unnamed Object";
     this.previewImage = "";
-    this.object = object.toSerializableObject();
+    this.object = object;
     this.createdAt = new Date();
   }
 

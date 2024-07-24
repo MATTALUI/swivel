@@ -13,6 +13,7 @@
     "build:ui": "tsc && vite build ui",
     "build:ui:watch": "tsc && vite build ui --watch",
     "typecheck": "tsc",
+    "precommit-notice": "Echo Running Precommit checks",
     "lint": "eslint ui",
     "lint:fix": "eslint --fix ui",
     "cleanup": "rm -rf ./ui/dist"
@@ -45,6 +46,7 @@
     "solid-js": "^1.8.7"
   },
   "pre-commit": [
+    "precommit-notice",
     "lint",
     "typecheck"
   ]

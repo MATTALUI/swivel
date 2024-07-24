@@ -1,7 +1,7 @@
-import AnimationObject from "../models/AnimationObject";
 import ObjectNode from "../models/ObjectNode";
 import globalState from "../state";
 import type { SerializableObjectNode, SerializablePrefabAnimationObject } from "../types";
+import { buildAnimationObject, setAnimationObjectRoot } from "../utilities/animationObject.util";
 import { getCurrentFrame } from "../utilities/animator.util";
 import { getMainCanvas } from "../utilities/canvas.util";
 import { buildVec2 } from "../utilities/vec2.util";
@@ -16,7 +16,7 @@ const ObjectThumbnail = (props: IObjectThumbnailProps) => {
     // REHYDRATE THE PREFAB
     // The prefab in props is just going to be a raw object so it'll need to be
     // instantiated in the proper classes and ids shifted
-    const hydratedObject = new AnimationObject();
+    const hydratedObject = buildAnimationObject();
     let newRoot: ObjectNode | null = null;
     hydratedObject.id = crypto.randomUUID();
     const hydrateNode = (parent: ObjectNode | null, serialNode: SerializableObjectNode) => {
@@ -35,7 +35,7 @@ const ObjectThumbnail = (props: IObjectThumbnailProps) => {
     };
     hydrateNode(null, props.prefab.object.root);
     if (!newRoot) throw new Error("The root is missing.");
-    hydratedObject.setRoot(newRoot);
+    setAnimationObjectRoot(hydratedObject, newRoot);
     // CALCULATE THE CANVAS POSITION
     // When a prefab is created, the creator uses a 1:1 canvas so we'l need to 
     // find an inner "crop" position within the current canvas that is 1:1 so

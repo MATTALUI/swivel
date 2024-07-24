@@ -4,8 +4,8 @@ import {
   ObjectNodeTypes,
   SelectionType,
   type Frame,
+  type AnimationObject,
 } from "../types";
-import AnimationObject from "../models/AnimationObject";
 import globalState from "../state";
 import { degToRad, getAngleOfChange, getPositionDistance, radToDeg } from "./calculations.util";
 import { getRenderedPosition } from "./vec2.util";

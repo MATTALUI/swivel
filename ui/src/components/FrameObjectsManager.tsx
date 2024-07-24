@@ -2,9 +2,9 @@ import { For, onMount } from "solid-js";
 import styles from "./FrameObjectsManager.module.scss";
 import controlStyles from "./Settings.module.scss";
 import ObjectThumbnail from "./ObjectThumbnail";
-import AnimationObject from "../models/AnimationObject";
 import globalState from "../state";
 import { CanvasMode } from "../types";
+import { buildAnimationObject } from "../utilities/animationObject.util";
 
 const FrameObjectsManager = () => {
   let container: HTMLDivElement | undefined;
@@ -12,7 +12,7 @@ const FrameObjectsManager = () => {
 
   const startCreateCanvas = () => {
     globalState.canvasMode = CanvasMode.OBJECT_CREATOR;
-    const newObject = new AnimationObject();
+    const newObject = buildAnimationObject();
     globalState.creator.object = newObject;
     globalState.creator.controllableNodes = [newObject.root];
   };
@@ -41,7 +41,7 @@ const FrameObjectsManager = () => {
       <div ref={container} class={styles.objectsListContainer}>
         <div ref={scroller} class={styles.scroller}>
           <For each={globalState.animator.savedObjects}>
-            {(prefab) => (<ObjectThumbnail prefab={prefab}/>)}
+            {(prefab) => (<ObjectThumbnail prefab={prefab} />)}
           </For>
         </div>
       </div>

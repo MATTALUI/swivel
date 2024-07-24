@@ -1,7 +1,9 @@
 import { createSignal } from "solid-js";
-import AnimationObject from "../models/AnimationObject";
 import ObjectNode from "../models/ObjectNode";
-import { CreatorToolNames } from "../types";
+import {
+  CreatorToolNames,
+  type AnimationObject,
+} from "../types";
 
 const [object, setObject] =
   createSignal<AnimationObject | null>(null);
