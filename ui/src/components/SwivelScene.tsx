@@ -3,16 +3,17 @@ import styles from "./SwivelScene.module.scss";
 import FramePreviewer from "./FramePreviewer";
 import SceneControls from "./SceneControls";
 import { drawFrameToCanvas } from "../utilities/canvas.util";
-import ObjectNode from "../models/ObjectNode";
 import { debounce, degToRad, getAngleOfChange, getPositionDistance } from "../utilities/calculations.util";
 import globalState from "../state";
 import { deselectObjects, getCurrentFrame } from "../utilities/animator.util";
 import { updateFrame } from "../utilities/project.util";
 import {
   type MouseDownValues,
+  type ObjectNode,
   SelectionType,
 } from "../types";
 import { getRenderedPositionTuple, getRenderedPosition, buildVec2 } from "../utilities/vec2.util";
+import { getNodeRoot, nodeIsRoot } from "../utilities/objectNode.util";
 
 const SwivelScene = () => {
   let canvasContainerRef: HTMLDivElement | undefined;
@@ -157,7 +158,7 @@ const SwivelScene = () => {
         globalState.ui.canvas.targetNode = null;
         globalState.ui.cursor = null;
       }
-    } else if (currentSelectedNode.isRoot) {
+    } else if (nodeIsRoot(currentSelectedNode)) {
       const { width, height } = canvasRef;
       const initialValues = globalState.ui.canvas.mouseDownInitialValues;
       if (!initialValues) throw new Error("No initial values for the mouse");
@@ -173,10 +174,7 @@ const SwivelScene = () => {
           getRenderedPosition(originalNode.position, canvasRef);
         const newX = originalNodeX + deltaX;
         const newY = originalNodeY + deltaY;
-        node.setPosition(buildVec2(
-          newX / width,
-          newY / height
-        ));
+        node.position = buildVec2(newX / width, newY / height);
       };
       moveWithChildren(currentSelectedNode, originalNodeRoot);
       repaintCanvas();
@@ -207,12 +205,9 @@ const SwivelScene = () => {
         const newAngle = originalAngle + deltaDeg;
         const newX = swivelX + (Math.cos(degToRad(newAngle)) * distance);
         const newY = swivelY + (Math.sin(degToRad(newAngle)) * distance);
-        node.setPosition(buildVec2(
-          newX / width,
-          newY / height
-        ));
+        node.position = buildVec2(newX / width, newY / height);
       };
-      const originalNode = currentSelectedNode?.clone();
+      const originalNode = structuredClone(currentSelectedNode);
       if (!originalNode) throw new Error("No original node");
       const [originalX, originalY] =
         getRenderedPositionTuple(originalNode.position, canvasRef);
@@ -252,11 +247,11 @@ const SwivelScene = () => {
       x: mouseX,
       y: mouseY,
       originalParentNode: null,
-      originalNodeRoot: node.objectRootNode.clone(),
-      originalNode: node.clone(),
+      originalNodeRoot: structuredClone(getNodeRoot(node)),
+      originalNode: structuredClone(node),
     };
     if (node.parent)
-      mouseDownValues.originalParentNode = node.parent.clone();
+      mouseDownValues.originalParentNode = structuredClone(node.parent);
     globalState.ui.cursor = "grabbing";
     globalState.ui.canvas.selectedNode = node;
     globalState.ui.canvas.mouseDownInitialValues = mouseDownValues;

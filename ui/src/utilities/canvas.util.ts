@@ -1,14 +1,15 @@
 import Color from "color";
-import ObjectNode from "../models/ObjectNode";
 import {
   ObjectNodeTypes,
   SelectionType,
   type Frame,
   type AnimationObject,
+  type ObjectNode,
 } from "../types";
 import globalState from "../state";
 import { degToRad, getAngleOfChange, getPositionDistance, radToDeg } from "./calculations.util";
 import { getRenderedPosition } from "./vec2.util";
+import { nodeIsRoot } from "./objectNode.util";
 
 const ROOT_NODE_COLOR = "#ff8000";
 const NODE_COLOR = "#bf0404";
@@ -144,7 +145,8 @@ export const drawFrameToCanvas = (
     allControlNodes.push(root); // Root nodes
   });
   if (shouldDrawHelpers) {
-    allControlNodes.forEach(({ position, isRoot }) => {
+    allControlNodes.forEach((node) => {
+      const { position } = node;
       if (!ctx) {
         throw new Error("Context unavailable");
       }
@@ -157,7 +159,7 @@ export const drawFrameToCanvas = (
         0,
         2 * Math.PI
       );
-      ctx.fillStyle = isRoot ? ROOT_NODE_COLOR : NODE_COLOR;
+      ctx.fillStyle = nodeIsRoot(node) ? ROOT_NODE_COLOR : NODE_COLOR;
       ctx.fill();
     });
     const selection = globalState.animator.selectedObjects;
@@ -172,7 +174,7 @@ export const drawFrameToCanvas = (
           0,
           2 * Math.PI
         );
-        ctx.fillStyle = node.isRoot
+        ctx.fillStyle = nodeIsRoot(node)
           ? Color(ROOT_NODE_COLOR).negate().hex()
           : Color(NODE_COLOR).negate().hex();
         ctx.fill();
@@ -287,7 +289,8 @@ export const drawAnimationObjectToCanvas = (
     if (!ctx) {
       throw new Error("Context unavailable");
     }
-    const { position, isRoot, id } = node;
+    const { position, id } = node;
+    const isRoot = nodeIsRoot(node);
     const { x, y } = getRenderedPosition(position, ctx.canvas);
     ctx.beginPath();
     ctx.arc(x, y, 6.9, 0, 2 * Math.PI);

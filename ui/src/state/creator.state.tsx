@@ -1,8 +1,8 @@
 import { createSignal } from "solid-js";
-import ObjectNode from "../models/ObjectNode";
 import {
   CreatorToolNames,
   type AnimationObject,
+  type ObjectNode,
 } from "../types";
 
 const [object, setObject] =

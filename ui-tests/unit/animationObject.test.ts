@@ -1,5 +1,7 @@
-import ObjectNode from "../../ui/src/models/ObjectNode";
-import { ObjectNodeTypes } from "../../ui/src/types";
+import {
+  ObjectNodeTypes,
+  ObjectNode,
+} from "../../ui/src/types";
 import {
   buildAnimationObject,
   setAnimationObjectRoot,

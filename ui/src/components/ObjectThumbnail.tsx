@@ -1,9 +1,16 @@
-import ObjectNode from "../models/ObjectNode";
 import globalState from "../state";
-import type { SerializableObjectNode, SerializablePrefabAnimationObject } from "../types";
+import type {
+  SerializableObjectNode,
+  SerializablePrefabAnimationObject,
+  ObjectNode,
+} from "../types";
 import { buildAnimationObject, setAnimationObjectRoot } from "../utilities/animationObject.util";
 import { getCurrentFrame } from "../utilities/animator.util";
 import { getMainCanvas } from "../utilities/canvas.util";
+import {
+  buildObjectNode,
+  appendChildNode,
+} from "../utilities/objectNode.util";
 import { buildVec2 } from "../utilities/vec2.util";
 import styles from "./ObjectThumbnail.module.scss";
 
@@ -20,16 +27,16 @@ const ObjectThumbnail = (props: IObjectThumbnailProps) => {
     let newRoot: ObjectNode | null = null;
     hydratedObject.id = crypto.randomUUID();
     const hydrateNode = (parent: ObjectNode | null, serialNode: SerializableObjectNode) => {
-      const node = new ObjectNode();
+      const node = buildObjectNode();
       node.object = hydratedObject;
       node.size = serialNode.size;
       node.type = serialNode.type;
       if (serialNode.image) node.image = serialNode.image;
-      node.setPosition(buildVec2(
+      node.position = buildVec2(
         serialNode.position.x,
         serialNode.position.y,
-      ));
-      if (parent) parent.appendChild(node);
+      );
+      if (parent) appendChildNode(parent, node);
       if (!parent) newRoot = node;
       serialNode.children.forEach(sn => hydrateNode(node, sn));
     };

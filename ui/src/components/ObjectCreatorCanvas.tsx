@@ -2,11 +2,15 @@ import { createEffect, onCleanup, onMount } from "solid-js";
 import styles from "./ObjectCreatorCanvas.module.scss";
 import { drawAnimationObjectToCanvas } from "../utilities/canvas.util";
 import { clamp } from "../utilities/calculations.util";
-import ObjectNode from "../models/ObjectNode";
 import { CreatorToolNames, ErasorCursor, SelectionType } from "../types";
-import type { MouseDownValues, CursorOption } from "../types";
+import type {
+  MouseDownValues,
+  CursorOption,
+  ObjectNode,
+} from "../types";
 import globalState from "../state";
 import { buildVec2, getRenderedPosition } from "../utilities/vec2.util";
+import { appendChildNode, buildObjectNode, detachNode, getNodeRoot, nodeIsRoot } from "../utilities/objectNode.util";
 
 const ObjectCreatorCanvas = () => {
   let containerRef: HTMLDivElement | undefined;
@@ -45,9 +49,9 @@ const ObjectCreatorCanvas = () => {
     if (globalState.creator.currentTool === CreatorToolNames.ADD) {
       const parent = globalState.ui.canvas.targetNode;
       if (!parent) return;
-      newNode = new ObjectNode();
-      newNode.setPosition(parent?.position);
-      parent.appendChild(newNode);
+      newNode = buildObjectNode();
+      newNode.position = parent?.position;
+      appendChildNode(parent, newNode);
       globalState.creator.controllableNodes =
         [...globalState.creator.controllableNodes, newNode];
       globalState.ui.canvas.targetNode = newNode;
@@ -57,9 +61,9 @@ const ObjectCreatorCanvas = () => {
     }
     if (globalState.creator.currentTool === CreatorToolNames.ERASE) {
       const node = globalState.ui.canvas.targetNode;
-      if (!node || node?.isRoot || !node.parent) return;
+      if (!node || nodeIsRoot(node) || !node.parent) return;
       globalState.ui.canvas.targetNode = null;
-      node.parent.detach(node);
+      detachNode(node);
       redrawCanvas();
       return;
     }
@@ -73,8 +77,8 @@ const ObjectCreatorCanvas = () => {
       x: event.offsetX,
       y: event.offsetY,
       originalParentNode: null,
-      originalNodeRoot: node.objectRootNode.clone(),
-      originalNode: node.clone(),
+      originalNodeRoot: structuredClone(getNodeRoot(node)),
+      originalNode: structuredClone(node),
     };
     if (globalState.creator.currentTool === CreatorToolNames.SELECT)
       globalState.ui.cursor = "grabbing";
@@ -144,8 +148,9 @@ const ObjectCreatorCanvas = () => {
         };
         let cursor = cursorMap[globalState.creator.currentTool];
         if (
+          nextTargetNode &&
           globalState.creator.currentTool === CreatorToolNames.ERASE &&
-          nextTargetNode?.isRoot
+          nodeIsRoot(nextTargetNode)
         ) cursor = "not-allowed";
         globalState.ui.canvas.targetNode = nextTargetNode;
         globalState.ui.cursor = cursor;
@@ -171,20 +176,14 @@ const ObjectCreatorCanvas = () => {
         getRenderedPosition(originalNode.position, canvasRef);
       const newX = originalNodeX + deltaX;
       const newY = originalNodeY + deltaY;
-      currentSelectedNode.setPosition(buildVec2(
-        newX / width,
-        newY / height
-      ));
+      currentSelectedNode.position = buildVec2(newX / width, newY / height);
 
       redrawCanvas();
     } else if (globalState.creator.currentTool === CreatorToolNames.ADD) {
       if (event.target !== canvasRef) return;
       const { offsetX, offsetY } = event;
       const { width, height } = canvasRef;
-      currentSelectedNode.setPosition(buildVec2(
-        offsetX / width,
-        offsetY / height
-      ));
+      currentSelectedNode.position = buildVec2(offsetX / width, offsetY / height);
 
       redrawCanvas();
     }
@@ -213,6 +212,7 @@ const ObjectCreatorCanvas = () => {
       class={styles.container}
     >
       <canvas
+        id="canvas"
         ref={canvasRef}
         class={styles.canvas}
         onMouseDown={handleMouseDown}

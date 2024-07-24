@@ -1,10 +1,14 @@
 import type { JSX } from "solid-js";
 import { For, Match, Show, Switch } from "solid-js";
 import styles from "./Settings.module.scss";
-import ObjectNode from "../models/ObjectNode";
 import globalState from "../state";
-import { ObjectNodeTypes, SelectionType } from "../types";
+import {
+  ObjectNodeTypes,
+  SelectionType,
+  type ObjectNode,
+} from "../types";
 import ImageNodeSettings from "./ImageNodeSettings.component";
+import { nodeIsRoot } from "../utilities/objectNode.util";
 
 type InputHandler = JSX.ChangeEventHandler<HTMLSelectElement, Event>;
 
@@ -43,7 +47,7 @@ const ObjectNodeSettings = () => {
   const uniformTypes = () => nodeTypes().length === 1;
 
   const containsRoot = () => {
-    return selectedNodes().some(n => n.isRoot);
+    return selectedNodes().some(n => nodeIsRoot(n));
   };
 
   const changeNodeTypes: InputHandler = (event) => {
@@ -82,7 +86,7 @@ const ObjectNodeSettings = () => {
               Rotator
             </option>
             <option
-              selected={firstType() === ObjectNodeTypes.TRANSLATE  && !containsRoot()}
+              selected={firstType() === ObjectNodeTypes.TRANSLATE && !containsRoot()}
               value={ObjectNodeTypes.TRANSLATE}
             >
               Translator

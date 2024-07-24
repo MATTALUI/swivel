@@ -1,6 +1,5 @@
 import type PrefabAnimationObject from "./models/PrefabAnimationObject";
 import type MediaResource from "./models/MediaResource";
-import type ObjectNode from "./models/ObjectNode";
 
 // These can be anything from the CSS options for cursor, but you'll have to opt-in
 // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
@@ -54,18 +53,18 @@ export type Frame = {
 //   element: HTMLImageElement | HTMLVideoElement | null;
 // };
 
-// export type ObjectNode = {
-//   id: string;
-//   object: AnimationObject | null;
-//   parent: ObjectNode | null;
-//   position: Vec2;
-//   children: ObjectNode[];
-//   size: number;
-//   width: number | null;
-//   height: number | null;
-//   type: ObjectNodeTypes;
-//   image?: string;
-// }
+export type ObjectNode = {
+  id: string;
+  object: AnimationObject | null;
+  parent: ObjectNode | null;
+  position: Vec2;
+  children: ObjectNode[];
+  size: number;
+  width: number | null;
+  height: number | null;
+  type: ObjectNodeTypes;
+  image?: string;
+}
 
 // export type PrefabAnimationObject = {
 //   id: string;

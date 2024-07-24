@@ -1,9 +1,11 @@
 import { JSX, Match, Show, Switch, createSignal } from "solid-js";
-import ObjectNode from "../models/ObjectNode";
 import globalState from "../state";
 import styles from "./ImageNodeSettings.module.scss";
 import MediaResource from "../models/MediaResource";
-import { MediaResourceType } from "../types";
+import {
+  MediaResourceType,
+  type ObjectNode,
+} from "../types";
 import APIService from "../services";
 
 interface IImageNodeSettingsProps {

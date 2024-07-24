@@ -1,11 +1,12 @@
-import ObjectNode from "../models/ObjectNode";
 import {
   ObjectNodeTypes,
+  type ObjectNode,
   type AnimationObject,
 } from "../types";
+import { buildObjectNode } from "./objectNode.util";
 
 export const buildAnimationObject = (): AnimationObject => {
-  const root = new ObjectNode();
+  const root = buildObjectNode();
 
   const ao: AnimationObject = {
     id: crypto.randomUUID(),

@@ -1,6 +1,9 @@
 import { JSX, createSignal } from "solid-js";
-import ObjectNode from "../models/ObjectNode";
-import type { CursorOption, MouseDownValues } from "../types";
+import type {
+  CursorOption,
+  MouseDownValues,
+  ObjectNode,
+} from "../types";
 
 type OptionalCallback =
   JSX.EventHandlerUnion<HTMLButtonElement, MouseEvent> | undefined;
