@@ -2,6 +2,7 @@ import { MediaResourceType } from "../../ui/src/types";
 import {
   buildMediaResource,
   hydrateMediaResource,
+  stripResource,
 } from "../../ui/src/utilities/mediaResource.util";
 
 describe("buildMediaResource", () => {
@@ -37,5 +38,22 @@ describe("hydrateMediaResource", () => {
     const _hydrationPromise = hydrateMediaResource(resource);
 
     expect(resource.element).toBeDefined();
+  });
+});
+
+describe("stripResource", () => {
+  it("removes the element from a media resource object", () => {
+    const resource = buildMediaResource({
+      type: MediaResourceType.IMAGE,
+      url: "example.com",
+    });
+    resource.element = {} as HTMLImageElement;
+
+    expect(resource.element).toBeTruthy();
+
+    stripResource(resource);
+
+    expect(stripResource(resource).element).toBeNull();
+    expect(resource.element).toBeTruthy();
   });
 });

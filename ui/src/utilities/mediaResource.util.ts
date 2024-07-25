@@ -25,6 +25,30 @@ export const buildMediaResource = (
   };
 };
 
+/**
+ * Nondestructively removes all non-cloneable data from a media--like \
+ * references to loaded media elements--in order to aid in resource object \
+ * serialization.
+ * 
+ * @param resource the media resource to strip
+ * 
+ * @returns a clone of the provided media resource with data removed
+ */
+export const stripResource = (resource: MediaResource): MediaResource => {
+  return {
+    ...resource,
+    element: null,
+  };
+};
+
+/**
+ * populates the media dependencies and data needed in order to make use of the\
+ * media resource that is provided
+ * 
+ * @param resource The base resource that should be hydrates
+ * 
+ * @returns a hydrated version of the resource provided
+ */
 export const hydrateMediaResource = async (
   resource: MediaResource
 ): Promise<MediaResource> => {

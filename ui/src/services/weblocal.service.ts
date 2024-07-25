@@ -12,7 +12,7 @@ import type {
   MediaResource,
   MediaResourceConstructorArgs,
 } from "../types";
-import { buildMediaResource } from "../utilities/mediaResource.util";
+import { buildMediaResource, stripResource } from "../utilities/mediaResource.util";
 
 const SERVICE_NAME = "Web Local Service";
 const DB_NAME = "SWIVEL::DATABASE";
@@ -141,7 +141,7 @@ const getMediaResources = async () => {
 const createMediaResource = async (resource: MediaResource) => {
   const db = await useDb();
   const transaction = db.transaction([RESOURCES_STORE], "readwrite");
-  await db.add(RESOURCES_STORE, resource);
+  await db.add(RESOURCES_STORE, stripResource(resource));
   await transaction.done;
 
   return buildServiceSuccess(resource);
