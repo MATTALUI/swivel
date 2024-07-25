@@ -2,8 +2,11 @@ import type { JSX } from "solid-js";
 import styles from "./Settings.module.scss";
 import globalState from "../state";
 import { updateFramePreviews } from "../utilities/project.util";
+import { debounce } from "../utilities/calculations.util";
 
 type InputHandler = JSX.ChangeEventHandler<HTMLInputElement, Event>;
+
+const debouncedUpdateFramePreviews = debounce(updateFramePreviews, 500);
 
 const ProjectSettings = () => {
   const updateProjectName: InputHandler = (event) => {
@@ -23,6 +26,11 @@ const ProjectSettings = () => {
   const updateProjectBackgroundColor: InputHandler = (event) => {
     globalState.project.backgroundColor = event.target.value;
     updateFramePreviews();
+  };
+
+  const updateProjectBackgroundOpacity: InputHandler = (event) => {
+    globalState.project.backgroundOpacity = +event.target.value;
+    debouncedUpdateFramePreviews();
   };
 
   const updateProjectFPS: InputHandler = (event) => {
@@ -62,14 +70,6 @@ const ProjectSettings = () => {
         </div>
       </div>
       <div class={styles.settingContainer}>
-        <label>Background Color</label>
-        <input
-          type="color"
-          value={globalState.project.backgroundColor}
-          onChange={updateProjectBackgroundColor}
-        />
-      </div>
-      <div class={styles.settingContainer}>
         <div class={styles.splitHeader}>
           <label>Frame Rate</label>
           <span>{globalState.project.fps} FPS</span>
@@ -81,6 +81,28 @@ const ProjectSettings = () => {
           step={1}
           value={globalState.project.fps}
           onInput={updateProjectFPS}
+        />
+      </div>
+      <div class={styles.settingContainer}>
+        <label>Background Color</label>
+        <input
+          type="color"
+          value={globalState.project.backgroundColor}
+          onChange={updateProjectBackgroundColor}
+        />
+      </div>
+      <div class={styles.settingContainer}>
+        <div class={styles.splitHeader}>
+          <label>Background Opacity</label>
+          <span>{globalState.project.backgroundOpacity}%</span>
+        </div>
+        <input
+          type="range"
+          min={0}
+          max={100}
+          step={1}
+          value={globalState.project.backgroundOpacity}
+          onInput={updateProjectBackgroundOpacity}
         />
       </div>
     </>

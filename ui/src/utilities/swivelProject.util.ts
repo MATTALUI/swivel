@@ -15,5 +15,6 @@ export const buildSwivelProject = (): SwivelProject => {
     fps: 10,
     name: "Untitled Project",
     backgroundColor: "#ffffff",
+    backgroundOpacity: 100,
   };
 };

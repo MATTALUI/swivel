@@ -19,6 +19,8 @@ const [fps, setFPS] =
   createSignal(defaultProject.fps);
 const [backgroundColor, setBackgroundColor] =
   createSignal(defaultProject.backgroundColor);
+const [backgroundOpacity, setBackgroundOpacity] =
+  createSignal(defaultProject.backgroundOpacity);
 
 const projectState = {
   get id() { return id(); },
@@ -34,6 +36,8 @@ const projectState = {
   set fps(newFPS: number) { setFPS(newFPS); },
   get backgroundColor() { return backgroundColor(); },
   set backgroundColor(bg: string) { setBackgroundColor(bg); },
+  get backgroundOpacity() { return backgroundOpacity(); },
+  set backgroundOpacity(op: number) { setBackgroundOpacity(op); },
   get aspectRatio() { return width() / height(); },
   get swivelProject() {
     const project = buildSwivelProject();
@@ -45,6 +49,7 @@ const projectState = {
     project.frames = frames();
     project.fps = fps();
     project.backgroundColor = backgroundColor();
+    project.backgroundOpacity = backgroundOpacity();
 
     return project;
   },

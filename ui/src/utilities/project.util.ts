@@ -30,7 +30,7 @@ export const updateFramePreviews = async () => {
   const newFrames = await Promise.all([...existingFrames].map(async (frame) => {
     frame.previewImage = getFramePreviewUrl(frame);
 
-    return frame;
+    return structuredClone(frame);
   }));
   globalState.project.frames = newFrames;
 };

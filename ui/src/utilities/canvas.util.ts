@@ -25,6 +25,9 @@ interface IDrawFrameToCanvasOptions {
    * override will take precedence over the state of the animator scene options.
   */
   bgColorOverride?: string;
+  /** The opacity value that will be applied to the canvas's background color, 
+   * accepts 0-100  */
+  bgOpacityOverride?: number;
 }
 export const drawFrameToCanvas = (
   canvas: HTMLCanvasElement,
@@ -47,10 +50,19 @@ export const drawFrameToCanvas = (
   // Clear it out
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   // Draw in the background color
-  ctx.fillStyle =
+  const rawBgColor =
     options.bgColorOverride ||
     frame.backgroundColor ||
     globalState.project.backgroundColor;
+  const bgColor = rawBgColor.slice(0, 7);
+  const opacityValue =
+    options.bgOpacityOverride ??
+    globalState.project.backgroundOpacity ??
+    100;
+  const opacity = Math.floor(opacityValue / 100 * 255)
+    .toString(16)
+    .padStart(2, "0");
+  ctx.fillStyle = [bgColor, opacity].join("");
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   // Create a registry of just the points that we can build as we go so that
   // we can draw the control points on top of all the lines at the end without having to recurse again

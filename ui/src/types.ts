@@ -83,6 +83,7 @@ export type SwivelProject = {
   frames: Frame[];
   fps: number;
   backgroundColor: string;
+  backgroundOpacity: number;
 }
 
 export interface Dimensions {
